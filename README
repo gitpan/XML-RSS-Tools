@@ -1,4 +1,4 @@
-XML/RSS/Tools version 0.04
+XML/RSS/Tools version 0.05
 ==========================
 
 RSS/RDF feeds are commonly available ways of distributing the latest news about a
@@ -26,7 +26,7 @@ DEPENDENCIES
 
 This module requires these other modules for full functionality:
 
-  XML::RSS XML::LibXSLT XML::LibXML LWP HTTP::GHTTP HTML::Entities
+  XML::RSS XML::LibXSLT XML::LibXML LWP HTTP::GHTTP
 
 COPYRIGHT AND LICENCE
 

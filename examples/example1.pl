@@ -1,7 +1,7 @@
 #!/bin/perl/bin/perl
 
 #
-#	Example for XML::RSS::Tools
+#	Example1 for XML::RSS::Tools
 #
 
 use strict;

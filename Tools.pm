@@ -1,8 +1,8 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.04 "ALPHA"
-# May 2002
+# Version 0.05 "ALPHA"
+# July 2002
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
 #
@@ -24,17 +24,11 @@ use diagnostics;				# Will eventually be removed
 use XML::RSS;					# Handle the RSS/RDF files
 use XML::LibXML;				# Hand the XML file for XSL-T
 use XML::LibXSLT;				# Hand the XSL file and do the XSL-T
-use HTML::Entities;				# Try and fix entities
 
 require Exporter;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 our @ISA = qw(Exporter);
-
-#{
-#	Class Data
-	
-#}
 
 #
 #	Tools Constructor
@@ -146,7 +140,7 @@ sub rss_file {
 	my $file_name = shift;
 
 	if ($self->_check_file($file_name)) {
-		open SOURCE_FILE, "<$file_name" or croak "Unable to open $file_name for reading";
+		open SOURCE_FILE, "<", $file_name or croak "Unable to open $file_name for reading";
 		$self->{_rss_string} = $self->_load_filehandle(\*SOURCE_FILE);
 		close SOURCE_FILE;
 		_parse_rss_string($self);
@@ -166,7 +160,7 @@ sub xsl_file {
 	my $file_name = shift;
 
 	if ($self->_check_file($file_name)) {
-		open SOURCE_FILE, "<$file_name" or croak "Unable to open $file_name for reading";
+		open SOURCE_FILE, "<", $file_name or croak "Unable to open $file_name for reading";
 		$self->{_xsl_string} = $self->_load_filehandle(\*SOURCE_FILE);
 		close SOURCE_FILE;
 		$self->{_transformed} = 0;
@@ -251,6 +245,8 @@ sub transform {
 	my $xml_parser = XML::LibXML->new;
 	
 	$xml_parser->keep_blanks(0);
+	$xml_parser->expand_entities(0);
+	$xml_parser->validation(0);
 	
 	$self->{_rss_string} =~ s/<!DOCTYPE.*?>//s;							# Evil hack to remove DTD
 
@@ -282,6 +278,7 @@ sub _parse_rss_string {
 	if ($rss->{version} != $self->{_rss_version}) {
 		$rss->{output} = $self->{_rss_version};
 		$xml = $rss->as_string;
+		$xml = _wash_xml($xml) if $self->{_auto_wash};
 	}
 
 	$self->{_rss_string} = $xml;
@@ -310,18 +307,9 @@ sub	_load_filehandle {
 sub _wash_xml {
 	my $xml = shift;
 
-	my %entity = (
-		trade  => "&#8482;",
-	);
-	my $entities = join('|', keys %entity);
-
-	decode_entities($xml);											# Try and deal with known entities
-
-	$xml =~ s/&($entities);/$entity{$1}/g;							# Deal with odd entities
-	$xml =~ s/&(?!(#[0-9]+|#x[0-9a-fA-F]+|\w+);)/&amp;/g;			# Matt's ampersand entity fixer
+	$xml = _clean_entities($xml);
 	$xml =~ s/\s+/ /gs;
 	$xml =~ s/> />/g;
-
 	return $xml
 }
 
@@ -349,6 +337,11 @@ sub _http_get {
 	my $self= shift;
 	my $uri = shift;
 
+	unless ($uri) {
+		$self->_raise_error("HTTP error: No URI provided.");
+		return;
+	}
+
 	eval {													# Try and use Gnome HTTP, it's faster
 		require HTTP::GHTTP;
 	};
@@ -375,10 +368,128 @@ sub _http_get {
 
 
 #
+#	Fix Entities
+#	This subroutine is a mix of Matt Sergents rss-mirror script
+#	And chunks of the HTML::Entites module
+#
+sub	_clean_entities {
+	my $xml  = shift;
+	
+	my %entity = (
+		trade	=> "&#8482;",
+		euro	=> "&#8364;",
+		quot	=> '"',  # double quote
+ 		apos	=> "'",
+		AElig	=> 'Æ',  # capital AE diphthong (ligature)
+		Aacute	=> 'Á',  # capital A, acute accent
+		Acirc	=> 'Â',  # capital A, circumflex accent
+		Agrave	=> 'À',  # capital A, grave accent
+		Aring	=> 'Å',  # capital A, ring
+		Atilde	=> 'Ã',  # capital A, tilde
+		Auml	=> 'Ä',  # capital A, dieresis or umlaut mark
+		Ccedil	=> 'Ç',  # capital C, cedilla
+		ETH		=> 'Ð',  # capital Eth, Icelandic
+		Eacute	=> 'É',  # capital E, acute accent
+		Ecirc	=> 'Ê',  # capital E, circumflex accent
+		Egrave	=> 'È',  # capital E, grave accent
+		Euml	=> 'Ë',  # capital E, dieresis or umlaut mark
+		Iacute	=> 'Í',  # capital I, acute accent
+		Icirc	=> 'Î',  # capital I, circumflex accent
+		Igrave	=> 'Ì',  # capital I, grave accent
+		Iuml	=> 'Ï',  # capital I, dieresis or umlaut mark
+		Ntilde	=> 'Ñ',  # capital N, tilde
+		Oacute	=> 'Ó',  # capital O, acute accent
+		Ocirc	=> 'Ô',  # capital O, circumflex accent
+		Ograve	=> 'Ò',  # capital O, grave accent
+		Oslash	=> 'Ø',  # capital O, slash
+		Otilde	=> 'Õ',  # capital O, tilde
+		Ouml	=> 'Ö',  # capital O, dieresis or umlaut mark
+		THORN	=> 'Þ',  # capital THORN, Icelandic
+		Uacute	=> 'Ú',  # capital U, acute accent
+		Ucirc	=> 'Û',  # capital U, circumflex accent
+		Ugrave	=> 'Ù',  # capital U, grave accent
+		Uuml	=> 'Ü',  # capital U, dieresis or umlaut mark
+		Yacute	=> 'Ý',  # capital Y, acute accent
+		aacute	=> 'á',  # small a, acute accent
+		acirc	=> 'â',  # small a, circumflex accent
+		aelig	=> 'æ',  # small ae diphthong (ligature)
+		agrave	=> 'à',  # small a, grave accent
+		aring	=> 'å',  # small a, ring
+		atilde	=> 'ã',  # small a, tilde
+		auml	=> 'ä',  # small a, dieresis or umlaut mark
+		ccedil	=> 'ç',  # small c, cedilla
+		eacute	=> 'é',  # small e, acute accent
+		ecirc	=> 'ê',  # small e, circumflex accent
+		egrave	=> 'è',  # small e, grave accent
+		eth		=> 'ð',  # small eth, Icelandic
+		euml	=> 'ë',  # small e, dieresis or umlaut mark
+		iacute	=> 'í',  # small i, acute accent
+		icirc	=> 'î',  # small i, circumflex accent
+		igrave	=> 'ì',  # small i, grave accent
+		iuml	=> 'ï',  # small i, dieresis or umlaut mark
+		ntilde	=> 'ñ',  # small n, tilde
+		oacute	=> 'ó',  # small o, acute accent
+		ocirc	=> 'ô',  # small o, circumflex accent
+		ograve	=> 'ò',  # small o, grave accent
+		oslash	=> 'ø',  # small o, slash
+		otilde	=> 'õ',  # small o, tilde
+		ouml	=> 'ö',  # small o, dieresis or umlaut mark
+		szlig	=> 'ß',  # small sharp s, German (sz ligature)
+		thorn	=> 'þ',  # small thorn, Icelandic
+		uacute	=> 'ú',  # small u, acute accent
+		ucirc	=> 'û',  # small u, circumflex accent
+		ugrave	=> 'ù',  # small u, grave accent
+		uuml	=> 'ü',  # small u, dieresis or umlaut mark
+		yacute	=> 'ý',  # small y, acute accent
+		yuml	=> 'ÿ',  # small y, dieresis or umlaut mark
+		copy	=> '©',  # copyright sign
+		reg		=> '®',  # registered sign
+		nbsp	=> "\240", # non breaking space
+		iexcl	=> '¡',
+		cent	=> '¢',
+		pound	=> '£',
+		curren	=> '¤',
+		yen		=> '¥',
+		brvbar	=> '¦',
+		sect	=> '§',
+		uml		=> '¨',
+		ordf	=> 'ª',
+		laquo	=> '«',
+		'not'	=> '¬',    # not is a keyword in perl
+		shy		=> '­',
+		macr	=> '¯',
+		deg		=> '°',
+		plusmn	=> '±',
+		sup1	=> '¹',
+		sup2	=> '²',
+		sup3	=> '³',
+		acute	=> '´',
+		micro	=> 'µ',
+		para	=> '¶',
+		middot	=> '·',
+		cedil	=> '¸',
+		ordm	=> 'º',
+		raquo	=> '»',
+		frac14	=> '¼',
+		frac12	=> '½',
+		frac34	=> '¾',
+		iquest	=> '¿',
+		'times'	=> '×',    # times is a keyword in perl
+		divide	=> '÷',
+	);
+	my $entities = join('|', keys %entity);
+#print "\n\n$xml\n";
+	$xml =~ s/&(?!(#[0-9]+|#x[0-9a-fA-F]+|\w+);)/&amp;/g;			# Matt's ampersand entity fixer
+	$xml =~ s/&($entities);/$entity{$1}/gi;							# Deal with odd entities
+#print "\n\n$xml\n";
+	return $xml;
+}
+
+#
 #	Raise error condition
 #
 sub _raise_error {
-	my $self = shift;
+	my $self    = shift;
 	my $message = shift;
 
 	$self->{_error_message} = $message;
@@ -505,7 +616,7 @@ invalid XML constructs.
 =head1 PREREQUISITES
 
 To function you must have at least C<XML::RSS> installed, and to be of any real use C<XML::LibXSLT>
-and C<XML::LibXML>. To clean up dirty HTML, C<HTML::Entities> is required.
+and C<XML::LibXML>.
 
 Either C<HTTP::GHTTP> or C<LWP> will bring this module to full functionality. HTTP::GHTTP is much
 faster than LWP but not as widely available.
@@ -520,13 +631,17 @@ None by default.
 
 =head1 HISTORY
 
+0.05 More minor stuff. Change to entities routine - still not ideal. Test suite upgraded and expanded again.
+
 0.04 Removed un-used test files, other minor changes. Defect in Test script corrected, tested module on Linux.
 
-0.03 Minor code cheanges and defect corrections. Example script included.
+0.03 Minor code changes and defect corrections. Example script included.
 
 0.02 Some code changes, POD expanded, and test suite more developed.
 
 0.01 Initial Build. Shown to the public on PerlMonks May 2002, for feedback.
+
+See Chnages file for more detail
 
 =head2 ToDo
 
@@ -539,6 +654,10 @@ all together if we treat all files as URIs.
 
 Provide xmlcatalog exmaple so the the manual removal of DTDs can be taken
 out.
+
+Possibly re-write XML::RSS based on the LibXML parser, or fix it's output
+on the older XML::Parser core. Try and develop a more effective XML stream
+pre-parsing auto-wash function...
 
 =head2 Defects and Limitations
 
@@ -556,6 +675,14 @@ at the site. Often the RSS feed is either not well formed or it is invalid. In
 either case this will prevent the RSS parser from functioning, and you will get
 no output. The auto_wash option attempts to fix these errors, but it's is neither
 perfect nor ideal. Some people report good succes with complaining to the site.
+
+XML::RSS on which this module uses for RSS normalisation has a defect in that in
+does not escape & " ' < > in it's output stream, resulting in invalid XML. Again
+the auto_wash option attempts to correct this, but again, the correction is not
+reliable....
+
+Perl pre 5.7.x is not able to handle Unicode fully, strange things happen... Things
+should get better as 5.8.0 is now available.
 
 =head1 AUTHOR
 
