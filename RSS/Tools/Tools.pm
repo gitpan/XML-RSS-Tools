@@ -1,7 +1,7 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.02
+# Version 0.03 "ALPHA"
 # May 2002
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
@@ -14,14 +14,13 @@
 
 package XML::RSS::Tools;
 
-use 5.006;
-use strict;
-use warnings;
-use Diagnostics;
-use Carp;
+use 5.006;						# Not been tested on anything earlier
+use strict;						# Naturally
+use warnings;					# Naturally
+use Carp;						# We're a nice module
 
-#use HTTP::GHTTP;				# Delayed loading
-#use LWP::UserAgent;			# In case you don't have GHTTP
+use diagnostics;				# Will eventually be removed
+
 use XML::RSS;					# Handle the RSS/RDF files
 use XML::LibXML;				# Hand the XML file for XSL-T
 use XML::LibXSLT;				# Hand the XSL file and do the XSL-T
@@ -29,10 +28,8 @@ use HTML::Entities;				# Try and fix entities
 
 require Exporter;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 our @ISA = qw(Exporter);
-
-# Preloaded methods go here.
 
 #{
 #	Class Data
@@ -434,7 +431,7 @@ proceeding with your code:
 
   my $rss_object = XML::RSS::Tools->new;
 
-Or with optioanl parameters.
+Or with optional parameters.
 
   my $rss_object = XML::RSS::Tools->new(
     version   => 0.91,
@@ -459,7 +456,7 @@ All return true on success, false on failure. If an XML file was provided but wa
 XML the parser will fail fataly at this time. The input RSS feed will automatically be
 normalised to the prefered RSS version at this time. Chose your version before you load it.
 
-=head2 Source XSl-T file
+=head2 Source XSL-Template
 
   $rss_object->xsl_file('/my/file.xsl');
 
@@ -496,8 +493,8 @@ current status.
 
 and
 
-  $rss_object->set_auto_wash;
-  $rss_object->set_version;  
+  $rss_object->set_auto_wash(1);
+  $rss_object->set_version(0.92);  
 
 These methods control the core RSS functionality. The get methods return the current setting, and
 set method sets the value. By default RSS version is set to 0.91, and auto_wash to true. All incoming
@@ -521,6 +518,8 @@ None by default.
 
 =head1 HISTORY
 
+0.03 Minor code cheanges and defect corrections. Example script included.
+
 0.02 Some code changes, POD expanded, and test suite more developed.
 
 0.01 Initial Build. Shown to the public on PerlMonks May 2002, for feedback.
@@ -538,7 +537,8 @@ attempt to obtain the files, before performing the transformation. If the files
 refered to are on the public INTERNET, and you do not have a connection when this
 happens you may find that the process waits around for several minutes until
 LibXML gives up. If you plan to use this module in an asyncronous manner, you
-should setup a XML Catalog for LibXML using the GNOME xmlcatalog command.
+should setup an XML Catalog for LibXML using the GNOME xmlcatalog command. See:
+http://www.xmlsoft.org/catalog.html for more details.
 
 Many commercial RSS feeds are derived from the Content Managment System in use
 at the site. Often the RSS feed is either not well formed or it is invalid. In

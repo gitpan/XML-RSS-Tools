@@ -57,7 +57,7 @@ if ($rss_object->rss_file('foo.bar')) {
 	print "ok ", $test_no++, "\tBad file name correctly dealt with\n";
 }
 
-if ($rss_object->as_string(error) ne "File error: Cannot find file foo.bar") {
+if ($rss_object->as_string('error') ne "File error: Cannot find file foo.bar") {
 	print "NOT ok ", $test_no++, "\tFailed to report bad file error correctly\n";
 } else {
 	print "ok ", $test_no++, "\tBad file name error correctly reported\n";

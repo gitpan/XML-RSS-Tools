@@ -3,6 +3,7 @@ Makefile.PL
 MANIFEST
 README
 test.pl
+example.pl
 Tools.pm
 test.rdf
 test.xsl

@@ -1,7 +1,11 @@
 Revision history for Perl extension XML::RSS::Tools.
 
-0.02  Sun 05 May 2002
+0.03  Sun 12 May 2002
+	- More minor changes and fixes, example script included.
+
+0.02  Sat 11 May 2002
 	- Test suite developed properly
+	- Uploaded to CPAN as alpha code
 
 0.01  Sun 28 Apr 2002
 	- original version; created by h2xs 1.21 with options
