@@ -1,0 +1,102 @@
+<!DOCTYPE rss PUBLIC 
+  "-//Netscape Communications//DTD RSS 0.91//EN" 
+  "http://my.netscape.com/publish/formats/rss-0.91.dtd"
+>
+
+<rss version="0.91">
+  <channel>
+    <title>XML.com</title>
+    <description>
+	XML.com features a rich mix of information and services for the XML community.
+    </description>
+    <language>en-us</language>
+    <link>http://www.xml.com/</link> 
+    <copyright>Copyright 2000, O'Reilly and Associates</copyright>
+    <managingEditor>edd@xml.com (Edd Dumbill)</managingEditor>
+    <webMaster>peter@xml.com (Peter Wiggin)</webMaster>
+	<image>
+		<link>http://www.xml.com/</link>
+		<url>http://www.xml.com/universal/images/xml_tiny.gif</url>
+		<title>XML.com</title>
+	</image>
+
+
+    <item>
+      <title>Privacy and XML, Part I</title>
+      <link>http://www.xml.com/pub/a/2002/04/17/privacy.html</link>
+      <description>This first installment of a two-part series on privacy and XML introduces the issues at stake in online privacy and gives an overview of privacy concepts.</description>
+    </item>
+    <item>
+      <title>Perl and XML on the Command Line</title>
+      <link>http://www.xml.com/pub/a/2002/04/17/perl-xml.html</link>
+      <description>In this month's Perl and XML column, Kip Hampton explores how the desperate Perl hacker can use its XML tools on the command line.</description>
+    </item>
+    <item>
+      <title>Hot and Fresh Technology for the Enterprise</title>
+      <link>http://www.xml.com/pub/a/2002/04/17/svg.html</link>
+      <description>This month's SVG column takes a step back from SVG's use for end-user graphics and examines its potential in the enterprise context.</description>
+    </item>
+    <item>
+      <title>Beyond W3C XML Schema</title>
+      <link>http://www.xml.com/pub/a/2002/04/10/beyondwxs.html</link>
+      <description>Adding XPath and XSLT into your toolchain for validating documents can give you much more control than using W3C XML Schema alone.</description>
+    </item>
+    <item>
+      <title>What's New in XSLT 2.0</title>
+      <link>http://www.xml.com/pub/a/2002/04/10/xslt2.html</link>
+      <description>A advance look at the useful and much-awaited new features in the second version of the W3C's XSLT language.</description>
+    </item>
+    <item>
+      <title>XML Namespaces 1.1</title>
+      <link>http://www.xml.com/pub/a/2002/04/10/namespaces-1.1.html</link>
+      <description>This week's Deviant examines the Namespaces 1.1 Working Draft, as well as its goals and likely impact on XML processors and development practices.</description>
+    </item>
+    <item>
+      <title>From JDOM to XmlDocument</title>
+      <link>http://www.xml.com/pub/a/2002/04/03/csharp.html</link>
+      <description>In this second part of his &quot;Learning C# XML&quot; series, Niel Bornstein shows how Java-based document processing with JDOM translates into the .NET world with C#.</description>
+    </item>
+    <item>
+      <title>TAG Watch</title>
+      <link>http://www.xml.com/pub/a/2002/04/03/tag.html</link>
+      <description>The W3C's Technical Architecture Group (TAG), charged with making the hard decisions about the shape web technology, has now gotten down to serious business. We take a took at their progress so far.</description>
+    </item>
+    <item>
+      <title>Putting Attributes to Work</title>
+      <link>http://www.xml.com/pub/a/2002/04/03/attributes.html</link>
+      <description>In this month's Transforming XML column, Bob DuCharme examines the treatment of source tree attributes in XSL stylesheets.</description>
+    </item>
+    <item>
+      <title>Template Languages in XSLT</title>
+      <link>http://www.xml.com/pub/a/2002/03/27/templatexslt.html</link>
+      <description>Handy as it is, XSLT fails to bring a proper separation between content and presentation. This article demonstrates how XSLT can be used to implement a template language more suitable for everyday use.</description>
+    </item>
+    <item>
+      <title>SVG Tips and Tricks, Part One</title>
+      <link>http://www.xml.com/pub/a/2002/03/27/svg-tips-tricks.html</link>
+      <description>In this month's SVG column Antoine Quint offers some tips and tricks for creating more useful and impressive SVG animations.</description>
+    </item>
+    <item>
+      <title>W3C XML Schema Needs You</title>
+      <link>http://www.xml.com/pub/a/2002/03/27/deviant-schemas.html</link>
+      <description>In this week's Deviant column the issue of interoperability and specification conformance of XML Schema processors is discussed.</description>
+    </item>
+    <item>
+      <title>Basic Training</title>
+      <link>http://www.xml.com/pub/a/2002/03/27/qanda.html</link>
+      <description>In this month's Q&amp;A column, John Simpson attends to the most basic XML question of all: &quot;What is XML?&quot;</description>
+    </item>
+    <item>
+      <title>What is XSL-FO?</title>
+      <link>http://www.xml.com/pub/a/2002/03/20/xsl-fo.html</link>
+      <description>Extended excerpts from noted XSLT trainer Ken Holman's book on the W3C's XSL Formatting Objects specification.</description>
+    </item>
+    <item>
+      <title>What's New in XPath 2.0</title>
+      <link>http://www.xml.com/pub/a/2002/03/20/xpath2.html</link>
+      <description>XPath's about to become a lot more powerful and flexible. Evan Lenz guides us through a tour of the new features of XPath 2.0.</description>
+    </item>
+
+</channel>
+</rss>
+

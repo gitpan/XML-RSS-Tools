@@ -1,0 +1,48 @@
+XML/RSS/Tools version 0.02
+==========================
+
+RSS/RDF feeds are commonly available ways of distributing the latest news about a
+given web site for news syndication. This module provides a VERY high level way of
+manipulating them. You can easily use LWP, the XML::RSS and XML::LibXSLT do to this
+yourself.
+
+STATUS
+
+Warning! this module is ALPHA code, it may have undocumented features "bugs", and
+the API may change without notice. However it is currently under active development
+and so now is the time to add features to the code base before the API becomes
+fixed.
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+This module requires these other modules for full functionality:
+
+  XML::RSS XML::LibXSLT XML::LibXML LWP HTTP::GHTTP HTML::Entities
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2002 Adam Trickett
+
+XML::RSS::Tools, Copyright iredale Consulting 2002
+
+This program is free software; you can redistribute it and/or modify it under the terms
+of the GNU General Public License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details. 
+
+You should have received a copy of the GNU General Public License along with this program;
+if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+Boston, MA  02111, USA.
+
