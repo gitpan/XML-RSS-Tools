@@ -1,5 +1,9 @@
 Revision history for Perl extension XML::RSS::Tools.
 
+0.06  thu 01 August 2002
+	- Cosmetic changes to the HTML
+	- Test script corrections
+
 0.05  Wed 31 July 2002
 	- Null URIs dealt with
 	- Extra example script provided

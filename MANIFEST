@@ -8,5 +8,5 @@ t/use.t
 t/xtended-test.t
 t/test.rdf
 t/test.xsl
-examples/example1.pl
-examples/example2.pl
+examples/example1
+examples/example2

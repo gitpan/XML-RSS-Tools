@@ -1,8 +1,8 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.05 "ALPHA"
-# July 2002
+# Version 0.06 "ALPHA"
+# August 2002
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
 #
@@ -27,7 +27,7 @@ use XML::LibXSLT;				# Hand the XSL file and do the XSL-T
 
 require Exporter;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 our @ISA = qw(Exporter);
 
 #
@@ -630,6 +630,8 @@ Any OS able to run the core requirments.
 None by default.
 
 =head1 HISTORY
+
+0.06 Changes to HTML Documentation. Tests fixed.
 
 0.05 More minor stuff. Change to entities routine - still not ideal. Test suite upgraded and expanded again.
 

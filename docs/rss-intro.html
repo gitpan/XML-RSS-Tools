@@ -7,21 +7,20 @@
 <title>Simple Introduction into RSS</title>
 <style type="text/css">
 <!--
-body     {margin: 40px; color: black; background-color: white; font-size: 12px;}
-h1,h2,h3 {font-face: verdana, arial, sans-serif; color: navy;}
-h1, h2   {font-variant: small-caps;}
+body     {margin: 40px; color: black; background-color: white; font-size: 13px; line-heigh: 1.5;}
+h1,h2,h3 {font-face: verdana, arial, sans-serif; color: #069; border-bottom: 1px dotted #069; padding: 5px 0px 5px 0px;}
+h2       {border-bottom: 4px solid #069;}
+h1       {border: 4px solid blue; background-color: #069; color: white; padding:10px; text-align:center}
 p        {text-align: justify; text-indent: 40px}
-a        {text-decoration: none;}
-a:hover  {color: yellow; background-color: green;}
-hr       {color: green; background-color: green;}
+a        {text-decoration: none; padding:2px;}
+a:hover  {color: yellow; background-color: #069;}
+hr       {color: #069; background-color: #069; height: 4px;}
 -->
 </style>
 </head>
 <body>
 
-<hr />
 <h1>Simple Introduction Into RSS</h1>
-<hr />
 
 <h2>RSS/RDF</h2>
 
@@ -30,13 +29,13 @@ simple method of a site describing what it has, so that another
 site can summarise the content, and provide links back to the
 original content.</p>
 
-<p>RSS was pioneered by <a href="http://my.netscape.com/publish/formats/rss-spec-0.91.html">Netscape Communications</a> for their my.netscape portal, and adopted quickly
+<p>RSS was pioneered by <a href="http://my.netscape.com/publish/formats/rss-spec-0.91.html">Netscape Communications</a> for their <em>my.netscape</em> portal, and adopted quickly
 by many others, notably <a href="http://backend.userland.com/rss092">userland.com</a>.</p>
 
 <h2>XML</h2>
 
 <p>A simple <a href="http://www.w3.org/XML/">XML</a> file is produced by the site
-originating the articles. This file easily obtainable by HTTP is downloaded, and
+originating the articles. This file, easily obtainable by HTTP, is downloaded and
 parsed by the client, allowing the client to present the site summary in a way
 that suits the client. XML provides a simple human readable format
 that is easy to generate and read, using typical web tools.</p>
@@ -73,8 +72,8 @@ easiest one for Perl is Matt Sergeant's <a  href="http://search.cpan.org/search?
 
 <p>After developing the script to do this I realised that much of the code could be
 converted into a module and distributed to the world. After a popular post to
-<a href="http://www.perlmonks.org/">Perlmonks</a>, I have moved the module up to ALPHA
-state, and it is currently in the process of moving up to <a href="http://www.cpan.org/">CPAN</a>.</p>
+<a href="http://www.perlmonks.org/">Perlmonks</a>, I have moved the module up to <a href="http://www.cpan.org/">CPAN</a>. The code should be considered as <strong>ALPHA</strong>
+code, and the API may change somewhat in the near future.</p>
 
 <h2>Resources</h2>
 
@@ -82,9 +81,11 @@ state, and it is currently in the process of moving up to <a href="http://www.cp
 <li>Userland.com the home of key RSS developments: <a href="http://backend.userland.com/rss092">backend.userland.com</a></li>
 <li>SOAP CLient RSS to HTML online tool: <a href="http://soapclient.com/rss/rss.html">soapclient.com/rss/rss.html</a></li>
 <li>Netscape Communications: <a href="http://my.netscape.com/publish/formats/rss-spec-0.91.html">my.netscape.com/publish/formats/rss-spec-0.91.html</a></li>
-<li>W3C Standards body: <a href=" http://www.w3.org/RDF/">www.w3.org/RDF/</a></li>
+<li>W3C Standards body: <a href="http://www.w3.org/RDF/">www.w3.org/RDF/</a></li>
 <li>Blogspace RSS FAQ: <a href="http://blogspace.com/rss/">blogspace.com/rss/</a></li>
 <li>RSS Versions: <a href="http://www.webreference.com/authoring/languages/xml/rss/1/8.html">www.webreference.com/authoring/languages/xml/rss/1.8.html</a></li>
+<li>Ben Hammersley's Content Syndication with XML and RSS: <a href="http://rss.benhammersley.com/">rss.benhammersley.com</a></li>
+<li>Dave Beckett's Resource Description Framework Resource Guide: <a href="http://www.ilrt.bristol.ac.uk/discovery/rdf/resources/">/www.ilrt.bristol.ac.uk/discovery/rdf/resources/</a></li>
 </ul>
 
 <h2>Some Example RSS Feeds</h2>
