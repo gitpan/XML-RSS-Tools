@@ -1,5 +1,12 @@
 Revision history for Perl extension XML::RSS::Tools.
 
+0.12  Thur 12 June 2003
+	- Lots of fixes to the build & test process
+		* Example 5 added to the manifest
+		* http-tests.t defect corrected
+		* Makefile corrected
+	- No changes to the actual module
+
 0.11  Wed 11 June 2003
 	- POD Improvments
 	- Corrections to included RSS feed

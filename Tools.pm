@@ -1,7 +1,7 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.11
+# Version 0.12
 # June 2003
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
@@ -29,7 +29,7 @@ use FileHandle;					# Alow the use of File Handle Objects
 
 require Exporter;
 
-our $VERSION = '0.11';
+our $VERSION = '0.12';
 our @ISA = qw(Exporter);
 
 #
@@ -880,15 +880,13 @@ None by default.
 
 =head1 HISTORY
 
+0.12 Numerous fixes.
+
 0.11 POD and doc corrections. Minor bug fixes.
 
 0.10 Initial XML Catalog support. HTTP client selection.
 
 0.09 Started to test with XML::RSS 1.x family. Now accepts FileHandle objects as inputs.
-
-0.08 Removed Diagnostics pragma. Minor changes. Documentation additions and corrections.
-
-0.07 POD corrections. More changes to HTML documentation. Now uses URI for URI processing.
 
 ...
 

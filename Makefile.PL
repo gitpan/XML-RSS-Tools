@@ -71,13 +71,13 @@ if ($s) {
 push @tests, test => { TESTS => $test_list};
 WriteMakefile(
     'NAME'		=> 'XML::RSS::Tools',
-    'VERSION_FROM'	 => 'Tools.pm', 
-    'PREREQ_PM'		 => {
-    	URI          => 1.21,
-    	XML::LibXSLT => 1.5,
-    	XML::LibXML  => 1.5,
-    	XML::RSS     => 1.0,
-    	LWP          => 5.6,
+    'VERSION_FROM'	   => 'Tools.pm', 
+    'PREREQ_PM'		   => {
+    	URI            => 1.21,
+    	'XML::LibXSLT' => 1.5,
+    	'XML::LibXML'  => 1.5,
+    	'XML::RSS'     => 1.0,
+    	LWP            => 5.6,
     	},
     @tests,
     dist             => {

@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
+	   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-15" />
+<title>XML::RSS::Tools &gt; example 5</title>
+<link rel="StyleSheet" href="./style.css" type="text/css" />
+<link rel="StyleSHeet" href="./print.css" type="text/css" media="print" />
+</head>
+<body>
+
+<h1>XML::RSS::Tools</h1>
+
+<h2>Example 5</h2>
+
+<p>The following example is a complete web server based RSS-Client. The XSL stylesheet from the previous
+example should work perfectly for the example to function. The example is slightly larger, so it has
+been broken down into smaller logical units. The listing here works well as either an <code>Apache::Registry</code> 
+or a plain CGI application. The example also includes server side data caching - for simple low volume usage,
+something that a dedicated caching-proxy is better able to provide in high volume use.
+</p>
+
+<p>In listing <strong>1</strong> the typical Perl pragma and CGI modules are loaded. The
+<code>Cache::FileCache</code> module is loaded to provide light-weight data caching. The hash
+<code>%config</code> stores configuration data, this data could easily be loaded in from one of the
+many configuration file modules.
+</p>
+
+<div class="code">
+<h3>
+1: Main core of application
+</h3>
+<pre>
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use CGI;
+use CGI::Carp;
+use XML::RSS::Tools;
+use Cache::FileCache;
+
+	$|++;
+	my $q = CGI-&gt;new;
+
+	my %config= (
+		xsl_path =&gt; '/usr/local/apache/cgi-bin/',
+		css1     =&gt; '/style/style.css',
+		css2     =&gt; '/style/news-style.css',
+		title    =&gt; 'i r e d a l e consulting | News Feeds |',
+		language =&gt; 'en-GB',
+		namespace=&gt; 'xhtml',
+		cache_depth    =&gt; 1,
+		auto_purge     =&gt; '+2h',
+		default_expire =&gt; '+1h',
+		cache_root     =&gt; '/tmp/FileCache/news');
+
+	my $input = process_params($q);
+	top_html($q, $input, \%config);
+	tad ("Usage: news2html.pl?site=uri;style=xsl[;cache=off | ;debug=on]\n", $q)
+		unless $input-&gt;{uri} &amp;&amp; $input-&gt;{xsl};
+	my ($cache, $cache_key, $data) = manage_cache($q, $input, \%config);
+	$data = process_rss_feed($q, $input, \%config) unless $data;
+	print $data;
+	end_fragment($q, $input);
+	$cache-&gt;set($cache_key, $data) if $cache;
+	%ENV = ();
+	exit;
+</pre></div>
+
+<p>In listing <strong>2</strong>, the input parameters are extracted using <code>CGI.pm</code> and
+returned as a reference to a hash.</p>
+
+<div class="code">
+<h3>
+2: Processing Input parameters
+</h3>
+<pre>
+sub process_params {
+	my $q = shift;
+	my %p;
+	$p{uri}  = $q-&gt;param("site") if $q-&gt;param("site");
+	$p{xsl}  = $q-&gt;param("style") if $q-&gt;param("style");
+	$p{debug}= $q-&gt;param("debug") if $q-&gt;param("debug");
+	$p{cache_status} = lc($q-&gt;param("cache")) || "on";
+	return \%p;
+}
+</pre></div>
+
+<p>In listing <strong>3</strong>, the normal HTTP headers and the top of the HTML is sent to the browser using <code>CGI.pm</code>. Should any error occur now, the browser should get a message, rather than a 500 error.</p>
+
+<div class="code">
+<h3>
+3: Sending the HTTP headers and starting the HTML
+</h3>
+<pre>
+sub top_html {
+	my $q     = shift;
+	my $input = shift;
+	my $config= shift;
+
+	$input-&gt;{uri} = "No Site URI" unless $input-&gt;{uri};
+	$input-&gt;{xsl} = "No XSL stylesheet" unless $input-&gt;{xsl};
+	print $q-&gt;header(-type      =&gt; "text/html",
+	                 -expires   =&gt; $config-&gt;{default_expire}),
+	      $q-&gt;start_html(-title =&gt; $config-&gt;{title} . " " . $input-&gt;{uri} . " and " . $input-&gt;{xsl},
+	                     -lang  =&gt; $config-&gt;{language}, 
+	                     -style =&gt; {-src =&gt; $config-&gt;{css1},
+	                     	        -verbatim =&gt; '@import url(' . $config-&gt;{css2} . ');'}
+	);
+	print $q-&gt;comment("\nInput Conditions:\nURI: ", $input-&gt;{uri},
+	                              "\nxsl sheet: ", $input-&gt;{xsl},
+	                              "\nCache:     ", $input-&gt;{cache_status}, "\n") if $input-&gt;{debug}; 
+};
+</pre></div>
+
+<p>In listing <strong>4</strong>, a cache key is created from the RSS feed URI and the name of the XSL stylesheet.
+A <code>FileCache</code> object is created. If the user requested an uncached object then the cache object and key
+are returned and any data stored against the cache key is removed from the cache. If the user did not request
+new data, then the cache is queried for data, and if any is found it is returned along with the cache object and key, otherwise only the cache key and object are returned.</p>
+
+<div class="code">
+<h3>
+4: Creating the Cache object
+</h3>
+<pre>
+sub manage_cache {
+	my $q      = shift;
+	my $input  = shift;
+	my $config = shift;
+	my $cache_key = $input-&gt;{uri} . $input-&gt;{xsl};
+	
+	my $cached_file;
+	my $c_handle = Cache::FileCache-&gt;new(
+		{namespace   =&gt; $config-&gt;{namespace},
+		 default_expires_in  =&gt; $config-&gt;{default_expire},
+		 auto_purge_interval =&gt; $config-&gt;{auto_purge},
+		 cache_depth         =&gt; $config-&gt;{cache_depth},
+		 cache_root          =&gt; $config-&gt;{cache_root},
+		 auto_purge_on_set   =&gt; 1
+		} ) || tad ("Unable to create Cache object", $q);
+			                             
+	if ($input-&gt;{cache_status} eq "off") {
+		$c_handle-&gt;remove($cache_key);
+	} else {
+		$cached_file = $c_handle-&gt;get($cache_key);
+		$cached_file .= "\n&lt;!-- Cached Fragment --&gt;\n" if $cached_file &amp;&amp; $input-&gt;{debug};
+	}
+	return $c_handle, $cache_key, $cached_file;
+}
+</pre></div>
+
+<p>In listing <strong>5</strong>, a <code>XML::RSS::Tools</code> object is created. It is configured for no
+conversion, and to use the HTTP client <code>HTTP::Lite</code>. The XSL stylesheet is loaded first, then the
+URI of the RSS feed is passed to the object. Finally transformation is performed, and the resultant XHTML
+returned. If any process fails then a fatal error is raised via the <code>tad</code> Terminate And Die method.</p>
+
+<div class="code">
+<h3>
+5: Processing the RSS Feed
+</h3>
+<pre>
+sub process_rss_feed{
+	my $q      = shift;
+	my $input  = shift;
+	my $config = shift;
+
+	my $rss = XML::RSS::Tools-&gt;new;
+	$rss-&gt;set_version(0);
+	$rss-&gt;set_http_client("lite");		# HTTP::GHTTP does not work on Windows/mod_Perl
+	
+	if (! $rss-&gt;xsl_file($config-&gt;{xsl_path} . $input-&gt;{xsl})) {tad ($rss-&gt;as_string('error'), $q)};
+	
+	print $q-&gt;comment("\nHTTP Client: " . $rss-&gt;get_http_client . "\n") if $input-&gt;{debug};
+	if (! $rss-&gt;rss_uri($input-&gt;{uri})) {tad ($rss-&gt;as_string('error'), $q)};
+
+	if ($rss-&gt;transform) {
+		return $rss-&gt;as_string;
+	} else {
+		tad ($rss-&gt;as_string('error'), $q);
+	}
+}
+</pre></div>
+
+<p>In listing <strong>6</strong>, <code>CGI.pm</code> is used to build the bottom of the page, and generate some
+navigation buttons. Note the <a href="http://www.mozilla.org/">Mozilla</a> a <code>view-source</code> URI prefix,
+you may need to remove this if your browser cannot support this construct.</p>
+
+<div class="code">
+<h3>
+6: End the HTML
+</h3>
+<pre>
+sub end_fragment {
+	my $q     = shift;
+	my $input = shift;
+	my $ref   = $q-&gt;referer() || "";
+	my $self  = $q-&gt;self_url;
+
+	print $q-&gt;hr, $q-&gt;start_div({-id =&gt; "navigation"});
+	print $q-&gt;a({
+		-href  =&gt; $ref,
+		-title =&gt; "Click to Go Back"}, "Go Back"), " " if $ref;
+	print $q-&gt;a({
+		-href  =&gt; "view-source: " . $input-&gt;{uri},
+		-title =&gt; "Click to See Source RSS Feed (Opens a New Window)",
+		-target=&gt; "_blank"}, "View RSS"), " ",
+	      $q-&gt;a({
+		-href  =&gt; "view-source:$self",
+		-title =&gt; "View HTML Page Source"}, "View HTML"), " ";
+
+	$self  .= ";cache=off" unless $self =~ /cache=off/;
+	print $q-&gt;a({
+		-href  =&gt; "$self",
+		-title =&gt; "Reload RSS Feed From Source"}, "Refresh Feed"),
+	      $q-&gt;end_div, $q-&gt;end_html;
+}
+</pre></div>
+
+<p>In listing <strong>7</strong>, is a generic failure handler. Any error condition is reported by <code>CGI::Carp</code> to the server error logs, a helpful message is sent to the user, and the <code>%ENV</code>
+hash is cleaned up.</p>
+
+<div class="code">
+<h3>
+7: Something went wrong, report the error and clean up
+</h3>
+<pre>
+sub tad {
+	my $error = shift || "Unknown Error";
+	my $q     = shift;
+
+	warn $error;
+	print $q-&gt;hr, $q-&gt;h1("News 2 HTML Error:"), $q-&gt;h2($error), $q-&gt;hr, $q-&gt;end_html;
+	%ENV = ();
+	exit;
+}
+</pre></div>
+
+<div class="nav">
+<a href="./example4.html" title="Back to Example 4">Back</a>
+<a href="./rss-intro.html" title="Back to RSS Introduction">Home</a>
+</div>
+
+<div id="footnote">
+<p>Copyright iredale Consulting 2002-2003</p>
+</div>
+
+</body>
+</html>

@@ -33,6 +33,7 @@ if ($uri) {
 	eval { require HTTP::GHTTP };
 	if ($@) {
 		skip("HTTP::GHTTP isn't installed");
+		skip("HTTP::GHTTP isn't installed");
 	} else {
 		ok($rss->set_http_client('ghttp'));
 		ok($rss->xsl_uri($uri));
@@ -41,6 +42,7 @@ if ($uri) {
 	eval { require HTTP::Lite };
 	if ($@) {
 		skip("HTTP::Lite isn't installed");
+		skip("HTTP::Lite isn't installed");
 	} else {
 		ok($rss->set_http_client('lite'));
 		ok($rss->xsl_uri($uri));
@@ -48,6 +50,7 @@ if ($uri) {
 
 	eval { require LWP };
 	if ($@) {
+		skip("LWP isn't installed");
 		skip("LWP isn't installed");
 	} else {
 		ok($rss->set_http_client('lwp'));
