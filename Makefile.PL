@@ -1,4 +1,4 @@
-#	$Id: Makefile.PL,v 1.2 2004/02/14 16:34:23 adam Exp $
+#	$Id: Makefile.PL,v 1.3 2004/04/21 18:10:32 adam Exp $
 
 use ExtUtils::MakeMaker;
 use strict;
@@ -6,7 +6,7 @@ use 5.006;
 use Sys::Hostname;
 
 my @tests;
-my $test_list  = 't/use.t t/basic-tests.t t/standard-tests.t t/version-tests.t t/filehandle-tests.t t/error-tests.t';
+my $test_list  = 't/config.t t/use.t t/basic-tests.t t/standard-tests.t t/version-tests.t t/filehandle-tests.t t/error-tests.t';
 my $ghttp;
 my $lite;
 
@@ -98,7 +98,6 @@ WriteMakefile(
        }, 
     ($] >= 5.005 ?    
       (ABSTRACT_FROM => 'lib/XML/RSS/Tools.pm', 
-       AUTHOR        => 'Dr A. J. Trickett <adam@cpan.org>') : ()),
-
+       AUTHOR        => 'Dr A. J. Trickett <atrickett@cpan.org>') : ()),
 );
 

@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: XML-RSS-Tools
-version: 0.13
+version: 0.14
 license: gpl
 distribution_type: module
 requires:
@@ -13,9 +13,14 @@ requires:
 recommends:
   HTTP::GHTTP: 1
   HTTP::Lite: 2.1
-build_requires: {}
+  Test::Pod: 0
+  Test::More: 0
+build_requires:
+  Sys::Hostname: 0
+  IO::Socket: 0
+  Test: 0
 conflicts: {}
 provides:
   XML::RSS::Tools:
-    file: Tools.pm
-    version: 0.13
+    file: lib/XML/RSS/Tools.pm
+    version: 0.14

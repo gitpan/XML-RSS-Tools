@@ -1,8 +1,8 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.13
-# $Id: Tools.pm,v 1.2 2004/02/14 16:34:23 adam Exp $
+# Version 0.14
+# $Id: Tools.pm,v 1.4 2004/04/21 18:11:00 adam Exp $
 # March 2004
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
@@ -28,7 +28,7 @@ use XML::LibXSLT;				# Hand the XSL file and do the XSLT
 use URI;						# Deal with URIs nicely
 use FileHandle;					# Allow the use of File Handle Objects
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 #
 #	Tools Constructor
@@ -953,11 +953,11 @@ None.
 
 =head1 HISTORY
 
+0.14 Doc changes, configuration dump during testing, module untouched.
+
 0.13 Proxy support, doc format changes.
 
 0.12 Numerous build fixes, module untouched.
-
-0.11 POD and doc corrections. Minor bug fixes.
 
 ...
 
@@ -1011,6 +1011,15 @@ Perl and Unicode
 Perl pre 5.7.x is not able to handle Unicode properly, strange things happen...
 Things should get better as 5.8.x is now available.
 
+=item *
+
+Build Problems
+
+There are alas quite a lot of differences between differing versions of
+libxml2/libxslt and XML::LibXML/LibXSLT which makes writing definitive
+tests hard. Some failures are false positives, some successes may be
+false negatives. Feedback welcomed.
+
 =back
 
 =head2 To Do
@@ -1027,11 +1036,11 @@ Support Piers Harding's C<HTTP::MHTTP> module, it seems to be even faster than G
 
 =item *
 
-Support HTTP::CURL, it's very fast, and GHTTP is depracated.
+Support libcurl, it's very fast, and GHTTP is deprecated.
 
 =item *
 
-Investigae supporting Atom feeds.
+Investigate supporting Atom feeds.
 
 =item *
 

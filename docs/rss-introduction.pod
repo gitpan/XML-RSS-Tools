@@ -1,4 +1,4 @@
-#   $Id: rss-introduction.pod,v 1.2 2004/02/14 16:34:23 adam Exp $
+#   $Id: rss-introduction.pod,v 1.3 2004/04/21 18:10:50 adam Exp $
 
 =head1 NAME
 
@@ -11,17 +11,19 @@ simple method of a site describing what it has, so that another
 site can summarise the content, and provide links back to the
 original content.
 
-RSS was pioneered by Netscape Communications http://my.netscape.com/publish/formats/rss-spec-0.91.html
-for their I<my.netscape> portal, and adopted quickly by many others, notably userland
-http://backend.userland.com/rss092 .
+RSS was pioneered by Netscape Communications
+http://my.netscape.com/publish/formats/rss-spec-0.91.html
+for their I<my.netscape> portal, and adopted quickly by many
+others, notably userland http://backend.userland.com/rss092 .
 
 =head2 XML
 
 A simple XML http://www.w3.org/XML/ file is produced by the site
-originating the articles. This file, easily obtainable by HTTP, is downloaded and
-parsed by the client, allowing the client to present the site summary in a way
-that suits the client. XML provides a simple human readable format
-that is easy to generate and read, using typical web tools.
+originating the articles. This file, easily obtainable by HTTP,
+is downloaded and parsed by the client, allowing the client to
+present the site summary in a way that suits the client. XML
+provides a simple human readable format that is easy to generate
+and read, using typical web tools.
 
 =head2 Principle
 
@@ -68,41 +70,7 @@ B<pre-release> code, and the API may be extended in the future.
 
 =head2 Examples
 
-Some basic examples of how to use this module are provided in the examples folder. The following examples
-and this page should print fine if you have a modern standard compliant browser Simple
-explanations can be found here:
-
-=over
-
-=item *
-
-Example 1 - simple example
-
-=item *
-
-Example 2 - complete example
-
-=item *
-
-Example 3 - concise example
-
-=item *
-
-Example 4 - single stylesheet example with no normalisation
-
-=item *
-
-Example 5 - a complete RSS client mini-application
-
-=item *
-
-RSS With XSLT - An article from The Perl Review
-
-=item *
-
-rss.xml - the RSS feed for this module
-
-=back
+Some basic examples of how to use this module are provided in the examples folder.
 
 =head2 Resources
 
@@ -110,19 +78,23 @@ rss.xml - the RSS feed for this module
 
 =item *
 
-http://backend.userland.com/rss092 - the home of key RSS developments
+http://backend.userland.com/rss092
+- the home of key RSS developments
 
 =item *
 
-http://soapclient.com/rss/rss.html - a RSS to HTML online tool
+http://soapclient.com/rss/rss.html
+- a RSS to HTML online tool
 
 =item *
 
-Netscape Communications, home of the original specifications - http://my.netscape.com/publish/formats/rss-spec-0.91.html
+Netscape Communications, home of the original specifications
+- http://my.netscape.com/publish/formats/rss-spec-0.91.html
 
 =item *
 
-W3C Standards body: RDF http://www.w3.org/RDF/ and RDF Validator http://www.w3.org/RDF/Validator/
+W3C Standards body: RDF http://www.w3.org/RDF/ and
+RDF Validator http://www.w3.org/RDF/Validator/
 
 =item *
 
@@ -130,39 +102,52 @@ http://blogspace.com/rss/ - Blogspace RSS FAQ
 
 =item *
 
-http://www.webreference.com/authoring/languages/xml/rss/1/8.html Webreference.com RSS Versions
+http://www.webreference.com/authoring/languages/xml/rss/1/8.html
+Webreference.com RSS Versions
 
 =item *
 
-http://rss.benhammersley.com/ Ben Hammersley's Webloggery and recent book Content Syndication with RSS - http://www.oreilly.com/catalog/consynrss/
+http://rss.benhammersley.com/ Ben Hammersley's Webloggery and
+recent book Content Syndication with RSS
+- http://www.oreilly.com/catalog/consynrss/
 
 =item *
 
-Dave Beckett's Resource Description Framework Resource Guide - http://www.ilrt.bristol.ac.uk/discovery/rdf/resources/
+Dave Beckett's Resource Description Framework Resource Guide
+- http://www.ilrt.bristol.ac.uk/discovery/rdf/resources/
 
 =item *
 
-Mark Pilgrim and Sam Ruby's RSS Validator http://feeds.archive.org/validator/
+Mark Pilgrim and Sam Ruby's RSS Validator
+http://feeds.archive.org/validator/
 
 =item *
 
-C<brian d foy> has an interesting, article in The Perl Review - http://www.theperlreview.com/Issues/v0i6.shtml
+C<brian d foy> has an interesting, article in The Perl Review
+- http://www.theperlreview.com/Issues/v0i6.shtml
 
 =item *
 
-Mark Pilgrim has some nice RSS articles on XML.com (in Python): http://www.xml.com/lpt/a/2002/12/18/dive-into-xml.html http://www.xml.com/lpt/a/2003/01/22/dive-into-xml.html and http://www.xml.com/lpt/a/2003/02/26/dive-into-xml.html
+Mark Pilgrim has some nice RSS articles on XML.com (in Python):
+http://www.xml.com/lpt/a/2002/12/18/dive-into-xml.html
+http://www.xml.com/lpt/a/2003/01/22/dive-into-xml.html 
+http://www.xml.com/lpt/a/2003/02/26/dive-into-xml.html and
+http://www.xml.com/lpt/a/2004/04/07/dive.html
 
 =item *
 
-Bob DuCharme wrote a simple introduction to using XSLT with RSS on XML.com: http://www.xml.com/lpt/a/2003/01/02/tr.html
+Bob DuCharme wrote a simple introduction to using XSLT with
+RSS on XML.com: http://www.xml.com/lpt/a/2003/01/02/tr.html
 
 =item *
 
-The Perl-RSS Group has a nice selection of articles on http://perl-rss.sourceforge.net/bibliography.html
+The Perl-RSS Group has a nice selection of articles on
+http://perl-rss.sourceforge.net/bibliography.html
 
 =item *
 
-O'Reilly has a dedicated RSS section in O'Reilly Network: RSS DevCenter http://www.oreillynet.com/rss/
+O'Reilly has a dedicated RSS section in O'Reilly Network:
+RSS DevCenter http://www.oreillynet.com/rss/
 
 =back
 
@@ -188,7 +173,7 @@ http://www.oreillynet.com/meerkat/?_fl=rss10
 
 =item *
 
-http://www.theregister.co.uk/tonys/slashdot.rdf - this one has often been malformed
+http://www.theregister.co.uk/headlines.rss
 
 =item *
 
@@ -202,4 +187,4 @@ http://www.perl.com/pace/perlnews.rdf
 
 =head1 See Also
 
-L<XML::RSS>, L<XML::LibXML>, L<XML::LibXSLT>
+L<XML::RSS>, (L<XML::RSS::Parser>), L<XML::LibXML>, L<XML::LibXSLT>
