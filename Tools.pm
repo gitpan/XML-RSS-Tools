@@ -27,7 +27,7 @@ use XML::LibXSLT;				# Hand the XSL file and do the XSLT
 use URI;						# Deal with URIs nicely
 use FileHandle;					# Alow the use of File Handle Objects
 
-our $VERSION = '0.13_2';
+our $VERSION = '0.13_3';
 
 #
 #	Tools Constructor

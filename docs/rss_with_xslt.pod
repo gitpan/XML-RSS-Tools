@@ -1,6 +1,5 @@
 =head1 NAME
 
-XML::RSS::Tools
 Processing RSS Files with XSLT I<1>
 
 =head1 SYNOPSIS

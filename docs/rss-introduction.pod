@@ -1,5 +1,6 @@
 =head1 NAME
 
+Introduction
 Simple Introduction To RSS
 
 =head2 RSS/RDF

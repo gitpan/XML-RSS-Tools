@@ -1,6 +1,6 @@
 =head1 NAME
 
-XML::RSS::Tools Example 1 Very simple example
+Example 1 Very simple example
 
 =head2 Example 1
 
