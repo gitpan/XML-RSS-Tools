@@ -58,7 +58,7 @@ my $s = IO::Socket::INET->new(
 
 if ($s) {
 	close($s);
-	print "Good, you are connected to the Internt!\nWill test HTTP clients for you...\n";
+	print "Good, you are connected to the Internet!\nWill test HTTP clients for you...\n";
 	$test_list .= " t/http-tests.t";
 } elsif ($s = IO::Socket::INET->new(PeerAddr => "$hostname:80", Timeout  => 10)) {
 		print "Good, $hostname is running a HTTP server.\nWill test HTTP clients for you...\n";

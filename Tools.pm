@@ -1,7 +1,7 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.12
+# Version 0.13
 # June 2003
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
@@ -27,10 +27,7 @@ use XML::LibXSLT;				# Hand the XSL file and do the XSLT
 use URI;						# Deal with URIs nicely
 use FileHandle;					# Alow the use of File Handle Objects
 
-require Exporter;
-
-our $VERSION = '0.12';
-our @ISA = qw(Exporter);
+our $VERSION = '0.13_1';
 
 #
 #	Tools Constructor
@@ -880,13 +877,13 @@ None by default.
 
 =head1 HISTORY
 
-0.12 Numerous fixes.
+0.13
+
+0.12 Numerous build fixes, module untouched.
 
 0.11 POD and doc corrections. Minor bug fixes.
 
 0.10 Initial XML Catalog support. HTTP client selection.
-
-0.09 Started to test with XML::RSS 1.x family. Now accepts FileHandle objects as inputs.
 
 ...
 
