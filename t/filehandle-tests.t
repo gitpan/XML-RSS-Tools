@@ -8,7 +8,7 @@ use Test;
 use strict;
 use warnings;
 
-BEGIN { plan tests => 13 };
+BEGIN { plan tests => 9 };
 
 use XML::RSS::Tools;
 ok(1); # If we made it this far, we're ok.
@@ -20,74 +20,51 @@ my $test_no = 2;
 
 my $rss_object = XML::RSS::Tools->new;
 
-eval { $rss_object->transform; };
-
-if ($@ =~ /No XSLT loaded/) {
-	print "\nok ", $test_no++;
-} else {
-	print "\nNOT ok ", $test_no++;
-}
-
-if ($rss_object->rss_file('foo.bar')) {
+my $dummy_fh = FileHandle->new('foo.bar');
+if ($rss_object->rss_fh($dummy_fh)) {
 	print "\nNOT ok ", $test_no++;
 } else {
 	print "\nok ", $test_no++;
 }
 
-if ($rss_object->as_string('error') ne "File error: Cannot find foo.bar") {
+if ($rss_object->as_string('error') ne "FileHandle error: No FileHandle Object Passed") {
+	dump_debug($rss_object->as_string('error'), $test_no);
 	print "\nNOT ok ", $test_no++;
 } else {
 	print "\nok ", $test_no++;
 }
 
-if ($rss_object->rss_uri) {
+if ($rss_object->xsl_fh($dummy_fh)) {
 	print "\nNOT ok ", $test_no++;
 } else {
 	print "\nok ", $test_no++;
 }
 
-if ($rss_object->rss_uri("wibble wobble")) {
+if ($rss_object->as_string('error') ne "FileHandle error: No FileHandle Object Passed") {
+	dump_debug($rss_object->as_string('error'), $test_no);
 	print "\nNOT ok ", $test_no++;
 } else {
 	print "\nok ", $test_no++;
 }
+
 
 #	Do some real tests
 
-eval { $rss_object->rss_file('./t/test.rdf'); };
+my $rss_fh = FileHandle->new('./t/test.rdf');
+my $xsl_fh = FileHandle->new('./t/test.xsl');
 
-if ($@) {
-	dump_debug($@, $test_no);
-	print "\nNOT ok", $test_no++;
-} else {
+if ($rss_object->rss_fh($rss_fh)) {
 	print "\nok ", $test_no++;
-}
-
-eval { $rss_object->rss_uri('file:./t/test.rdf'); };
-
-if ($@) {
-	dump_debug($@, $test_no);
-	print "\nNOT ok", $test_no++;
 } else {
-	print "\nok ", $test_no++;
-}
-
-eval { $rss_object->xsl_file('./t/test.xsl'); };
-
-if ($@) {
-	dump_debug($@, $test_no);
+	dump_debug($rss_object->as_string('error'), $test_no);
 	print "\nNOT ok", $test_no++;
-} else {
+} 
+
+if ($rss_object->xsl_fh($xsl_fh)) {
 	print "\nok ", $test_no++;
-}
-
-eval { $rss_object->xsl_uri('file:./t/test.xsl'); };
-
-if ($@) {
-	dump_debug($@, $test_no);
+} else {
+	dump_debug($rss_object->as_string('error'), $test_no);
 	print "\nNOT ok", $test_no++;
-} else {
-	print "\nok ", $test_no++;
 }
 
 eval { $rss_object->transform; };
@@ -97,15 +74,6 @@ if ($@) {
 	print "\nNOT ok", $test_no++;
 } else {
 	print "\nok ", $test_no++;
-}
-
-eval { $rss_object->transform; };
-
-if ($@ =~ /Can't transform twice without a change/) {
-	print "\nok ", $test_no++;
-} else {
-	dump_debug($@, $test_no);
-	print "\nNOT ok", $test_no++;
 }
 
 my $output_html = $rss_object->as_string;

@@ -1,11 +1,20 @@
 Revision history for Perl extension XML::RSS::Tools.
 
+0.09  Fri 28 March 2003
+	- Tested with latest XML::RSS Versions 0.98 and 1.02
+	- Changes and additions to documentation and HTML
+	- Warning message in Makefile.PL removed now that XML::RSS has moved out of beta
+	- Bump versions of dependants up in Makefile.PL
+	- Experimental support for FileHandle objects, internally and from an external call
+	- More tests, including a POD test
+
 0.08  Fri 10 January 2003
 	- Incorporates "The Perl Review" Article - Processing RSS Files with XSLT
 	- Minor changes to HTML, and updated links  
 	- Removed Diagnostics pragma
 	- Warning message added to Makefile.PL
-	- Extra tests for RSS versions, and ability to disable RSS normalisation
+	- Extra tests for RSS versions
+	- Ability to disable RSS normalisation
 	- Extra code examples
 
 0.07  Sun 24 November 2002

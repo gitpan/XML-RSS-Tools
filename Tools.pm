@@ -1,8 +1,8 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.08 "BETA"
-# January 2003
+# Version 0.09
+# March 2003
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
 #
@@ -19,15 +19,15 @@ use strict;						# Naturally
 use warnings;					# Naturally
 use warnings::register;			# So users can "use warnings 'XML::RSS::Tools'"
 use Carp;						# We're a nice module
-
 use XML::RSS;					# Handle the RSS/RDF files
 use XML::LibXML;				# Hand the XML file for XSLT
 use XML::LibXSLT;				# Hand the XSL file and do the XSLT
 use URI;						# Deal with URIs nicely
+use FileHandle;					# Alow the use of File Handle Objects
 
 require Exporter;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 our @ISA = qw(Exporter);
 
 #
@@ -153,9 +153,9 @@ sub rss_file {
 	my $file_name = shift;
 
 	if ($self->_check_file($file_name)) {
-		open SOURCE_FILE, "<", $file_name or croak "Unable to open $file_name for reading";
-		$self->{_rss_string} = $self->_load_filehandle(\*SOURCE_FILE);
-		close SOURCE_FILE;
+		my $fh = FileHandle->new($file_name, "r") or croak "Unable to open $file_name for reading";
+		$self->{_rss_string} = $self->_load_filehandle($fh);
+		undef $fh;
 		_parse_rss_string($self);
 		$self->{_transformed} = 0;
 		return $self;
@@ -173,13 +173,47 @@ sub xsl_file {
 	my $file_name = shift;
 
 	if ($self->_check_file($file_name)) {
-		open SOURCE_FILE, "<", $file_name or croak "Unable to open $file_name for reading";
-		$self->{_xsl_string} = $self->_load_filehandle(\*SOURCE_FILE);
-		close SOURCE_FILE;
+		my $fh = FileHandle->new($file_name, "r") or croak "Unable to open $file_name for reading";
+		$self->{_xsl_string} = $self->_load_filehandle($fh);
+		undef $fh;
 		$self->{_transformed} = 0;
 		return $self
 	} else {
 		return undef
+	}
+}
+
+#
+#	Load an RSS file from a FH, and call RSS conversion to standard RSS format
+#
+sub rss_fh {
+	my $self = shift;
+	my $file_name = shift;
+
+	if (ref($file_name) eq "FileHandle") {
+		$self->{_rss_string} = $self->_load_filehandle($file_name);
+		_parse_rss_string($self);
+		$self->{_transformed} = 0;
+		return $self;
+	} else {
+		return $self->_raise_error("FileHandle error: No FileHandle Object Passed");
+	}
+}
+
+
+#
+#	Load an XSL file from a FH
+#
+sub xsl_fh {
+	my $self = shift;
+	my $file_name = shift;
+
+	if (ref($file_name) eq "FileHandle") {
+		$self->{_xsl_string} = $self->_load_filehandle($file_name);
+		$self->{_transformed} = 0;
+		return $self
+	} else {
+		return $self->_raise_error("FileHandle error: No FileHandle Object Passed");
 	}
 }
 
@@ -270,6 +304,7 @@ sub transform {
 	$xml_parser->keep_blanks(0);
 	$xml_parser->expand_entities(0);
 	$xml_parser->validation(0);
+	$xml_parser->complete_attributes(0);
 	
 	$self->{_rss_string} =~ s/<!DOCTYPE.*?>//s;							# Evil hack to remove DTD
 
@@ -318,8 +353,8 @@ sub	_load_filehandle {
 	my $handle = shift;
 	my $content;
 
-	while (<$handle>) {
-		$content .= $_
+	while (my $line = $handle->getline) {
+		$content .= $line;
 	}
 	return $content;
 }
@@ -347,7 +382,7 @@ sub _check_file {
 	my $file_name = shift;
 
 	return $self->_raise_error("File error: No file name supplied") unless $file_name;
-	return $self->_raise_error("File error: Cannot find file $file_name") unless -e $file_name;
+	return $self->_raise_error("File error: Cannot find $file_name") unless -e $file_name;
 	return $self->_raise_error("File error: $file_name isn't a real file") unless -f _;
 	return $self->_raise_error("File error: Cannot read file $file_name") unless -r _;
 	return $self->_raise_error("File error: $file_name is zero bytes long") if -z _;
@@ -593,18 +628,10 @@ Or with optional parameters.
 =head2 Source RSS feed
 
   $rss_object->rss_file('/my/file.rss');
-
-or
-
   $rss_object->rss_uri('http://my.server.com/index.rss');
-
-or
-
   $rss_object->rss_uri('file:/my/file.rss');
-
-or
-
   $rss_object->rss_string($xml_file);
+  $rss_object->rss_fh($file_handle);
 
 All return true on success, false on failure. If an XML file was provided but was invalid
 XML the parser will fail fataly at this time. The input RSS feed will automatically be
@@ -613,22 +640,18 @@ normalised to the prefered RSS version at this time. Chose your version before y
 =head2 Source XSL Template
 
   $rss_object->xsl_file('/my/file.xsl');
-
-or
-
   $rss_object->xsl_uri('http://my.server.com/index.xsl');
-  
-or
-
   $rss_object->xsl_uri('file:/my/file.xsl');
-  
-or
-
   $rss_object->xsl_string($xml_file);
+  $rss_object->xsl_fh($file_handle);
 
-All return true on success, false on failure. The XSLT file is not parsed or verified at this time.
+All return true on success, false on failure. The XSLT file is NOT parsed or verified at this time.
 
 =head2 Other Methods
+
+  $rss_object->transform();
+
+Perfomrs the XSL transformation on the source RSS file with the loaded XSLT file.
 
   $rss_object->as_string;
 
@@ -667,8 +690,8 @@ must also have C<XML::RSS> installed. To transform any RSS files to HTML you wil
 C<XML::LibXSLT> and C<XML::LibXML>.
 
 Either C<HTTP::GHTTP> or C<LWP> will bring this module to full functionality. HTTP::GHTTP is much
-faster than LWP and will be used by default, but is not as widely available. By default GHTTP will
-be used if it is available.
+faster than LWP, but is it not as widely available as LWP. By default GHTTP will be used if it is
+available.
 
 =pod OSNAMES
 
@@ -679,6 +702,8 @@ Any OS able to run the core requirments.
 None by default.
 
 =head1 HISTORY
+
+0.09 Started to test with XML::RSS 1.x family. Now accepts FileHandle objects as inputs.
 
 0.08 Removed Diagnostics pragma. Minor changes. Documentatoin additions and corrections.
 
@@ -700,13 +725,8 @@ See Changes file for more detail
 
 =head2 ToDo
 
-This module needs expanded testing, and beta testing in the wild. It also
-needs the ability to accept rss/xsl files directly from file handles.
-
-Provide xmlcatalog exmaple so the the manual removal of DTDs can be taken
+Provide xmlcatalog exmaple so the the manual (hack) removal of DTDs can be taken
 out.
-
-Develop XSLT stlyesheets to render programatic XML::RSS normalisation unnessesary.
 
 =head2 Defects and Limitations
 
@@ -716,22 +736,24 @@ attempt to obtain the files, before performing the transformation. If the files
 refered to are on the public INTERNET, and you do not have a connection when this
 happens you may find that the process waits around for several minutes until
 LibXML gives up. If you plan to use this module in an asyncronous manner, you
-should setup an XML Catalog for LibXML using the GNOME xmlcatalog command. See:
+should setup an XML Catalog for LibXML using the xmlcatalog command. See:
 http://www.xmlsoft.org/catalog.html for more details.
 
 Many commercial RSS feeds are derived from the Content Management System in use
-at the site. Often the RSS feed is either not well formed or it is invalid. In
-either case this will prevent the RSS parser from functioning, and you will get
+at the site. Often the RSS feed is not well formed and is thus invalid. This will
+prevent the RSS parser and/or XSLT engine from functioning, and you will get
 no output. The auto_wash option attempts to fix these errors, but it's is neither
 perfect nor ideal. Some people report good succes with complaining to the site.
+Mark Pilgrim estimates that about 10% of RSS feeds have defective XML.
 
 XML::RSS upto and including version 0.96 has a number of defects. This module had
 also been out of active development for some time, and had fallen behind the currect
 RSS/RDF specifications. As of October 2002 brian d foy has taken over the module,
 and it is again under active devlopment on http://perl-rss.sourceforge.net/.
 
-Perl pre 5.7.x is not able to handle Unicode fully, strange things happen... Things
-should get better as 5.8.0 is now available.
+Perl pre 5.7.x is not able to handle Unicode properly, strange things happen...
+Things should get better as 5.8.0 is now available, but have as yet not been
+tested.
 
 =head1 AUTHOR
 
@@ -759,6 +781,10 @@ PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place - Suite 330, Boston, MA  02111, USA.
+
+=head1 DEDICATION
+
+This module is dedicated to my beloved mother who believed in me, even when I didn't.
 
 =cut
 

@@ -1,4 +1,4 @@
-XML/RSS/Tools version 0.08
+XML/RSS/Tools version 0.09
 ==========================
 
 RSS/RDF feeds are commonly available ways of distributing the latest news about a
@@ -8,9 +8,9 @@ yourself.
 
 STATUS
 
-Warning! this module is BETA code, it may have undocumented features "bugs", and
-the API may change. However it is currently under active development and so now
-is the time to add features to the code base before the API becomes fixed.
+This module is BETA code, it may have undocumented features "bugs", and the API
+may change. However it is currently under active development and so now is the
+time to add features to the code base before the API becomes fixed.
 
 INSTALLATION
 
@@ -23,7 +23,7 @@ To install this module type the following:
 
 DEPENDENCIES
 
-This module requires these other modules for full functionality:
+This module requires these other non-core modules for full functionality:
 
   XML::LibXSLT XML::LibXML
   XML::RSS
@@ -35,6 +35,14 @@ limitations, please upgrade if possible.
 
 XML::LibXML and XML::LibXSLT rely on the GNOME libxml2 and libxslt libraries
 which need to be installed before attempting to install the Perl modules.
+
+OLDER VERSIONS
+
+To keep CPAN trim, older versions of this module will be continually culled as
+newer versions are loaded. Older versions are archive on backPAN here:
+http://history.perl.org/backpan/authors/id/A/AT/ATRICKETT/  and I keep copies
+myself which are also available upon request.
+
 
 COPYRIGHT AND LICENCE
 

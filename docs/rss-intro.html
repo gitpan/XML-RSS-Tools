@@ -47,7 +47,7 @@ on my web server's disk space to reduce unnecessary downloading.</p>
 <p>RSS feeds come in several incompatible families. To make conversion to HTML
 simple I opted to convert all RSS feeds to RSS version 0.91 as this is very
 simple to convert to HTML via <a href="http://www.w3.org/Style/XSL/">XSLT</a>. You can
-turn of normalisation if you plan to use just one XSLT stylesheet.</p>
+turn off normalisation if you plan to use just one XSLT stylesheet.</p>
 
 <p>The underlying <a href="http://perl-rss.sourceforge.net/">XML::RSS</a> (up to version 0.97) core can
 parse and interconvert RSS Versions 0.9, 0.91 and 1.0, versions of XML::RSS 0.98 and beyond can
@@ -71,7 +71,7 @@ title="The XML C Library for Gnome">XML C Library for Gnome</a> based
 <p>After developing the script to do this I realised that much of the code could be
 converted into a module and distributed to the world. After a popular post to
 <a href="http://www.perlmonks.org/">Perlmonks</a>, I have moved the module up to <a href="http://www.cpan.org/">CPAN</a>. The code should be considered as <strong>beta</strong>
-code, and the API may change somewhat in the near future.</p>
+code, and the API may be extended in the future.</p>
 
 <h2>Examples</h2>
 
@@ -98,8 +98,9 @@ explanations can be found here:</p>
 <li>Dave Beckett's Resource Description Framework Resource Guide: <a href="http://www.ilrt.bristol.ac.uk/discovery/rdf/resources/">www.ilrt.bristol.ac.uk/discovery/rdf/resources/</a></li>
 <li>Mark Pilgrim and Sam Ruby's RSS Validator: <a href="http://feeds.archive.org/validator/">feeds.archive.org/validator/</a></li>
 <li><tt>brian d foy</tt> has an interesting, article in The Perl Review: <a href="http://www.theperlreview.com/Issues/v0i6.shtml">www.theperlreview.com/Issues/v0i6.shtml</a></li>
-<li>Mark Pilgrim has a nice introduction to RSS on XML.com (alas Python code examples): <a href="http://www.xml.com/lpt/a/2002/12/18/dive-into-xml.html">www.xml.com/lpt/a/2002/12/18/dive-into-xml.html</a></li>
+<li>Mark Pilgrim has some nice RSS articles on XML.com (in Python): <a href="http://www.xml.com/lpt/a/2002/12/18/dive-into-xml.html">What is RSS?</a>; <a href="http://www.xml.com/lpt/a/2003/01/22/dive-into-xml.html">Parsing RSS At All Costs</a> and <a href="http://www.xml.com/lpt/a/2003/02/26/dive-into-xml.html">Inside the RSS Validator</a></li>
 <li>Bob DuCharme wrote a simple introduction to using XSLT with RSS on XML.com: <a href="http://www.xml.com/lpt/a/2003/01/02/tr.html">Never Mind the Namespaces: An XSLT RSS Client</a></li>
+<li>The Perl-RSS Group has a nice selection of articles on the XML:RSS Site: <a href="http://perl-rss.sourceforge.net/bibliography.html">XML::RSS | Bibliography</a></li>
 </ul>
 
 <h2>Some Example RSS Feeds</h2>
@@ -110,7 +111,7 @@ explanations can be found here:</p>
 <li><a href="http://freshmeat.net/backend/fm.rdf">freshmeat.net/backend/fm.rdf</a></li>
 <li><a href="http://slashdot.org/slashdot.rdf">slashdot.org/slashdot.rdf</a></li>
 <li><a href="http://www.oreillynet.com/meerkat/?_fl=rss10">www.oreillynet.com/meerkat/?_fl=rss10</a></li>
-<li><a href="http://www.theregister.co.uk/tonys/slashdot.rdf">www.theregister.co.uk/tonys/slashdot.rdf</a></li>
+<li><a href="http://www.theregister.co.uk/tonys/slashdot.rdf">www.theregister.co.uk/tonys/slashdot.rdf</a> - this one is often malformed.</li>
 <li><a href="http://www.sophos.com/virusinfo/infofeed/tenalerts.xml">www.sophos.com/virusinfo/infofeed/tenalerts.xml</a></li>
 <li><a href="http://www.perl.com/pace/perlnews.rdf">www.perl.com/pace/perlnews.rdf</a></li>
 </ul>
