@@ -27,7 +27,7 @@ use XML::LibXSLT;				# Hand the XSL file and do the XSLT
 use URI;						# Deal with URIs nicely
 use FileHandle;					# Alow the use of File Handle Objects
 
-our $VERSION = '0.13_3';
+our $VERSION = '0.13_4';
 
 #
 #	Tools Constructor
@@ -966,7 +966,7 @@ Fully test with Perl 5.8.x
 Adam Trickett, E<lt>atrickett@cpan.orgE<gt>
 
 This module contains the direct and indirect input of a number of friendly Perl Hackers on
-Perlmonks/use.perl: Ovid; Matts; Merlyn and more...
+Perlmonks/use.perl: Ovid; Matts; Merlyn; hfb and more...
 
 =head1 SEE ALSO
 

@@ -1,6 +1,6 @@
 =head1 NAME
 
-Example 3 Another simple example
+Example-3 Another simple example
 
 =head2 Example 3
 

@@ -1,7 +1,6 @@
 =head1 NAME
 
-Introduction
-Simple Introduction To RSS
+Introduction: Simple Introduction To RSS
 
 =head2 RSS/RDF
 
@@ -55,7 +54,7 @@ was inefficient and so I opted to use "XML Stylesheet Language Transformation", 
 industry standard and does not require programming. There are several XSLT processors available:
 Saxon http://saxon.sourceforge.net/ , Xalan http://xml.apache.org/ ,
 MSXML, and Sablotron http://www.gingerall.com/charlie/ga/xml/p_sab.xml , however
-the fastest and easiest one for Perl is Matt Sergeant's XML C Library for Gnome (http://xmlsoft.org/)
+the fastest and easiest one for Perl is Matt Sergeant's XML C Library for Gnome http://xmlsoft.org/
 based a XML::LibXSL.
 
 =head2 Script to Module

@@ -1,6 +1,6 @@
 =head1 NAME
 
-Example 4 Using a single XSLT stylesheet
+Example-4 Using a single XSLT stylesheet
 
 =head2 Example 4
 

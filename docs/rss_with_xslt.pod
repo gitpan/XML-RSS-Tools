@@ -1,6 +1,6 @@
 =head1 NAME
 
-Processing RSS Files with XSLT I<1>
+Article: Processing RSS Files with XSLT I<1>
 
 =head1 SYNOPSIS
 
@@ -310,7 +310,7 @@ incorporates the XSLT processing. Thus the application code is  separate from th
 
 =item *
 
-XML In A Nutshell, 2nd edition by Harold &amp; Means, O'Reilly and Associates. http://www.oreilly.com/catalog/xmlnut2/
+XML In A Nutshell, 2nd edition by Harold & Means, O'Reilly and Associates. http://www.oreilly.com/catalog/xmlnut2/
 
 =item *
 

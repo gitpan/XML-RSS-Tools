@@ -1,6 +1,6 @@
 =head1 NAME
 
-Example 5 - A complete web server based RSS-client
+Example-5 - A complete web server based RSS-client
 
 =head2 Example 5
 
