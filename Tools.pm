@@ -1,8 +1,8 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.06 "ALPHA"
-# August 2002
+# Version 0.07 "BETA"
+# November 2002
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
 #
@@ -17,6 +17,7 @@ package XML::RSS::Tools;
 use 5.006;						# Not been tested on anything earlier
 use strict;						# Naturally
 use warnings;					# Naturally
+use warnings::register;			# So users can "use warnings 'XML::RSS::Tools'"
 use Carp;						# We're a nice module
 
 use diagnostics;				# Will eventually be removed
@@ -24,10 +25,11 @@ use diagnostics;				# Will eventually be removed
 use XML::RSS;					# Handle the RSS/RDF files
 use XML::LibXML;				# Hand the XML file for XSL-T
 use XML::LibXSLT;				# Hand the XSL file and do the XSL-T
+use URI;						# Deal with URIs nicely
 
 require Exporter;
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 our @ISA = qw(Exporter);
 
 #
@@ -45,8 +47,12 @@ sub new {
 		_output_string  =>  "",									# Where the output string goes
 		_transformed    =>  0,									# Flag for transformation
 		_auto_wash      =>  $args{auto_wash} || 1,				# Flag for auto_washing input RSS/RDF
-		_error_message  =>  ""									# Error message
+		_error_message  =>  "",									# Error message
+		_uri_url        =>  "",									# URI URL
+		_uri_file       =>  "",									# URI File
+		_uri_scheme     =>  ""									# URI Scheme
 	}, ref($class) || $class;
+
 }
 
 
@@ -145,7 +151,7 @@ sub rss_file {
 		close SOURCE_FILE;
 		_parse_rss_string($self);
 		$self->{_transformed} = 0;
-		return 1;
+		return $self;
 	} else {
 		return undef;
 	}
@@ -164,7 +170,7 @@ sub xsl_file {
 		$self->{_xsl_string} = $self->_load_filehandle(\*SOURCE_FILE);
 		close SOURCE_FILE;
 		$self->{_transformed} = 0;
-		return 1
+		return $self
 	} else {
 		return undef
 	}
@@ -178,12 +184,17 @@ sub rss_uri {
 	my $self = shift;
 	my $uri  = shift;
 
+	$uri = $self->_process_uri($uri);
+	return unless $uri;
+
+	return $self->rss_file($self->{_uri_file}) if ($self->{_uri_scheme} eq "file");
+		
 	my $xml = $self->_http_get($uri);
 	return unless $xml;
 	$self->{_rss_string} = $xml;	
 	_parse_rss_string($self);
 	$self->{_transformed} = 0;
-	return 1;
+	return $self;
 }
 
 
@@ -194,11 +205,16 @@ sub xsl_uri {
 	my $self = shift;
 	my $uri  = shift;
 
+	$uri = $self->_process_uri($uri);
+	return unless $uri;
+
+	return $self->xsl_file($self->{_uri_file}) if ($self->{_uri_scheme} eq "file");
+
 	my $xml = $self->_http_get($uri);
 	return uless $xml;
 	$self->{_xsl_string} = $xml;
 	$self->{_transformed} = 0;
-	return 1;
+	return $self;
 }
 
 
@@ -213,7 +229,7 @@ sub rss_string {
 	$self->{_rss_string} = $xml;
 	_parse_rss_string($self);
 	$self->{_transformed} = 0;
-	return 1;
+	return $self;
 }
 
 
@@ -227,7 +243,7 @@ sub xsl_string {
 	return unless $xml;
 	_$self->{_xsl_string} = $xml;
 	$self->{_transformed} = 0;
-	return 1;
+	return $self;
 }
 
 
@@ -256,7 +272,7 @@ sub transform {
 	my $result_xml = $stylesheet->transform($source_xml);				# Transform the source XML
 	$self->{_output_string} = $stylesheet->output_string($result_xml);	# Store the result
 	$self->{_transformed} = 1;
-	return 1;
+	return $self;
 }
 
 
@@ -282,7 +298,7 @@ sub _parse_rss_string {
 	}
 
 	$self->{_rss_string} = $xml;
-	return 1;
+	return $self;
 }
 
 
@@ -320,13 +336,34 @@ sub _wash_xml {
 sub _check_file {
 	my $self      = shift;
 	my $file_name = shift;
-	
-	retrun $self->_raise_error("File error: No file name supplied") unless $file_name;
+
+	return $self->_raise_error("File error: No file name supplied") unless $file_name;
 	return $self->_raise_error("File error: Cannot find file $file_name") unless -e $file_name;
 	return $self->_raise_error("File error: $file_name isn't a real file") unless -f _;
 	return $self->_raise_error("File error: Cannot read file $file_name") unless -r _;
 	return $self->_raise_error("File error: $file_name is zero bytes long") if -z _;
-	return 1;
+	return $self;
+}
+
+
+#
+#	Process a URI ready for HTTP getting
+#
+sub _process_uri {
+	my $self= shift;
+	my $uri = shift;
+
+	return $self->_raise_error("No URI provided.") unless $uri;
+	my $uri_object = URI->new($uri)->canonical;
+	return $self->_raise_error("URI provided ($uri) is not valid.") unless $uri_object;
+
+	$self->{_uri_scheme} = $uri_object->scheme;
+	return $self->_raise_error("No URI Scheme in " . $uri_object->as_string . ".") unless $self->{_uri_scheme};
+	return $self->_raise_error("Unsupported URI Scheme (" . $self->{_uri_scheme} . ").") unless $self->{_uri_scheme} =~ /http|file/;
+
+	$self->{_uri_file} = $uri_object->file if $self->{_uri_scheme} eq "file";
+	
+	return $uri_object->as_string;
 }
 
 
@@ -337,11 +374,6 @@ sub _http_get {
 	my $self= shift;
 	my $uri = shift;
 
-	unless ($uri) {
-		$self->_raise_error("HTTP error: No URI provided.");
-		return;
-	}
-
 	eval {													# Try and use Gnome HTTP, it's faster
 		require HTTP::GHTTP;
 	};
@@ -350,7 +382,7 @@ sub _http_get {
 		my $ua = LWP::UserAgent->new;
 		$ua->agent("iC-XML::RSS::Tools/$VERSION " . $ua->agent . " ($^O)");
 		my $response = $ua->request(HTTP::Request->new('GET', $uri));
-		$self->_raise_error("HTTP error: " . $response->status_line) if $response->is_error;
+		return $self->_raise_error("HTTP error: " . $response->status_line) if $response->is_error;
 		return $response->content();
 	} else {
 		my $r = HTTP::GHTTP->new($uri);
@@ -358,10 +390,10 @@ sub _http_get {
 		my $xml = $r->get_body;
 		if ($xml) {
 			my ($status, $message) = $r->get_status;
-			$self->_raise_error("HTTP error: $status, $message") unless $status == 200;
+			return $self->_raise_error("HTTP error: $status, $message") unless $status == 200;
 			return $xml;
 		} else {
-			$self->_raise_error("HTTP error: Unable to connect to server: $uri");
+			return $self->_raise_error("HTTP error: Unable to connect to server: $uri");
 		}
 	}	
 }
@@ -378,73 +410,73 @@ sub	_clean_entities {
 	my %entity = (
 		trade	=> "&#8482;",
 		euro	=> "&#8364;",
-		quot	=> '"',  # double quote
+		quot	=> '"',
  		apos	=> "'",
-		AElig	=> 'Æ',  # capital AE diphthong (ligature)
-		Aacute	=> 'Á',  # capital A, acute accent
-		Acirc	=> 'Â',  # capital A, circumflex accent
-		Agrave	=> 'À',  # capital A, grave accent
-		Aring	=> 'Å',  # capital A, ring
-		Atilde	=> 'Ã',  # capital A, tilde
-		Auml	=> 'Ä',  # capital A, dieresis or umlaut mark
-		Ccedil	=> 'Ç',  # capital C, cedilla
-		ETH		=> 'Ð',  # capital Eth, Icelandic
-		Eacute	=> 'É',  # capital E, acute accent
-		Ecirc	=> 'Ê',  # capital E, circumflex accent
-		Egrave	=> 'È',  # capital E, grave accent
-		Euml	=> 'Ë',  # capital E, dieresis or umlaut mark
-		Iacute	=> 'Í',  # capital I, acute accent
-		Icirc	=> 'Î',  # capital I, circumflex accent
-		Igrave	=> 'Ì',  # capital I, grave accent
-		Iuml	=> 'Ï',  # capital I, dieresis or umlaut mark
-		Ntilde	=> 'Ñ',  # capital N, tilde
-		Oacute	=> 'Ó',  # capital O, acute accent
-		Ocirc	=> 'Ô',  # capital O, circumflex accent
-		Ograve	=> 'Ò',  # capital O, grave accent
-		Oslash	=> 'Ø',  # capital O, slash
-		Otilde	=> 'Õ',  # capital O, tilde
-		Ouml	=> 'Ö',  # capital O, dieresis or umlaut mark
-		THORN	=> 'Þ',  # capital THORN, Icelandic
-		Uacute	=> 'Ú',  # capital U, acute accent
-		Ucirc	=> 'Û',  # capital U, circumflex accent
-		Ugrave	=> 'Ù',  # capital U, grave accent
-		Uuml	=> 'Ü',  # capital U, dieresis or umlaut mark
-		Yacute	=> 'Ý',  # capital Y, acute accent
-		aacute	=> 'á',  # small a, acute accent
-		acirc	=> 'â',  # small a, circumflex accent
-		aelig	=> 'æ',  # small ae diphthong (ligature)
-		agrave	=> 'à',  # small a, grave accent
-		aring	=> 'å',  # small a, ring
-		atilde	=> 'ã',  # small a, tilde
-		auml	=> 'ä',  # small a, dieresis or umlaut mark
-		ccedil	=> 'ç',  # small c, cedilla
-		eacute	=> 'é',  # small e, acute accent
-		ecirc	=> 'ê',  # small e, circumflex accent
-		egrave	=> 'è',  # small e, grave accent
-		eth		=> 'ð',  # small eth, Icelandic
-		euml	=> 'ë',  # small e, dieresis or umlaut mark
-		iacute	=> 'í',  # small i, acute accent
-		icirc	=> 'î',  # small i, circumflex accent
-		igrave	=> 'ì',  # small i, grave accent
-		iuml	=> 'ï',  # small i, dieresis or umlaut mark
-		ntilde	=> 'ñ',  # small n, tilde
-		oacute	=> 'ó',  # small o, acute accent
-		ocirc	=> 'ô',  # small o, circumflex accent
-		ograve	=> 'ò',  # small o, grave accent
-		oslash	=> 'ø',  # small o, slash
-		otilde	=> 'õ',  # small o, tilde
-		ouml	=> 'ö',  # small o, dieresis or umlaut mark
-		szlig	=> 'ß',  # small sharp s, German (sz ligature)
-		thorn	=> 'þ',  # small thorn, Icelandic
-		uacute	=> 'ú',  # small u, acute accent
-		ucirc	=> 'û',  # small u, circumflex accent
-		ugrave	=> 'ù',  # small u, grave accent
-		uuml	=> 'ü',  # small u, dieresis or umlaut mark
-		yacute	=> 'ý',  # small y, acute accent
-		yuml	=> 'ÿ',  # small y, dieresis or umlaut mark
-		copy	=> '©',  # copyright sign
-		reg		=> '®',  # registered sign
-		nbsp	=> "\240", # non breaking space
+		AElig	=> 'Æ',
+		Aacute	=> 'Á',
+		Acirc	=> 'Â',
+		Agrave	=> 'À',
+		Aring	=> 'Å',
+		Atilde	=> 'Ã',
+		Auml	=> 'Ä',
+		Ccedil	=> 'Ç',
+		ETH		=> 'Ð',
+		Eacute	=> 'É',
+		Ecirc	=> 'Ê',
+		Egrave	=> 'È',
+		Euml	=> 'Ë',
+		Iacute	=> 'Í',
+		Icirc	=> 'Î',
+		Igrave	=> 'Ì',
+		Iuml	=> 'Ï',
+		Ntilde	=> 'Ñ',
+		Oacute	=> 'Ó',
+		Ocirc	=> 'Ô',
+		Ograve	=> 'Ò',
+		Oslash	=> 'Ø',
+		Otilde	=> 'Õ',
+		Ouml	=> 'Ö',
+		THORN	=> 'Þ',
+		Uacute	=> 'Ú',
+		Ucirc	=> 'Û',
+		Ugrave	=> 'Ù',
+		Uuml	=> 'Ü',
+		Yacute	=> 'Ý',
+		aacute	=> 'á',
+		acirc	=> 'â',
+		aelig	=> 'æ',
+		agrave	=> 'à',
+		aring	=> 'å',
+		atilde	=> 'ã',
+		auml	=> 'ä',
+		ccedil	=> 'ç',
+		eacute	=> 'é',
+		ecirc	=> 'ê',
+		egrave	=> 'è',
+		eth		=> 'ð',
+		euml	=> 'ë',
+		iacute	=> 'í',
+		icirc	=> 'î',
+		igrave	=> 'ì',
+		iuml	=> 'ï',
+		ntilde	=> 'ñ',
+		oacute	=> 'ó',
+		ocirc	=> 'ô',
+		ograve	=> 'ò',
+		oslash	=> 'ø',
+		otilde	=> 'õ',
+		ouml	=> 'ö',
+		szlig	=> 'ß',
+		thorn	=> 'þ',
+		uacute	=> 'ú',
+		ucirc	=> 'û',
+		ugrave	=> 'ù',
+		uuml	=> 'ü',
+		yacute	=> 'ý',
+		yuml	=> 'ÿ',
+		copy	=> '©',
+		reg		=> '®',
+		nbsp	=> "\240",
 		iexcl	=> '¡',
 		cent	=> '¢',
 		pound	=> '£',
@@ -478,10 +510,8 @@ sub	_clean_entities {
 		divide	=> '÷',
 	);
 	my $entities = join('|', keys %entity);
-#print "\n\n$xml\n";
 	$xml =~ s/&(?!(#[0-9]+|#x[0-9a-fA-F]+|\w+);)/&amp;/g;			# Matt's ampersand entity fixer
 	$xml =~ s/&($entities);/$entity{$1}/gi;							# Deal with odd entities
-#print "\n\n$xml\n";
 	return $xml;
 }
 
@@ -503,7 +533,7 @@ __END__
 
 =head1 NAME
 
-XML::RSS::Tools - Perl extension for very high level RSS Feed manipulation
+XML::RSS::Tools - Perl extension for very high level RSS feed manipulation
 
 =head1 SYNOPSIS
 
@@ -610,13 +640,13 @@ and
 These methods control the core RSS functionality. The get methods return the current setting, and
 set method sets the value. By default RSS version is set to 0.91, and auto_wash to true. All incoming
 RSS feeds are automatically converted to one RSS version. If auto_wash is true, then all RSS files
-are cleaned before RSS normaisation to replace known entities by their numeric value, and fix know
+are cleaned before RSS normaisation to replace known entities by their numeric value, and fix known
 invalid XML constructs.
 
 =head1 PREREQUISITES
 
-To function you must have at least C<XML::RSS> installed, and to be of any real use C<XML::LibXSLT>
-and C<XML::LibXML>.
+To function you must have at least C<XML::RSS> and C<URI> installed, and to be of any real use
+C<XML::LibXSLT> and C<XML::LibXML>.
 
 Either C<HTTP::GHTTP> or C<LWP> will bring this module to full functionality. HTTP::GHTTP is much
 faster than LWP but not as widely available.
@@ -631,7 +661,9 @@ None by default.
 
 =head1 HISTORY
 
-0.06 Changes to HTML Documentation. Tests fixed.
+0.07 POD corrections. More changes to HTML documentation. Now uses URI for URI processing.
+
+0.06 Changes to HTML Documentation. Tests fixed. No change to module code.
 
 0.05 More minor stuff. Change to entities routine - still not ideal. Test suite upgraded and expanded again.
 
@@ -643,16 +675,12 @@ None by default.
 
 0.01 Initial Build. Shown to the public on PerlMonks May 2002, for feedback.
 
-See Chnages file for more detail
+See Changes file for more detail
 
 =head2 ToDo
 
 This module needs expanded testing, and beta testing in the wild. It also
 needs the ability to accept rss/xsl files directly from file handles.
-
-The URI handler needs to redirect "file:" requests to the file processor
-rather than the HTTP tool. In theory I could remove the xxx_file method
-all together if we treat all files as URIs.
 
 Provide xmlcatalog exmaple so the the manual removal of DTDs can be taken
 out.
@@ -672,16 +700,16 @@ LibXML gives up. If you plan to use this module in an asyncronous manner, you
 should setup an XML Catalog for LibXML using the GNOME xmlcatalog command. See:
 http://www.xmlsoft.org/catalog.html for more details.
 
-Many commercial RSS feeds are derived from the Content Managment System in use
+Many commercial RSS feeds are derived from the Content Management System in use
 at the site. Often the RSS feed is either not well formed or it is invalid. In
 either case this will prevent the RSS parser from functioning, and you will get
 no output. The auto_wash option attempts to fix these errors, but it's is neither
 perfect nor ideal. Some people report good succes with complaining to the site.
 
-XML::RSS on which this module uses for RSS normalisation has a defect in that in
-does not escape & " ' < > in it's output stream, resulting in invalid XML. Again
-the auto_wash option attempts to correct this, but again, the correction is not
-reliable....
+XML::RSS upto and including version 0.96 has a number of defects. This module had
+also been out of active development for some time, and had fallen behind the currect
+RSS/RDF specifications. As of October 2002 brian d foy has taken over the module,
+and it is again under active devlopment on http://perl-rss.sourceforge.net/.
 
 Perl pre 5.7.x is not able to handle Unicode fully, strange things happen... Things
 should get better as 5.8.0 is now available.
@@ -690,7 +718,8 @@ should get better as 5.8.0 is now available.
 
 Adam Trickett, E<lt>atrickett@cpan.orgE<gt>
 
-This module contains the direct and indirect input of a number of Perlmonks: Ovid, Matts and more...
+This module contains the direct and indirect input of a number of Perlmonks: Ovid,
+Matts and more...
 
 =head1 SEE ALSO
 

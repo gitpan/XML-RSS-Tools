@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
+	   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>XML::RSS::Tools &gt; example 2</title>
+<link rel="StyleSheet" href="./style.css" type="text/css" />
+</head>
+<body>
+
+<h1>XML::RSS::Tools</h1>
+
+<h2>Example 2</h2>
+
+<p>This more complex example is designed to show a normal command line or CGI application. After loading the normal modules, and unbuffering STDOUT, the URI of the site, and the style sheet are grabbed from the command line (if present), and the rss and cgi objects are created. Checking the request method to determine if the application is running in CGI or command line mode, a HTML header is sent if appropriate and then the application checks for required inputs.</p>
+
+<p>Assuming the pre-requisites have all been met, then the rss object is loaded with the source rss, xsl-template, and the transformation is performed. If at any stage an error is detected, all calls return rss method calls return true on success, an error message is generated, and sent to the user.</p>
+
+
+<div class="code">
+<pre>
+#!/usr/bin/perl
+
+#
+#	Example 2 for XML::RSS::Tools
+#
+
+use strict;
+use warnings;
+use CGI;
+use CGI::Carp;
+use XML::RSS::Tools;
+
+$|++;
+
+my $site = shift || '';
+my $style= shift || '';
+my $q    = CGI-&gt;new;
+my $rss  = XML::RSS::Tools-&gt;new;
+my $path_xsl = "./";
+
+undef $q unless $q-&gt;request_method();
+
+if ($q) {
+	$site  = $q-&gt;param("site") if $q-&gt;param("site");
+	$style = $q-&gt;param("style") if $q-&gt;param("style");
+	print $q-&gt;header, $q-&gt;start_html(-title=&gt;"RSS News Feed");
+	tad ("Usage: newsfeed.pl?site=foo;style=bar\n", $q) unless $site && $style;
+} else {
+	tad ("Usage: newsfeed.pl (&lt;RSS File&gt; | &lt;URI&gt;) &lt;XSLT stylesheet&gt;\n") unless $site && $style;
+}
+$style = $path_xsl . $style;
+
+if (! $rss-&gt;xsl_file($style)) {tad ($rss-&gt;as_string('error'), $q)};
+
+if ($site =~ /^http/i) {
+	if (! $rss-&gt;rss_uri($site)) {tad ($rss-&gt;as_string('error'), $q)};
+} else {
+	if (! $rss-&gt;rss_file($site)) {tad ($rss-&gt;as_string('error'), $q)};
+}
+
+if ($rss-&gt;transform) {
+	print $rss-&gt;as_string;
+} else {
+	tad ($rss-&gt;as_string('error'), $q);
+}
+
+exit;
+
+#
+#	Called after script ends.
+#
+
+END {
+	%ENV = ();
+	printf "\n&lt;!-- Transformation complete in %d seconds. --&gt;\n", time - $^T;
+	print $q-&gt;end_html if $q;
+	}
+
+
+#
+#	Gracefully die, Terminate and Die
+#
+
+sub tad {
+	my $error = shift || "Unknown Error";
+	my $q     = shift;
+
+	if ($q) {
+		print $q-&gt;hr, $q-&gt;h1("RSS 2 HTML via XSL-T error:"), $q-&gt;h2($error), $q-&gt;hr;
+		croak $error;
+	} else {
+		print "RSS 2 HTML via XSL-T error:\n\t$error";
+		exit;
+	}
+}
+<pre>
+</div>
+
+<div id="footnote">
+<p>Copyright iredale Consulting 2002</p>
+</div>

@@ -1,4 +1,4 @@
-XML/RSS/Tools version 0.06
+XML/RSS/Tools version 0.07
 ==========================
 
 RSS/RDF feeds are commonly available ways of distributing the latest news about a
@@ -8,7 +8,7 @@ yourself.
 
 STATUS
 
-Warning! this module is ALPHA code, it may have undocumented features "bugs", and
+Warning! this module is BETA code, it may have undocumented features "bugs", and
 the API may change without notice. However it is currently under active development
 and so now is the time to add features to the code base before the API becomes
 fixed.

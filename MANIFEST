@@ -4,9 +4,13 @@ MANIFEST
 README
 Tools.pm
 docs/rss-intro.html
+docs/example1.html
+docs/example2.html
+docs/example3.html
+docs/rdf_powered_button.32.gif
+docs/style.css
 t/use.t
-t/xtended-test.t
+t/basic-tests.t
+t/standard-tests.t
 t/test.rdf
 t/test.xsl
-examples/example1
-examples/example2

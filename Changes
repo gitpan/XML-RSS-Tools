@@ -1,8 +1,16 @@
 Revision history for Perl extension XML::RSS::Tools.
 
-0.06  thu 01 August 2002
-	- Cosmetic changes to the HTML
+0.07  Sun 24 November 2002
+	- More minor changes
+	- Tests re-organised, re-ordered, and expanded
+	- Additional Documentation
+	- Uses the URI module for parsing URIs
+	- File can be passed by the URI handler
+
+0.06  Thu 01 August 2002
+	- Cosmetic changes to the HTML, and minor additions
 	- Test script corrections
+	- NO change to module code
 
 0.05  Wed 31 July 2002
 	- Null URIs dealt with

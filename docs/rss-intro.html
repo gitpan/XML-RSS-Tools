@@ -4,23 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Simple Introduction into RSS</title>
-<style type="text/css">
-<!--
-body     {margin: 40px; color: black; background-color: white; font-size: 13px; line-heigh: 1.5;}
-h1,h2,h3 {font-face: verdana, arial, sans-serif; color: #069; border-bottom: 1px dotted #069; padding: 5px 0px 5px 0px;}
-h2       {border-bottom: 4px solid #069;}
-h1       {border: 4px solid blue; background-color: #069; color: white; padding:10px; text-align:center}
-p        {text-align: justify; text-indent: 40px}
-a        {text-decoration: none; padding:2px;}
-a:hover  {color: yellow; background-color: #069;}
-hr       {color: #069; background-color: #069; height: 4px;}
--->
-</style>
+<title>XML::RSS::Tools &gt; Simple Introduction</title>
+<link rel="StyleSheet" href="./style.css" type="text/css" />
 </head>
 <body>
 
-<h1>Simple Introduction Into RSS</h1>
+<h1>Simple Introduction To RSS</h1>
 
 <h2>RSS/RDF</h2>
 
@@ -51,55 +40,74 @@ server.</p>
 <p>Originally I used <a href="http://www.gnu.org/software/wget/wget.html">wget</a>,
 to pull files down from their server. Other tools to do this include
 <a href="http://curl.haxx.se/">cURL</a> and any web browser. I cached the RSS feeds 
-on my web server's disk space to reduce unnecessary donwloading.</p>
+on my web server's disk space to reduce unnecessary downloading.</p>
 
 <h3>RSS Normalisation</h3>
 
 <p>RSS feeds come in several incompatible formats. To make conversion to HTML
 simple I opted to convert all RSS feeds to RSS version 0.91 as this is very
-simple to convert to HTML via <a href="http://www.w3.org/Style/XSL/">XSL-Templating</a>.</p>
+simple to convert to HTML via <a href="http://www.w3.org/Style/XSL/">XSL-Templating</a>. The
+underlying <a href="http://perl-rss.sourceforge.net/">XML::RSS</a> core can parse
+and convert RSS Versions 0.9, 0.91 and 1.0, it does not as yet deal with 0.92 or 2.0.</p>
 
 <h3>RSS Conversion</h3>
 
-<p>Most online examples of RSS use the <a href="http://search.cpan.org/search?dist=XML-RSS">XML::RSS</a>  module to programmatically convert the feed into HTML, either directly or via using one of the
-many quality HTML templating tools. This I felt was inefficient and so I opted to use "XML Style
-Sheet Language Transformation", which is industry standard and does not require programming.
-There are several XSL-T engines available: <a href="http://saxon.sourceforge.net/">Saxon</a>,
-<a href="http://xml.apache.org/">Xalan</a>, MSXML, and <a href="http://www.gingerall.com/charlie/ga/xml/p_sab.xml">Sablotron</a>, however the fastest and
-easiest one for Perl is Matt Sergeant's <a  href="http://search.cpan.org/search?dist=XML-LibXSLT">LibXSLT</a>.</p>
+<p>Most online examples of RSS use the XML::RSS module to programmatically convert the feed into
+HTML, either directly or via using one of the many quality HTML templating tools. This I felt
+was inefficient and so I opted to use "XML Style Sheet Language Transformation", which is
+industry standard and does not require programming. There are several XSL-T engines available:
+<a href="http://saxon.sourceforge.net/">Saxon</a>, <a href="http://xml.apache.org/">Xalan</a>,
+MSXML, and <a href="http://www.gingerall.com/charlie/ga/xml/p_sab.xml">Sablotron</a>, however
+the fastest and easiest one for Perl is Matt Sergeant's <a href="http://xmlsoft.org/"
+title="The XML C Library for Gnome">GNOME</a> based
+<a href="http://search.cpan.org/search?dist=XML-LibXSLT">LibXSLT</a>.</p>
 
 <h3>Script to Module</h3>
 
 <p>After developing the script to do this I realised that much of the code could be
 converted into a module and distributed to the world. After a popular post to
-<a href="http://www.perlmonks.org/">Perlmonks</a>, I have moved the module up to <a href="http://www.cpan.org/">CPAN</a>. The code should be considered as <strong>ALPHA</strong>
+<a href="http://www.perlmonks.org/">Perlmonks</a>, I have moved the module up to <a href="http://www.cpan.org/">CPAN</a>. The code should be considered as <strong>beta</strong>
 code, and the API may change somewhat in the near future.</p>
+
+<h2>Examples</h2>
+
+<p>Some basic examples of how to use this module are provided in the examples folder. Simple explanations can be found here:</p>
+<ul>
+<li><a href="./example1.html">example 1</a></li>
+<li><a href="./example2.html">example 2</a></li>
+<li><a href="./example3.html">example 3</a></li>
+</ul>
 
 <h2>Resources</h2>
 
 <ul>
 <li>Userland.com the home of key RSS developments: <a href="http://backend.userland.com/rss092">backend.userland.com</a></li>
-<li>SOAP CLient RSS to HTML online tool: <a href="http://soapclient.com/rss/rss.html">soapclient.com/rss/rss.html</a></li>
+<li>SOAP Client RSS to HTML online tool: <a href="http://soapclient.com/rss/rss.html">soapclient.com/rss/rss.html</a></li>
 <li>Netscape Communications: <a href="http://my.netscape.com/publish/formats/rss-spec-0.91.html">my.netscape.com/publish/formats/rss-spec-0.91.html</a></li>
-<li>W3C Standards body: <a href="http://www.w3.org/RDF/">www.w3.org/RDF/</a></li>
+<li>W3C Standards body: <a href="http://www.w3.org/RDF/">www.w3.org/RDF/</a> &amp; Validator: <a href="http://www.w3.org/RDF/Validator/">www.w3.org/RDF/Validator/</a></li>
 <li>Blogspace RSS FAQ: <a href="http://blogspace.com/rss/">blogspace.com/rss/</a></li>
 <li>RSS Versions: <a href="http://www.webreference.com/authoring/languages/xml/rss/1/8.html">www.webreference.com/authoring/languages/xml/rss/1.8.html</a></li>
 <li>Ben Hammersley's Content Syndication with XML and RSS: <a href="http://rss.benhammersley.com/">rss.benhammersley.com</a></li>
-<li>Dave Beckett's Resource Description Framework Resource Guide: <a href="http://www.ilrt.bristol.ac.uk/discovery/rdf/resources/">/www.ilrt.bristol.ac.uk/discovery/rdf/resources/</a></li>
+<li>Dave Beckett's Resource Description Framework Resource Guide: <a href="http://www.ilrt.bristol.ac.uk/discovery/rdf/resources/">www.ilrt.bristol.ac.uk/discovery/rdf/resources/</a></li>
+<li>Mark Pilgrim and Sam Ruby's RSS Validator: <a href="http://feeds.archive.org/validator/">feeds.archive.org/validator/</a></li>
+<li><tt>brian d foy</tt> has an interesting, article in The Perl Review: <a href="http://www.theperlreview.com/Issues/v0i6.shtml">www.theperlreview.com/Issues/v0i6.shtml</a></a>
 </ul>
 
 <h2>Some Example RSS Feeds</h2>
 
 <ul>
-<li><a href="http://www.itn.co.uk/itn.rdf">http://www.itn.co.uk/itn.rdf</a></li>
-<li><a href="http://freshmeat.net/backend/fm.rdf">http://freshmeat.net/backend/fm.rdf</a></li>
-<li><a href="http://slashdot.org/slashdot.rdf">http://slashdot.org/slashdot.rdf</a></li>
-<li><a href="http://www.oreillynet.com/meerkat/?_fl=rss10">http://www.oreillynet.com/meerkat/?_fl=rss10</a></li>
-<li><a href="http://www.theregister.co.uk/tonys/slashdot.rdf">http://www.theregister.co.uk/tonys/slashdot.rdf</a></li>
-<li><a href="http://rss.blogspace.com/bbcNews/world?">http://rss.blogspace.com/bbcNews/world?</a></li>
-<li><a href="http://www.sophos.com/virusinfo/infofeed/tenalerts.xml">http://www.sophos.com/virusinfo/infofeed/tenalerts.xml</a></li>
+<li><a href="http://www.itn.co.uk/itn.rdf">www.itn.co.uk/itn.rdf</a></li>
+<li><a href="http://freshmeat.net/backend/fm.rdf">freshmeat.net/backend/fm.rdf</a></li>
+<li><a href="http://slashdot.org/slashdot.rdf">slashdot.org/slashdot.rdf</a></li>
+<li><a href="http://www.oreillynet.com/meerkat/?_fl=rss10">www.oreillynet.com/meerkat/?_fl=rss10</a></li>
+<li><a href="http://www.theregister.co.uk/tonys/slashdot.rdf">www.theregister.co.uk/tonys/slashdot.rdf</a></li>
+<li><a href="http://www.sophos.com/virusinfo/infofeed/tenalerts.xml">www.sophos.com/virusinfo/infofeed/tenalerts.xml</a></li>
+<li><a href="http://www.perl.com/pace/perlnews.rdf">www.perl.com/pace/perlnews.rdf</a></li>
 </ul>
-<hr/>
-<small>Copyright iredale Consulting 2002</small>
+
+<div id="footnote">
+	<div style="text-aign: right; float: right;"><a href="http://www.w3.org/RDF/" title="RDF Resource Description Framework"><img src="./rdf_powered_button.32.gif" alt="RDF Resource Description Framework Powered Icon" /></a></div>
+	<p>Copyright iredale Consulting 2002</p>
+</div>
 </body>
 </html>

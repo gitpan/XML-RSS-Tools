@@ -18,29 +18,7 @@ ok(1); # If we made it this far, we're ok.
 my $test_no = 2;
 
 
-#	First off create our object and test it's default values, test 2-5
-
-	my $rss_object = XML::RSS::Tools->new;
-
-	if ($rss_object->debug) {
-		print "NOT ok ", $test_no++;
-	} else {
-		print "ok ", $test_no++;
-	}
-
-	if ($rss_object->get_version == 0.91) {
-		print "\nok ", $test_no++;
-	} else {
-		print "\nNOT ok ", $test_no++;
-	}
-
-	if ($rss_object->get_auto_wash) {
-		print "\nok ", $test_no++;
-	} else {
-		print "\nNOT ok ", $test_no++;
-	}
-
-#	Test that we can't do anything with it yet, test 5-8
+my $rss_object = XML::RSS::Tools->new;
 
 eval { $rss_object->transform; };
 
@@ -68,7 +46,13 @@ if ($rss_object->rss_uri) {
 	print "\nok ", $test_no++;
 }
 
-#	Do some real tests, tests 9-12
+if ($rss_object->rss_uri("wibble wobble")) {
+	print "\nNOT ok ", $test_no++;
+} else {
+	print "\nok ", $test_no++;
+}
+
+#	Do some real tests
 
 eval { $rss_object->rss_file('./t/test.rdf'); };
 
@@ -78,7 +62,23 @@ if ($@) {
 	print "\nok ", $test_no++;
 }
 
+eval { $rss_object->rss_uri('file:./t/test.rdf'); };
+
+if ($@) {
+	print "\nNOT ok", $test_no++;
+} else {
+	print "\nok ", $test_no++;
+}
+
 eval { $rss_object->xsl_file('./t/test.xsl'); };
+
+if ($@) {
+	print "\nNOT ok", $test_no++;
+} else {
+	print "\nok ", $test_no++;
+}
+
+eval { $rss_object->xsl_uri('file:./t/test.xsl'); };
 
 if ($@) {
 	print "\nNOT ok", $test_no++;
