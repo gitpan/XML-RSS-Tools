@@ -1,4 +1,4 @@
-XML/RSS/Tools version 0.07
+XML/RSS/Tools version 0.08
 ==========================
 
 RSS/RDF feeds are commonly available ways of distributing the latest news about a
@@ -9,9 +9,8 @@ yourself.
 STATUS
 
 Warning! this module is BETA code, it may have undocumented features "bugs", and
-the API may change without notice. However it is currently under active development
-and so now is the time to add features to the code base before the API becomes
-fixed.
+the API may change. However it is currently under active development and so now
+is the time to add features to the code base before the API becomes fixed.
 
 INSTALLATION
 
@@ -26,13 +25,22 @@ DEPENDENCIES
 
 This module requires these other modules for full functionality:
 
-  XML::RSS XML::LibXSLT XML::LibXML LWP HTTP::GHTTP
+  XML::LibXSLT XML::LibXML
+  XML::RSS
+  URI
+  LWP or HTTP::GHTTP
+
+XML::RSS older versions than version 0.98 have a number of defects and
+limitations, please upgrade if possible.
+
+XML::LibXML and XML::LibXSLT rely on the GNOME libxml2 and libxslt libraries
+which need to be installed before attempting to install the Perl modules.
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2002 Adam Trickett
+Copyright (C) 2002, 2003 Adam Trickett
 
-XML::RSS::Tools, Copyright iredale Consulting 2002
+XML::RSS::Tools, Copyright iredale Consulting 2002-2003
 
 This program is free software; you can redistribute it and/or modify it under the terms
 of the GNU General Public License as published by the Free Software Foundation; either

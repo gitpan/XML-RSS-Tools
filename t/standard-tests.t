@@ -22,7 +22,7 @@ my $rss_object = XML::RSS::Tools->new;
 
 eval { $rss_object->transform; };
 
-if ($@ =~ /No XSL-T loaded/) {
+if ($@ =~ /No XSLT loaded/) {
 	print "\nok ", $test_no++;
 } else {
 	print "\nNOT ok ", $test_no++;

@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
 	   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-15" />
 <title>XML::RSS::Tools &gt; example 2</title>
 <link rel="StyleSheet" href="./style.css" type="text/css" />
 </head>
@@ -13,9 +13,17 @@
 
 <h2>Example 2</h2>
 
-<p>This more complex example is designed to show a normal command line or CGI application. After loading the normal modules, and unbuffering STDOUT, the URI of the site, and the style sheet are grabbed from the command line (if present), and the rss and cgi objects are created. Checking the request method to determine if the application is running in CGI or command line mode, a HTML header is sent if appropriate and then the application checks for required inputs.</p>
+<p>This more complex example is designed to show a normal command line or CGI
+application. After loading the normal modules, and unbuffering STDOUT, the URI
+of the site, and the style sheet are grabbed from the command line (if present),
+and the rss and cgi objects are created. Checking the request method to determine
+if the application is running in CGI or command line mode, a HTML header is sent
+if appropriate and then the application checks for required inputs.</p>
 
-<p>Assuming the pre-requisites have all been met, then the rss object is loaded with the source rss, xsl-template, and the transformation is performed. If at any stage an error is detected, all calls return rss method calls return true on success, an error message is generated, and sent to the user.</p>
+<p>Assuming the pre-requisites have all been met, then the rss object is loaded
+with the source rss, xsl Template, and the transformation is performed. If at
+any stage an error is detected, all calls return rss method calls return true
+on success, an error message is generated, and sent to the user.</p>
 
 
 <div class="code">
@@ -88,10 +96,10 @@ sub tad {
 	my $q     = shift;
 
 	if ($q) {
-		print $q-&gt;hr, $q-&gt;h1("RSS 2 HTML via XSL-T error:"), $q-&gt;h2($error), $q-&gt;hr;
+		print $q-&gt;hr, $q-&gt;h1("RSS 2 HTML via XSLT error:"), $q-&gt;h2($error), $q-&gt;hr;
 		croak $error;
 	} else {
-		print "RSS 2 HTML via XSL-T error:\n\t$error";
+		print "RSS 2 HTML via XSLT error:\n\t$error";
 		exit;
 	}
 }
@@ -99,5 +107,5 @@ sub tad {
 </div>
 
 <div id="footnote">
-<p>Copyright iredale Consulting 2002</p>
+<p>Copyright iredale Consulting 2002-2003</p>
 </div>

@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
+	   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-15" />
+<title>XML::RSS::Tools &gt; example 4</title>
+<link rel="StyleSheet" href="./style.css" type="text/css" />
+</head>
+<body>
+
+<h1>XML::RSS::Tools</h1>
+
+<h2>Example 4</h2>
+
+<p>In this example we turn off RSS normalisation, and use a single XSLT stylesheet to deal with all
+possible RSS feeds. As before we take inputs from the command line in the form of a URI of the RSS feed
+and a file location for the stylesheet. The actual Perl is largely as in the previous example.
+</p>
+
+<div class="code">
+<pre>
+#!/usr/bin/perl
+use strict;
+use XML::RSS::Tools;
+
+my $rss  = XML::RSS::Tools-&gt;new;
+$rss-&gt;set_version(0);            # This turns normalisation off
+eval {
+  print $rss-&gt;rss_uri(shift)-&gt;xsl_file(shift)-&gt;transform-&gt;as_string;
+  };
+print $rss-&gt;as_string('error') if ($@);
+</pre></div>
+
+<p>The XSLT stylesheet listed below should be able to read any of the 7 versions of RSS feed currently
+available and convert them consistently to a XHTML fragment. Becasue of the differences in RSS, it is not
+easy to convert all elements of each RSS standard into another standard, but it is practicle for the
+limited purposes of simple display in a web browser.</p>
+
+<div class="code">
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rss="http://purl.org/rss/1.0/"
+	xmlns:rss09="http://my.netscape.com/rdf/simple/0.9/"
+	exclude-result-prefixes="xsl rdf dc rss rss09"
+	&gt;
+&lt;xsl:output method="xml" omit-xml-declaration="yes" indent="yes"/&gt;
+
+&lt;xsl:template match="/"&gt;
+	&lt;div&gt;
+	&lt;xsl:apply-templates select="rdf:RDF/rss:channel" /&gt;
+	&lt;xsl:apply-templates select="rdf:RDF/rss09:channel" /&gt;
+	&lt;xsl:apply-templates select="rss/channel" /&gt;
+	&lt;xsl:if test="rdf:RDF/rss:item"&gt;
+		&lt;ul&gt;&lt;xsl:apply-templates select="rdf:RDF/rss:item"/&gt;&lt;/ul&gt;
+	&lt;/xsl:if&gt;
+	&lt;xsl:if test="rdf:RDF/rss09:item"&gt;
+		&lt;ul&gt;&lt;xsl:apply-templates select="rdf:RDF/rss09:item"/&gt;&lt;/ul&gt;
+	&lt;/xsl:if&gt;
+	&lt;/div&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="rss:channel"&gt;
+	&lt;xsl:variable name="link" select="rss:link"/&gt;
+	&lt;xsl:variable name="description" select="rss:description"/&gt;
+	&lt;xsl:variable name="image" select="rss:image/rss:url"/&gt;
+	&lt;xsl:if test="$image"&gt;	
+		&lt;img src="{$image}" style="float: right; margin: 2px;" /&gt;
+	&lt;/xsl:if&gt;
+	&lt;h3&gt;&lt;a href="{$link}" title="{$description}"&gt;&lt;xsl:value-of select="rss:title" /&gt;&lt;/a&gt;&lt;/h3&gt;
+	&lt;hr/&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="rss09:channel"&gt;
+	&lt;xsl:variable name="link" select="rss09:link"/&gt;
+	&lt;xsl:variable name="description" select="rss09:description"/&gt;
+	&lt;xsl:variable name="image" select="rss09:image/rss09:url"/&gt;
+	&lt;xsl:if test="$image"&gt;	
+		&lt;img src="{$image}" style="float: right; margin: 2px;" /&gt;
+	&lt;/xsl:if&gt;
+	&lt;h3&gt;&lt;a href="{$link}" title="{$description}"&gt;&lt;xsl:value-of select="rss09:title" /&gt;&lt;/a&gt;&lt;/h3&gt;
+	&lt;hr/&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="channel"&gt;
+	&lt;xsl:variable name="link" select="link"/&gt;
+	&lt;xsl:variable name="description" select="description"/&gt;
+	&lt;xsl:variable name="image" select="image/url"/&gt;
+	&lt;xsl:if test="$image"&gt;	
+		&lt;img src="{$image}" style="float: right; margin: 2px;" /&gt;
+	&lt;/xsl:if&gt;
+	&lt;h3&gt;&lt;a href="{$link}" title="{$description}"&gt;&lt;xsl:value-of select="title" /&gt;&lt;/a&gt;&lt;/h3&gt;
+	&lt;hr/&gt;
+	&lt;ul&gt;&lt;xsl:apply-templates select="item"/&gt;&lt;/ul&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="item"&gt;
+	&lt;xsl:variable name="item_link" select="link"/&gt;
+	&lt;xsl:variable name="item_title" select="description"/&gt;
+	&lt;li&gt;&lt;a href="{$item_link}" title="{$item_title}"&gt;&lt;xsl:value-of select="title"/&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="rss:item"&gt;
+	&lt;xsl:variable name="item_link" select="rss:link"/&gt;
+	&lt;xsl:variable name="item_title" select="rss:description"/&gt;
+	&lt;li&gt;&lt;a href="{$item_link}" title="{$item_title}"&gt;&lt;xsl:value-of select="rss:title"/&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="rss09:item"&gt;
+	&lt;xsl:variable name="item_link" select="rss09:link"/&gt;
+	&lt;xsl:variable name="item_title" select="rss09:description"/&gt;
+	&lt;li&gt;&lt;a href="{$item_link}" title="{$item_title}"&gt;&lt;xsl:value-of select="rss09:title"/&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/xsl:template&gt;
+
+&lt;/xsl:stylesheet&gt;
+</pre></div>
+
+<div id="footnote">
+<p>Copyright iredale Consulting 2002-2003</p>
+</div>
+
+</body>
+</html>

@@ -1,5 +1,13 @@
 Revision history for Perl extension XML::RSS::Tools.
 
+0.08  Fri 10 January 2003
+	- Incorporates "The Perl Review" Article - Processing RSS Files with XSLT
+	- Minor changes to HTML, and updated links  
+	- Removed Diagnostics pragma
+	- Warning message added to Makefile.PL
+	- Extra tests for RSS versions, and ability to disable RSS normalisation
+	- Extra code examples
+
 0.07  Sun 24 November 2002
 	- More minor changes
 	- Tests re-organised, re-ordered, and expanded
@@ -16,7 +24,7 @@ Revision history for Perl extension XML::RSS::Tools.
 	- Null URIs dealt with
 	- Extra example script provided
 	- Minor changes
-	- CPANPLUS test added for extra compatibility
+	- Tests added for extra CPANPLUS compatibility
 
 0.04  Mon 13 May 2002
 	- Minor changes

@@ -7,10 +7,13 @@ docs/rss-intro.html
 docs/example1.html
 docs/example2.html
 docs/example3.html
+docs/example4.html
+docs/rss_with_xslt.html
 docs/rdf_powered_button.32.gif
 docs/style.css
 t/use.t
 t/basic-tests.t
 t/standard-tests.t
+t/version-tests.t
 t/test.rdf
 t/test.xsl

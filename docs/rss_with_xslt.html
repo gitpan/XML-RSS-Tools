@@ -1,0 +1,473 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
+	   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=iso-8859-15" />
+    <title>
+      XML::RSS::Tools &gt; Processing RSS Files with XSLT
+    </title>
+    <link rel="StyleSheet" href="./style.css" type="text/css" />
+  </head>
+  <body>
+    <h1>
+      Processing RSS Files with XSLT <sup>*</sup>
+    </h1>
+    <h2>
+      Synopsis
+    </h2>
+    <p>
+      Rich Site Summary format files are traditionally converted to HTML for display in a browser by a brute force
+      approach. XML files are converted into a Perl data structure - or any other language - manipulated, and
+      converted back to XML. A more efficient approach is to use XSLT as it is a language designed to transform
+      XML. Then Perl deals only with the logistics of obtainning the source file and displaying the results.
+    </p>
+    <h2>
+      Introduction
+    </h2>
+    <p>
+      A number of years ago I lived in Southern California. At the time the best place to get news was via National
+      Public Radio, Public Broadcasting Service or the BBC World Service. Unfortunately, none of them had
+      particularly good reception where I lived, and so I was forced to turn to the web for news of home. In those
+      boom-time days, it seemed every web site was a portal, whether it made business sense or not. This helped me
+      build a custom news page with British and European news, along with world business and technology news.
+    </p>
+    <p>
+      Returning to Europe I abandoned my academic training and rushed headlong into enterprise web content
+      management working for one of the pioneering XML companies. We were so pioneering that we never made a profit
+      and as the boom turned to bust the company imploded. My thoughts again turned to syndicated news and
+      portals---How was it done? Was it easy? Could we use it to build a web site with multiple-content chanels
+      that was easy for a small company to build and maintain?
+    </p>
+    <h2>
+      RSS Basics
+    </h2>
+    <p>
+      Rich Site Summary (RSS) files allow people to syndicate a web site. RSS is an initialisation of one of
+      several possible phrases: Rich Site Summaries, Really Simple Syndication, or Resource Description Framework
+      Site Summaries. As RSS evolved, the meaning of RSS has shifted to match it's evolving abilities.
+    </p>
+    <p>
+      A RSS file is written in the <a href="http://www.w3.org/XML/">eXtensible Mark-up Language</a> (XML) and gives
+      a summary of the content for a section of or complete web site. The XML specification is a descendent mark-up
+      language of <a href="http://www.iso.org/iso/en/CatalogueDetailPage.CatalogueDetail?CSNUMBER=16387">Standard
+      Generalised Mark-up Language</a> (SGML) developed in the 1970s. XML was designed to be simple like <a
+      href="http://www.w3.org/MarkUp/">Hyper-Text Markup Language</a> (HTML) which had proved popular as the basis
+      of web sites, while SGML is complex to use and less popular. Typically, a site's content management system
+      constructs RSS dynamically as stories and articles show up on the web site. Most webmasters place their RSS
+      files on their web sites, and so the files are easy to download. Mirroring tools are ideal for the task, as
+      they only download files if they have changed.
+    </p>
+    <h2>
+      XML Stylesheet Language Transformation
+    </h2>
+    <p>
+      The <a href="http://www.w3.org/TR/xslt">XML Stylesheet Language Transformation</a> (XSLT) is a <a
+      href="http://www.w3.org/">World Wide Web Consortium</a> (W3C) standard for converting XML documents to
+      another format. XSLT engines use a stylesheet written in XML and consisting of a number of rules to convert
+      the source XML to another format. A full introduction is beyond the scope of this paper, and I list many
+      references at the end.
+    </p>
+    <p>
+      At the simplest level XSLT takes one XML document as a document-tree, and coverts it to another format. The
+      XSLT file is a list of transformation templates that apply to specific parts of the input tree. Each
+      individual template may operate in isolation of other rules, to give a result tree.
+    </p>
+    <p>
+      As an example I shall transform a simple XML document into a HTML fragment using XSLT. Code listing
+      <strong>1</strong> shows a simple XML document with a &lt;statement&gt; tag and a &lt;footer&gt; tag. I want
+      to apply a stylesheet to it to produce the output in code listing <strong>3</strong>.
+    </p>
+    <p>
+      In code listing <strong>2</strong>, the first rule of my style sheet tells the engine to start at the root of
+      the tree &lt;/&gt;. It then outputs a &lt;div&gt; tag. Then the second rule tells the engine to look in the
+      tree for a path than matches &lt;root/statement&gt; from the current context. If it finds a match it calls
+      the second template, if no match is found flow proceeds to the next line. The second template outputs a
+      &lt;p&gt; tag, followed by the content of the current input tree node value Hello World!, then a &lt;/p&gt;
+      tag. Flow returns to the calling rule, and outputs a &lt;/div&gt; tag.
+    </p>
+    <div class="code">
+      <h3>
+        1: An Example XML document
+      </h3>
+<pre>
+&lt;?xml version="1.0"?&gt;
+&lt;root&gt;
+  &lt;statement&gt;Hello World!&lt;/statement&gt;
+  &lt;footer&gt;Foo&lt;/footer&gt;
+&lt;/root&gt;
+</pre>
+    </div>
+    <div class="code">
+      <h3>
+        2: An Example Stylesheet Fragment
+      </h3>
+<pre>
+&lt;xsl:template match="/"&gt;
+  &lt;div&gt;
+  &lt;xsl:apply-templates select="root/statement"/&gt;
+  &lt;/div&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="statement"&gt;
+  &lt;p&gt;
+  &lt;xsl:value-of select="."/&gt;
+  &lt;/p&gt;
+&lt;/xsl:template&gt;
+</pre>
+    </div>
+    <div class="code">
+      <h3>
+        3: Result of Transformation
+      </h3>
+<pre>
+&lt;div&gt;&lt;p&gt;Hello World!&lt;/p&gt;&lt;/div&gt;
+</pre>
+    </div>
+    <p>
+      As with Perl, XSLT has "more than one way to do it", which can intimidate new users. Like Perl, XSLT is a
+      very flexible language, so it is easy to write this stylesheet in a totally different manner and get exactly
+      the same result. I often find other people's XSLT stylesheets very confusing, just as I did with other
+      people's Perl scripts, but with time they do start to make sense.
+    </p>
+    <h2>
+      Using Perl
+    </h2>
+    <p>
+      Code listing 4 uses the LWP::Simple module to retrieve XML files, and the libxslt-based XML::LibXSLT to
+      transform them. The first command line argument to the script specifies the file to fetch, and the second
+      specifies the XSLT template to use. Once LWP::Simple fetches the XML file, XML::LibXML and XML::LibXSLT
+      convert it to HTML via XSLT. Perl provides the framework for the download and conversion, and the XSLT
+      stylesheet provides the rules of the conversion.
+    </p>
+    <div class="code">
+      <h3>
+        4: Perl Example
+      </h3>
+<pre>
+#!/usr/bin/perl
+
+use strict;
+use LWP::Simple;
+use XML::LibXML;
+use XML::LibXSLT;
+
+my $site = shift;
+my $xslt = shift;
+
+my $rss  = get($site);
+
+my $xslt   = XML::LibXSLT-&gt;new;
+my $parser = XML::LibXML-&gt;new;
+
+my $source_xml  = $parser-&gt;parse_string($rss);
+my $style_xsl   = $parser-&gt;parse_file($xsl);
+
+my $stylesheet  = $xslt-&gt;parse_stylesheet($style_xsl);
+my $transformed = $stylesheet-&gt;transform($source_xml);
+
+print $stylesheet-&gt;output_string($transformed);
+</pre>
+    </div>
+    <h2>
+      Problems with RSS
+    </h2>
+    <p>
+      There are two RSS families, and they are different so that I cannot easily use the same XSLT style sheet on
+      all of them. In theory, I should be able to convert one RSS file into another one, however it is not that
+      simple.
+    </p>
+    <p>
+      Netscape Communications developed the original RSS format, version 0.9, and UserLand later simplified it to
+      create version 0.91. Independently, the RSS-DEV Working Group developed version 1.0, a new and incompatible
+      format based on the W3C <a href="http://www.w3.org/RDF/">Resource Description Format</a> (RDF) core. <a
+      href="http://backend.userland.com/rss">UserLand</a>, unhappy with the RDF-based RSS, continued to extend and
+      expand RSS up to its current version, 2.0.
+    </p>
+    <p>
+      The RDF-based RSS format uses <a href="http://www.w3.org/TR/REC-xml-names/">XML Namespace</a>, which has its
+      advantages, but makes the document much more verbose and more difficult to transform with XSLT. A number of
+      XSLT processor specific extensions simplify the transformation process, however extensions are not
+      universally supported, and therefore are not portable.
+    </p>
+    <p>
+      Many RSS files are automatically generated from badly written HTML by content managements systems, thus the
+      RSS file is often malformed. Some site editors correct their RSS feeds, but all too often there is nothing to
+      be done but to accept that the incoming feed will be wrong.
+    </p>
+    <p>
+      The W3C requires an XML parser to abort processing if it encounters a not well-formed document. The major
+      Perl XML parsers comply and will die in those cases. If a document format is invalid, the parser cannot
+      convert it to a tree, so transformation cannot start. This is a deliberate feature of XML to prevent
+      ambiguity of on-the-fly second-guessing, characteristic of HTML parsers. Most web browsers will read and
+      display almost any form of HTML no matter how badly formed it is.
+    </p>
+    <h2>
+      The XML::RSS module
+    </h2>
+    <p>
+      To make it easier to transform any RSS file with a single stylesheet, I first convert all RSS files to my
+      prefered version of RSS.
+    </p>
+    <p>
+      The <a href="http://perl-rss.sourceforge.net/">XML::RSS</a> module interconverts Perl structures and RSS
+      files. I can use it to convert a file in one RSS version into another version; however, the module has a
+      number of problems and limitations, including one fatal flaw as of version 0.97, it does not output properly
+      escaped XML. Thus any '&amp;amp;' is incorrectly outputted as '&amp;', a special character in XML signalling
+      the start of an entity encoding. The module should encode any literal '&amp;' as an '&amp;amp;'.
+    </p>
+    <p>
+      As a result of an email I sent to brian d foy regarding his recent article in this journal using the
+      XML::RSS, he took it upon himself to fix the module, and another project on SourceForge was born. The project
+      developers have not yet released a version that fixes this problem, however they are working on it.
+    </p>
+    <h2>
+      XML::RSS::Tools
+    </h2>
+    <p>
+      I wrote a module to fully automate RSS file conversion to HTML, while addressing the discussed problems of
+      poor source XML, multiple RSS versions and XML::RSS escaping defect.
+    </p>
+    <p>
+      The XML::RSS::Tools module incorporates HTTP tools and "The XML C library for Gnome" based XSLT processor,
+      giving a complete tool-kit. Code listing <strong>5</strong> uses the module to download the file, then to
+      transform and to output the result in one step. It has the same command line arguments as the earlier example
+      - an RSS file location and an XSLT stylesheet.
+    </p>
+    <p>
+      I create an XML::RSS::Tools object by initialising the module to its default configuration. Inside an eval, I
+      use the object to load the source file and the XSLT file, to transform the source, and to output the result
+      as a string. I use an eval block in case an invalid RSS file causes the XML parser to die.
+    </p>
+    <div class="code">
+      <h3>
+        5: Using XML::RSS::Tools
+      </h3>
+<pre>
+#!/usr/bin/perl
+use strict;
+use XML::RSS::Tools;
+
+my $rss = XML::RSS::Tools-&gt;new;
+eval { 
+  print $rss-&gt;rss_file(shift)-&gt;xsl_file(shift)-&gt;transform-&gt;as_string; 
+  };
+
+print $rss-&gt;as_string('error') if ($@);
+</pre>
+    </div>
+    <p>
+      The XSLT stylesheet in code listing <strong>6</strong> converts a single RSS feed code listing
+      <strong>7</strong> into a XHTML fragment. It starts with the standard XML and XSLT header details. I tell the
+      processor to turn off the XML declaration to make the fragment easier to directly incorporate in a XHTML
+      document. I select XML output and turne on indents to give a neater document.
+    </p>
+    <p>
+      The first template rule selects the XML root of the document, outputs a literal &lt;div&gt; tag, then applies
+      the &lt;rss/channel&gt; rule, and outputs a &lt;/div&gt; tag.
+    </p>
+    <p>
+      The &lt;rss/channel&gt; rule is where I process the details of the channel. I start by creating a number of
+      variables, and populating them with the details to create an image link and the heading. I use an
+      &lt;xsl:if&gt; to check if there is a image to link to, and if so populate an &lt;img&gt; tag with it. I
+      create &lt;h3&gt; and &lt;a&gt; tags which link to the originating site. I output an &lt;hr/&gt; tag to
+      separate the title, and then create an un-ordered list to put the individual story titles in. Inside the
+      &lt;ul&gt;&lt;/ul&gt; tags I place an &lt;xsl:apply-templates&gt; command which inserts the content of each
+      item. One of the many nice things about the XSLT language is that I do not need to know how many items there
+      are in a given story - the simple rule will find them all.
+    </p>
+    <p>
+      The &lt;item&gt; rule creates a pair of variables for the link, outputs a &lt;li&gt; tag, constructs an
+      &lt;a&gt; tag, and closes with a literal &lt;/li&gt; since this is XML.
+    </p>
+    <p>
+      Code listing <strong>8</strong> shows the XHTML fragment generated by this stylesheet.
+    </p>
+    <div class="code">
+      <h3>
+        6: Stylesheet to transform RSS to XHTML
+      </h3>
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;xsl:stylesheet version="1.0"
+   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+   exclude-result-prefixes="xsl"&gt;
+&lt;xsl:output method="xml" omit-xml-declaration="yes" indent="yes"/&gt;
+
+&lt;xsl:template match="/"&gt;
+  &lt;div&gt;
+  &lt;xsl:apply-templates select="rss/channel"/&gt;
+  &lt;/div&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="rss/channel"&gt;
+  &lt;xsl:variable name="link" select="link"/&gt;
+  &lt;xsl:variable name="description" select="description"/&gt;
+  &lt;xsl:variable name="image" select="image/url"/&gt;
+  &lt;xsl:if test="$image"&gt;
+    &lt;img src="{$image}" style="float: right; margin: 2px;" /&gt;
+  &lt;/xsl:if&gt;
+  &lt;h3&gt;
+    &lt;a href="{$link}" title="{$description}"&gt;&lt;xsl:value-of select="title" /&gt;&lt;/a&gt;
+  &lt;/h3&gt;
+  &lt;hr/&gt;
+  &lt;ul&gt;&lt;xsl:apply-templates select="item"/&gt;&lt;/ul&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="item"&gt;
+  &lt;xsl:variable name="item_link" select="link"/&gt;
+  &lt;xsl:variable name="item_title" select="description"/&gt;
+  &lt;li&gt;
+    &lt;a href="{$item_link}" title="{$item_title}"&gt;&lt;xsl:value-of select="title"/&gt;&lt;/a&gt;
+  &lt;/li&gt;
+&lt;/xsl:template&gt;
+
+&lt;/xsl:stylesheet&gt;
+</pre>
+    </div>
+    <div class="code">
+      <h3>
+        7: Sample Source RSS File
+      </h3>
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE rss PUBLIC "-//Netscape Communications//DTD RSS 0.91//EN"
+            "http://my.netscape.com/publish/formats/rss-0.91.dtd"&gt;
+&lt;rss version="0.91"&gt;
+&lt;channel&gt;
+  &lt;title&gt;search.cpan.org&lt;/title&gt;
+  &lt;link&gt;http://search.cpan.org&lt;/link&gt;
+  &lt;description&gt;The CPAN search site&lt;/description&gt;
+  &lt;language&gt;en&lt;/language&gt;
+  &lt;image&gt;
+    &lt;title&gt;searchDOTcpan&lt;/title&gt;
+    &lt;url&gt;http://search.cpan.org/s/img/cpanrdf.gif&lt;/url&gt;
+    &lt;link&gt;http://search.cpan.org&lt;/link&gt;
+    &lt;description&gt;All Modules, All the time&lt;/description&gt;
+  &lt;/image&gt;
+  &lt;item&gt;
+    &lt;title&gt;Apache-Dynagzip-0.09&lt;/title&gt;
+    &lt;link&gt;http://search.cpan.org/author/SLAVA/Apache-Dynagzip-0.09&lt;/link&gt;
+  &lt;/item&gt;
+  &lt;item&gt;
+    &lt;title&gt;MIME-Base64-2.16&lt;/title&gt;
+    &lt;link&gt;http://search.cpan.org/author/GAAS/MIME-Base64-2.16&lt;/link&gt;
+  &lt;/item&gt;
+  &lt;item&gt;
+    &lt;title&gt;Test-MockObject-0.10&lt;/title&gt;
+    &lt;link&gt;http://search.cpan.org/author/CHROMATIC/Test-MockObject-0.10&lt;/link&gt;
+  &lt;/item&gt;
+&lt;/channel&gt;
+&lt;/rss&gt;
+</pre>
+    </div>
+    <div class="code">
+      <h3>
+        8: XHTML result of RSS transformation
+      </h3>
+<pre>
+&lt;div&gt;
+  &lt;img src="http://search.cpan.org/s/img/cpanrdf.gif" style="float: right; margin: 2px;" /&gt;
+  &lt;h3&gt;
+  &lt;a href="http://search.cpan.org" title="The CPAN search site"&gt;search.cpan.org&lt;/a&gt;
+  &lt;/h3&gt;
+  &lt;hr /&gt;
+  &lt;ul&gt;
+    &lt;li&gt;
+      &lt;a href="http://search.cpan.org/author/SLAVA/Apache-Dynagzip-0.09" title=""&gt;Apache-Dynagzip-0.09&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;a href="http://search.cpan.org/author/GAAS/MIME-Base64-2.16" title=""&gt;MIME-Base64-2.16&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;a href="http://search.cpan.org/author/CHROMATIC/Test-MockObject-0.10" title=""&gt;Test-MockObject-0.10&lt;/a&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+</pre>
+    </div>
+    <h2>
+      Conclusion
+    </h2>
+    <p>
+      Perl is a powerful language for collecting, downloading and manipulating data. The XML::RSS::Tools module
+      works around some problems in XML::RSS and incorporates the XSLT processing. Thus the application code is
+      separate from the markup details.
+    </p>
+    <h2>
+      See Also
+    </h2>
+    <ul>
+      <li>
+        <a href="http://www.oreilly.com/catalog/xmlnut2/">XML In A Nutshell, 2nd edition</a> by Harold &amp; Means,
+        O'Reilly and Associates.
+      </li>
+      <li>
+        <a href="http://www.manning.com/ducharme/">XSLT Quickly</a> by Bob DuCharme, Manning Publications.
+      </li>
+      <li>
+        <a href="http://www.oreilly.com/catalog/xslt/">XSLT</a> by Doug Tidwell, O'Reilly and Associates.
+      </li>
+      <li>
+        <a href="http://www.wrox.com/books/1861005946.htm">Beginning XSLT</a> by Jeni Tennison, Wrox Press Ltd.
+      </li>
+      <li>
+        <a href="http://www.wrox.com/books/1861005067.htm">XSLT Programmer's Reference 2nd Edition</a> by Michael
+        Kay, Wrox Press Ltd.
+      </li>
+      <li>
+        <a href="http://www.oreilly.com/catalog/xsltckbk/">XSLT Cookbook</a> by Sal Mangano O'Reilly and
+        Associates.
+      </li>
+      <li>
+        <a href="http://www.oreilly.com/catalog/consynrss/">Content Syndication with RSS</a> by Ben Hammersley,
+        O'Reilly and Associates.
+      </li>
+      <li>
+        <a href="http://www.xml.com/lpt/a/2002/12/18/dive-into-xml.html">What is RSS?</a> by <a href="http://www.diveintomark.org/">Mark Pilgrim</a>, XML.com.
+      </li>
+      <li>
+        <a href="http://www.xml.com/lpt/a/2003/01/02/tr.html">Never Mind the Namespaces: An XSLT RSS Client</a> by
+        Bob DuCharme, XML.com.
+      </li>
+      <li>
+        <a href="http://search.cpan.org/search?query=XML-LibXML;mode=module">XML::LibXML</a> and <a
+        href="http://search.cpan.org/search?query=XML-LibXSLT;mode=module">XML::LibXSLT</a> are both available on
+        CPAN.
+      </li>
+      <li>
+        <a href="http://www.xmlsoft.org/">xmlsoft.org</a> for the underlying c libraries of LibXML and LibXSLT.
+      </li>
+    </ul>
+    <h2>
+      Credits
+    </h2>
+    <ul>
+      <li>
+        Dr V. E. Kerguelen
+      </li>
+      <li>
+        <a href="http://www.panix.com/~comdog/"><tt>brian d foy</tt></a>
+      </li>
+      <li>
+        <a href="http://www.snee.com/bob/">Bob DuCharme</a>
+      </li>
+    </ul>
+    <h2>
+      Author
+    </h2>
+    <ul>
+      <li>
+        Dr A. J. Trickett (atrickett AT cpan DOT org)
+      </li>
+    </ul>
+    <div id="footnote">
+      <p>
+        * This <a href="http://www.theperlreview.com/Articles/v0i7/xslt.pdf">article</a> first appeared in
+				<a href="http://www.theperlreview.com/">The Perl Review</a> in January 2003. This version will be
+				continually updated as appropiate.
+      </p>
+    </div>
+  </body>
+</html>
+

@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
 	   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>XML::RSS::Tools &gt; Simple Introduction</title>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-15" />
 <link rel="StyleSheet" href="./style.css" type="text/css" />
 </head>
 <body>
@@ -44,22 +44,26 @@ on my web server's disk space to reduce unnecessary downloading.</p>
 
 <h3>RSS Normalisation</h3>
 
-<p>RSS feeds come in several incompatible formats. To make conversion to HTML
+<p>RSS feeds come in several incompatible families. To make conversion to HTML
 simple I opted to convert all RSS feeds to RSS version 0.91 as this is very
-simple to convert to HTML via <a href="http://www.w3.org/Style/XSL/">XSL-Templating</a>. The
-underlying <a href="http://perl-rss.sourceforge.net/">XML::RSS</a> core can parse
-and convert RSS Versions 0.9, 0.91 and 1.0, it does not as yet deal with 0.92 or 2.0.</p>
+simple to convert to HTML via <a href="http://www.w3.org/Style/XSL/">XSLT</a>. You can
+turn of normalisation if you plan to use just one XSLT stylesheet.</p>
+
+<p>The underlying <a href="http://perl-rss.sourceforge.net/">XML::RSS</a> (up to version 0.97) core can
+parse and interconvert RSS Versions 0.9, 0.91 and 1.0, versions of XML::RSS 0.98 and beyond can
+additionally process RSS version 2.0, though it is unlikley to ever be able to process the largly
+unused versions 0.92, 0.93, and 0.94, which are the evolutionary steps from 0.91 to 2.0.</p>
 
 <h3>RSS Conversion</h3>
 
 <p>Most online examples of RSS use the XML::RSS module to programmatically convert the feed into
 HTML, either directly or via using one of the many quality HTML templating tools. This I felt
-was inefficient and so I opted to use "XML Style Sheet Language Transformation", which is
-industry standard and does not require programming. There are several XSL-T engines available:
+was inefficient and so I opted to use "XML Stylesheet Language Transformation", which is
+industry standard and does not require programming. There are several XSLT processors available:
 <a href="http://saxon.sourceforge.net/">Saxon</a>, <a href="http://xml.apache.org/">Xalan</a>,
 MSXML, and <a href="http://www.gingerall.com/charlie/ga/xml/p_sab.xml">Sablotron</a>, however
 the fastest and easiest one for Perl is Matt Sergeant's <a href="http://xmlsoft.org/"
-title="The XML C Library for Gnome">GNOME</a> based
+title="The XML C Library for Gnome">XML C Library for Gnome</a> based
 <a href="http://search.cpan.org/search?dist=XML-LibXSLT">LibXSLT</a>.</p>
 
 <h3>Script to Module</h3>
@@ -71,11 +75,14 @@ code, and the API may change somewhat in the near future.</p>
 
 <h2>Examples</h2>
 
-<p>Some basic examples of how to use this module are provided in the examples folder. Simple explanations can be found here:</p>
+<p>Some basic examples of how to use this module are provided in the examples folder. Simple
+explanations can be found here:</p>
 <ul>
-<li><a href="./example1.html">example 1</a></li>
-<li><a href="./example2.html">example 2</a></li>
-<li><a href="./example3.html">example 3</a></li>
+<li><a href="./example1.html">Example 1</a> - simple example</li>
+<li><a href="./example2.html">Example 2</a> - complete example</li>
+<li><a href="./example3.html">Example 3</a> - consise example</li>
+<li><a href="./example4.html">Example 4</a> - single stylesheet example with no normalisation</li>
+<li><a href="./rss_with_xslt.html">Processing RSS with XSLT</a> - an article from The Perl Review</li>
 </ul>
 
 <h2>Resources</h2>
@@ -90,13 +97,16 @@ code, and the API may change somewhat in the near future.</p>
 <li>Ben Hammersley's Content Syndication with XML and RSS: <a href="http://rss.benhammersley.com/">rss.benhammersley.com</a></li>
 <li>Dave Beckett's Resource Description Framework Resource Guide: <a href="http://www.ilrt.bristol.ac.uk/discovery/rdf/resources/">www.ilrt.bristol.ac.uk/discovery/rdf/resources/</a></li>
 <li>Mark Pilgrim and Sam Ruby's RSS Validator: <a href="http://feeds.archive.org/validator/">feeds.archive.org/validator/</a></li>
-<li><tt>brian d foy</tt> has an interesting, article in The Perl Review: <a href="http://www.theperlreview.com/Issues/v0i6.shtml">www.theperlreview.com/Issues/v0i6.shtml</a></a>
+<li><tt>brian d foy</tt> has an interesting, article in The Perl Review: <a href="http://www.theperlreview.com/Issues/v0i6.shtml">www.theperlreview.com/Issues/v0i6.shtml</a></li>
+<li>Mark Pilgrim has a nice introduction to RSS on XML.com (alas Python code examples): <a href="http://www.xml.com/lpt/a/2002/12/18/dive-into-xml.html">www.xml.com/lpt/a/2002/12/18/dive-into-xml.html</a></li>
+<li>Bob DuCharme wrote a simple introduction to using XSLT with RSS on XML.com: <a href="http://www.xml.com/lpt/a/2003/01/02/tr.html">Never Mind the Namespaces: An XSLT RSS Client</a></li>
 </ul>
 
 <h2>Some Example RSS Feeds</h2>
 
 <ul>
-<li><a href="http://www.itn.co.uk/itn.rdf">www.itn.co.uk/itn.rdf</a></li>
+<li><a href="http://www.bbc.co.uk/syndication/feeds/news/ukfs_news/front_page/rss091.xml">www.bbc.co.uk/syndication/feeds/news/ukfs_news/front_page/rss091.xml</a></li>
+<li><a href="http://www.guardian.co.uk/rss/">www.guardian.co.uk/rss/</a></li>
 <li><a href="http://freshmeat.net/backend/fm.rdf">freshmeat.net/backend/fm.rdf</a></li>
 <li><a href="http://slashdot.org/slashdot.rdf">slashdot.org/slashdot.rdf</a></li>
 <li><a href="http://www.oreillynet.com/meerkat/?_fl=rss10">www.oreillynet.com/meerkat/?_fl=rss10</a></li>
@@ -107,7 +117,7 @@ code, and the API may change somewhat in the near future.</p>
 
 <div id="footnote">
 	<div style="text-aign: right; float: right;"><a href="http://www.w3.org/RDF/" title="RDF Resource Description Framework"><img src="./rdf_powered_button.32.gif" alt="RDF Resource Description Framework Powered Icon" /></a></div>
-	<p>Copyright iredale Consulting 2002</p>
+	<p>Copyright iredale Consulting 2002-2003</p>
 </div>
 </body>
 </html>

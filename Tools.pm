@@ -1,8 +1,8 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.07 "BETA"
-# November 2002
+# Version 0.08 "BETA"
+# January 2003
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
 #
@@ -20,16 +20,14 @@ use warnings;					# Naturally
 use warnings::register;			# So users can "use warnings 'XML::RSS::Tools'"
 use Carp;						# We're a nice module
 
-use diagnostics;				# Will eventually be removed
-
 use XML::RSS;					# Handle the RSS/RDF files
-use XML::LibXML;				# Hand the XML file for XSL-T
-use XML::LibXSLT;				# Hand the XSL file and do the XSL-T
+use XML::LibXML;				# Hand the XML file for XSLT
+use XML::LibXSLT;				# Hand the XSL file and do the XSLT
 use URI;						# Deal with URIs nicely
 
 require Exporter;
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 our @ISA = qw(Exporter);
 
 #
@@ -43,7 +41,7 @@ sub new {
 		_rss_version	=>	$args{version} || 0.91,				# We convert all feeds to this version
 		_debug			=>  $args{debug} || 0,					# Debug flag
 		_xml_string	 	=>  "",									# Where we hold the input RSS/RDF
-		_xsl_string     =>  "",									# Where we hold the XSL-Template
+		_xsl_string     =>  "",									# Where we hold the XSL Template
 		_output_string  =>  "",									# Where the output string goes
 		_transformed    =>  0,									# Flag for transformation
 		_auto_wash      =>  $args{auto_wash} || 1,				# Flag for auto_washing input RSS/RDF
@@ -61,9 +59,8 @@ sub new {
 #
 sub as_string {
 	my $self = shift;
-	my $mode = shift;
+	my $mode = shift || '';
 
-	$mode ||= '';
 	if ($mode) {
 		if ($mode =~ /rss/i) {
 			warn "No RSS File to output" if ! $self->{_rss_string} && $self->{_debug};
@@ -133,8 +130,18 @@ sub get_version {
 sub set_version {
 	my $self    = shift;
 	my $version = shift;
-	$self->{_rss_version} = $version if defined $version;
-	return $self->{_rss_version};
+
+	return $self->_raise_error("No RSS version supplied")
+		unless defined $version;
+	return $self->_raise_error("No such version of RSS $version")
+		unless (grep {/$version/} qw(0 0.9 0.91 0.92 0.93 0.94 1.0 2.0));
+	
+	$self->{_rss_version} = $version;
+	if ($version) {
+		return $self->{_rss_version};
+	} else {
+		return "0.0";
+	}
 }
 
 
@@ -253,7 +260,7 @@ sub xsl_string {
 sub transform {
 	my $self = shift;
 
-	croak "No XSL-T loaded" unless $self->{_xsl_string};
+	croak "No XSLT loaded" unless $self->{_xsl_string};
 	croak "No RSS loaded" unless $self->{_rss_string};
 	croak "Can't transform twice without a change" if $self->{_transformed};
 	
@@ -289,14 +296,15 @@ sub _parse_rss_string {
 
 	$xml = _wash_xml($xml) if $self->{_auto_wash};
 
-	my $rss  = XML::RSS->new;
-	$rss->parse($xml);
-	if ($rss->{version} != $self->{_rss_version}) {
-		$rss->{output} = $self->{_rss_version};
-		$xml = $rss->as_string;
-		$xml = _wash_xml($xml) if $self->{_auto_wash};
+	if ($self->{_rss_version}) {							# Only normalise if version is true
+		my $rss  = XML::RSS->new;
+		$rss->parse($xml);
+		if ($rss->{version} != $self->{_rss_version}) {
+			$rss->{output} = $self->{_rss_version};
+			$xml = $rss->as_string;
+			$xml = _wash_xml($xml) if $self->{_auto_wash};
+		}
 	}
-
 	$self->{_rss_string} = $xml;
 	return $self;
 }
@@ -326,6 +334,7 @@ sub _wash_xml {
 	$xml = _clean_entities($xml);
 	$xml =~ s/\s+/ /gs;
 	$xml =~ s/> />/g;
+	$xml =~ s/^.*(<\?xml)/$1/gs;		# Remove bogus content before <?xml start
 	return $xml
 }
 
@@ -591,31 +600,39 @@ or
 
 or
 
+  $rss_object->rss_uri('file:/my/file.rss');
+
+or
+
   $rss_object->rss_string($xml_file);
 
 All return true on success, false on failure. If an XML file was provided but was invalid
 XML the parser will fail fataly at this time. The input RSS feed will automatically be
-normalised to the prefered RSS version at this time. Chose your version before you load it.
+normalised to the prefered RSS version at this time. Chose your version before you load it!
 
-=head2 Source XSL-Template
+=head2 Source XSL Template
 
   $rss_object->xsl_file('/my/file.xsl');
 
 or
 
   $rss_object->xsl_uri('http://my.server.com/index.xsl');
+  
+or
 
+  $rss_object->xsl_uri('file:/my/file.xsl');
+  
 or
 
   $rss_object->xsl_string($xml_file);
 
-All return true on success, false on failure. The XSL-T file is not parsed or verified at this time.
+All return true on success, false on failure. The XSLT file is not parsed or verified at this time.
 
 =head2 Other Methods
 
   $rss_object->as_string;
 
-Returns the RSS file after it's been though the XSL-T process. Optionally you can pass this method
+Returns the RSS file after it's been though the XSLT process. Optionally you can pass this method
 one additional parameter to obtain the source RSS, XSL Tempate and any error message:
 
   $rss_object->as_string(xsl);
@@ -639,17 +656,19 @@ and
 
 These methods control the core RSS functionality. The get methods return the current setting, and
 set method sets the value. By default RSS version is set to 0.91, and auto_wash to true. All incoming
-RSS feeds are automatically converted to one RSS version. If auto_wash is true, then all RSS files
-are cleaned before RSS normaisation to replace known entities by their numeric value, and fix known
-invalid XML constructs.
+RSS feeds are automatically converted to one RSS version. If RSS version is set to 0 then normalisation
+is not performed. If auto_wash is true, then all RSS files are cleaned before RSS normaisation to replace
+known entities by their numeric value, and fix known invalid XML constructs.
 
 =head1 PREREQUISITES
 
-To function you must have at least C<XML::RSS> and C<URI> installed, and to be of any real use
+To function you must have C<URI> installed. If you plan to normalise your RSS before transforming you
+must also have C<XML::RSS> installed. To transform any RSS files to HTML you will also need to use
 C<XML::LibXSLT> and C<XML::LibXML>.
 
 Either C<HTTP::GHTTP> or C<LWP> will bring this module to full functionality. HTTP::GHTTP is much
-faster than LWP but not as widely available.
+faster than LWP and will be used by default, but is not as widely available. By default GHTTP will
+be used if it is available.
 
 =pod OSNAMES
 
@@ -660,6 +679,8 @@ Any OS able to run the core requirments.
 None by default.
 
 =head1 HISTORY
+
+0.08 Removed Diagnostics pragma. Minor changes. Documentatoin additions and corrections.
 
 0.07 POD corrections. More changes to HTML documentation. Now uses URI for URI processing.
 
@@ -685,13 +706,11 @@ needs the ability to accept rss/xsl files directly from file handles.
 Provide xmlcatalog exmaple so the the manual removal of DTDs can be taken
 out.
 
-Possibly re-write XML::RSS based on the LibXML parser, or fix it's output
-on the older XML::Parser core. Try and develop a more effective XML stream
-pre-parsing auto-wash function...
+Develop XSLT stlyesheets to render programatic XML::RSS normalisation unnessesary.
 
 =head2 Defects and Limitations
 
-If an RSS or XSL-T file is passed into LibXML and it contains references to
+If an RSS or XSLT file is passed into LibXML and it contains references to
 external files, such as a DTD or external entites, LibXML will automatically
 attempt to obtain the files, before performing the transformation. If the files
 refered to are on the public INTERNET, and you do not have a connection when this
@@ -723,11 +742,11 @@ Matts and more...
 
 =head1 SEE ALSO
 
-C<perl>, C<XML::RSS>, C<XML::LibXSLT>, C<XML::LibXML>, C<LWP> and C<HTTP::GHTTP>.
+C<perl>, C<XML::RSS>, C<XML::LibXSLT>, C<XML::LibXML>, C<URI>, C<LWP> and C<HTTP::GHTTP>.
 
 =head1 COPYRIGHT
 
-XML::RSS::Tools, Copyright iredale Consulting 2002
+XML::RSS::Tools, Copyright iredale Consulting 2002-2003
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
