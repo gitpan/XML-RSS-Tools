@@ -17,6 +17,7 @@ my $socket   = IO::Socket::INET->new(
 );
 
 my $uri;
+my $skip;
 if ($socket) {
 	close($socket);
 	$uri = "http://" . $r_host . "/";
@@ -26,41 +27,31 @@ if ($socket) {
 }  
 
 if ($uri) {
-
 	my $rss = XML::RSS::Tools->new;
 	ok($rss);
 #	$rss->set_http_proxy(proxy_server => "http://marmot:3128/");		# HTTP PROXY TEST
 	
 	eval { require HTTP::GHTTP };
-	if ($@) {
-		skip("HTTP::GHTTP isn't installed");
-		skip("HTTP::GHTTP isn't installed");
-	} else {
-		ok($rss->set_http_client('ghttp'));
-		ok($rss->xsl_uri($uri));
-	}
+	$skip = "HTTP::GHTTP isn't installed" if $@;
+	skip($skip, $rss->set_http_client('ghttp'));
+	skip($skip, $rss->xsl_uri($uri));
+	undef $skip;
 
 	eval { require HTTP::Lite };
-	if ($@) {
-		skip("HTTP::Lite isn't installed");
-		skip("HTTP::Lite isn't installed");
-	} else {
-		ok($rss->set_http_client('lite'));
-		ok($rss->xsl_uri($uri));
-	}
+	$skip = "HTTP::Lite isn't installed" if $@;
+	skip($skip, $rss->set_http_client('lite'));
+	skip($skip, $rss->xsl_uri($uri));
+	undef $skip;
 
 	eval { require LWP };
-	if ($@) {
-		skip("LWP isn't installed");
-		skip("LWP isn't installed");
-	} else {
-		ok($rss->set_http_client('lwp'));
-		ok($rss->xsl_uri($uri));
-	}
+	$skip = "LWP isn't installed" if $@;
+	skip($skip, $rss->set_http_client('lwp'));
+	skip($skip, $rss->xsl_uri($uri));
+	undef $skip;
 
 } else {
 	for (1..7) {
-		skip("Unable to locate a HTTP Server to test HTTP clients.");
+		skip("Unable to locate a HTTP Server to test HTTP clients.", 1);
 	};
 }
 

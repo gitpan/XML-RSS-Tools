@@ -7,7 +7,7 @@ use Sys::Hostname;
 # the contents of the Makefile that is written.
 
 my @tests;
-my $test_list  = 't/use.t t/basic-tests.t t/standard-tests.t t/version-tests.t t/filehandle-tests.t t/error-tests.t t/catalog-tests.t';
+my $test_list  = 't/use.t t/basic-tests.t t/standard-tests.t t/version-tests.t t/filehandle-tests.t t/error-tests.t';
 my $ghttp;
 my $lite;
 
@@ -28,6 +28,7 @@ eval { require HTTP::Lite; };
 if ($@) {
 	print "\nYou don't have HTTP::Lite installed either.\nIt's also not a requirment, but it's faster\nthan LWP.\n" unless $ghttp;
 } else {
+	$lite++;
 	if ($ghttp) {
 		print "You have HTTP::Lite installed too.\n";
 	} else {
@@ -43,6 +44,17 @@ if ($@) {
 		print "You have LWP installed too.\n";
 	} else {
 		print "\nBut at least you have LWP installed.\n";
+	}
+}
+
+eval { require XML::LibXML };
+if ($@) {
+	print "\nYou don't have XML::LibXML installed!\n";
+} else {
+	if ($XML::LibXML::VERSION < 1.53) {
+		print "Your version of LibXML is too old to support XML Catalog.\n";
+	} else {
+		$test_list .= " t/catalog-tests.t";
 	}
 }
 

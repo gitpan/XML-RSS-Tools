@@ -384,7 +384,7 @@ Dr A. J. Trickett (atrickett AT cpan DOT org)
 =item 1
 
 This article http://www.theperlreview.com/Articles/v0i7/xslt.pdf first appeared in http://www.theperlreview.com/
-in January 2003. This version will be continually updated as appropriate. Revision 4.1, June 2003.
+in January 2003. This version will be continually updated as appropriate. Revision 4.2, January 2004.
 
 =item 2
 

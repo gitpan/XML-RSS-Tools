@@ -26,4 +26,3 @@ t/rss-0.91.dtd
 t/test-0.91.rdf
 t/catalog-tests.t
 t/http-tests.t
-META.yml                                Module meta-data (added by MakeMaker)

@@ -2,7 +2,7 @@
 #
 # XML::RSS::Tools
 # Version 0.13
-# September 2003
+# January 2004
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
 #
@@ -25,9 +25,9 @@ use XML::RSS;					# Handle the RSS/RDF files
 use XML::LibXML;				# Hand the XML file for XSLT
 use XML::LibXSLT;				# Hand the XSL file and do the XSLT
 use URI;						# Deal with URIs nicely
-use FileHandle;					# Alow the use of File Handle Objects
+use FileHandle;					# Allow the use of File Handle Objects
 
-our $VERSION = '0.13_5';
+our $VERSION = '0.13_6';
 
 #
 #	Tools Constructor
@@ -774,7 +774,7 @@ The module will die if it's created with invalid parameters.
   $rss_object->rss_fh($file_handle);
 
 All return true on success, false on failure. If an XML file was provided but was invalid
-XML the parser will fail fataly at this time. The input RSS feed will automatically be
+XML the parser will fail fatally at this time. The input RSS feed will automatically be
 normalised to the preferred RSS version at this time. Chose your version before you load it!
 
 =head2 Source XSL Template
@@ -869,7 +869,7 @@ load, and it's not exactly fast. It is however far more common, and is the most 
 =back
 
 If set to auto the module will first try C<HTTP::GHTTP> then C<HTTP::Lite> then C<LWP>, to
-retrieve files on the internet. Though C<GHTTP> is much faster than C<LWP> it is far less common and
+retrieve files on the Internet. Though C<GHTTP> is much faster than C<LWP> it is far less common and
 doesn't work reliably on Windows Apache 1.3.x/mod_Perl, so this method allows you to specify which
 client to use if you wish to.
 
@@ -896,13 +896,16 @@ which returns the proxy and BASIC authentication details as a single URI.
 
 =head2 XML Catalog
 
-To speed up large scale XML processing it is advised to create an XML Catalog (I<sic>) so that the XML parser
-does not have to make slow and expensive requests to files on the Internet. The catalogue contains details
-of the DTD and external entities so that they can be retrieved from the local file system quicker and at
-lower load that from the Internet. If XML processing is being carried out on a system not connected to
-the Internet, the libxml2 parser will still attempt to connect to the Internet which will add a delay of
-about 60 seconds per XML file. If a catalogue is created then the process will be much quicker as
-the libxml2 parser will use the local information stored in the catalogue.
+To speed up large scale XML processing it is advised to create an XML Catalog
+(I<sic>) so that the XML parser does not have to make slow and expensive
+requests to files on the Internet. The catalogue contains details of the
+DTD and external entities so that they can be retrieved from the local file
+system quicker and at lower load that from the Internet. If XML processing
+is being carried out on a system not connected to the Internet, the libxml2
+parser will still attempt to connect to the Internet which will add a delay of
+about 60 seconds per XML file. If a catalogue is created then the process will
+be much quicker as the libxml2 parser will use the local information stored
+in the catalogue.
 
 	$rss_object->set_xml_catalog( $xml_catalog_file);
 
@@ -912,20 +915,26 @@ This will pass the specified file to the XML parsers to use as a local XML Catal
 
 This will return the file name of the XML Catalog in use.
 
-Depending upon how your core libxml2 library is compiled, you should also be able to use pre-configured
-XML Catalog files stored in your C</etc/xml/catalog>.
+Depending upon how your core libxml2 library is compiled, you should also be
+able to use pre-configured XML Catalog files stored in your C</etc/xml/catalog>.
+
+XML Catalog support was introduced in version 2.4.3 of libxml2, and significantly
+revised in version 2.4.7. Support for XML Catalog was introduced into version
+1.53 of the XML::LibXML module. Therefore for XML Catalog support your libxml2
+library should be version 2.4.3 or better and your XML::LibXML should be version
+1.5.3 or better.
 
 
 =head1 PREREQUISITES
 
-To function you must have C<URI> installed. If you plan to normalise your RSS before transforming you
-must also have C<XML::RSS> installed. To transform any RSS files to HTML you will also need to use
-C<XML::LibXSLT> and C<XML::LibXML>.
+To function you must have C<URI> installed. If you plan to normalise your RSS data
+before transforming you must also have C<XML::RSS> installed. To transform any RSS
+files to HTML you will also need to use C<XML::LibXSLT> and C<XML::LibXML>.
 
-One of C<HTTP::GHTTP>, C<HTTP::Lite> or C<LWP> will bring this module to full functionality. GHTTP
-is much faster than LWP, but is it not as widely available as LWP. By default GHTTP will be used if
-it is available, then Lite, finally LWP. If you have two or more installed you may manually
-select which one you wish to use.
+One of C<HTTP::GHTTP>, C<HTTP::Lite> or C<LWP> will bring this module to full
+functionality. GHTTP is much faster than LWP, but is it not as widely available as
+LWP. By default GHTTP will be used if it is available, then Lite, finally LWP.
+If you have two or more installed you may manually select which one you wish to use.
 
 =pod OSNAMES
 
@@ -985,7 +994,7 @@ Mark Pilgrim estimates that about 10% of RSS feeds have defective XML.
 
 XML::RSS Limitations
 
-XML::RSS upto and including version 0.96 has a number of defects. As of October
+XML::RSS up-to and including version 0.96 has a number of defects. As of October
 2002 brian d foy has taken over the module, and it is again under active
 development on http://perl-rss.sourceforge.net/. Since the 1.xx family
 have been release most problems have been fixed, please upgrade if you can.
@@ -995,7 +1004,7 @@ have been release most problems have been fixed, please upgrade if you can.
 Perl and Unicode
 
 Perl pre 5.7.x is not able to handle Unicode properly, strange things happen...
-Things should get better as 5.8.0 is now available.
+Things should get better as 5.8.x is now available.
 
 =back
 
@@ -1015,22 +1024,27 @@ Possibly support C<HTTP::MHTTP> module, it seems to be even faster than GHTTP.
 
 Fully test with Perl 5.8.x - some partial testing has taken place.
 
+=item *
+
+Import Proxy settings from environment.
+
 =back
 
 =head1 AUTHOR
 
 Adam Trickett, E<lt>atrickett@cpan.orgE<gt>
 
-This module contains the direct and indirect input of a number of friendly Perl Hackers on
-Perlmonks/use.perl: Ovid; Matts; Merlyn; hfb and more...
+This module contains the direct and indirect input of a number of friendly Perl
+Hackers on Perlmonks/use.perl: Ovid; Matts; Merlyn; hfb and more...
 
 =head1 SEE ALSO
 
-L<perl>, L<XML::RSS>, L<XML::LibXSLT>, L<XML::LibXML>, L<URI>, L<LWP>, L<HTTP::Lite>, L<HTTP::GHTTP>.
+L<perl>, L<XML::RSS>, L<XML::LibXSLT>, L<XML::LibXML>, L<URI>, L<LWP>,
+L<HTTP::Lite>, L<HTTP::GHTTP>.
 
 =head1 COPYRIGHT
 
-XML::RSS::Tools, Copyright iredale Consulting 2002-2003
+XML::RSS::Tools, Copyright iredale Consulting 2002-2004
 
 OSI Certified Open Source Software
 

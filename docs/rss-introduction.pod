@@ -174,10 +174,6 @@ http://www.bbc.co.uk/syndication/feeds/news/ukfs_news/front_page/rss091.xml
 
 =item *
 
-http://www.guardian.co.uk/rss/
-
-=item *
-
 http://freshmeat.net/backend/fm.rdf
 
 =item *
