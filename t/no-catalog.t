@@ -1,6 +1,5 @@
 #!/usr/bin/env perl -w
-
-#########################
+#   $Id: no-catalog.t,v 1.2 2004/02/14 16:34:23 adam Exp $
 
 use Test;
 use strict;

@@ -1,6 +1,7 @@
 #!/usr/bin/env perl -w
-# Before `make install' is performed this script should be runnable with
-# `make test'. After `make install' it should work as `perl test.pl'
+#   $Id: basic-tests.t,v 1.2 2004/02/14 16:34:23 adam Exp $
+#	Before `make install' is performed this script should be runnable with
+#	`make test'. After `make install' it should work as `perl test.pl'
 
 #########################
 
@@ -14,7 +15,7 @@ use XML::RSS::Tools;
 ok(1); # If we made it this far, we're ok.
 
 #########################
-ok($XML::RSS::Tools::VERSION eq "0.13_7");
+ok($XML::RSS::Tools::VERSION eq "0.13");
 
 my $rss_object = XML::RSS::Tools->new;
 

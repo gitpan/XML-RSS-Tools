@@ -1,10 +1,12 @@
+#   $Id: CHANGES,v 1.2 2004/02/14 16:34:23 adam Exp $
+
 Revision history for Perl extension XML::RSS::Tools.
 
-0.13  Xxx xx January 2004
-	- Implment HTTP Proxy support - no tests yet
-	- Suplementary documentation converted from HTML to POD
+0.13  Sun 28 March 2004
+	- Implement HTTP Proxy support - no tests yet
+	- Supplementary documentation converted from HTML to POD
 	- Minor code and test additions/changes
-	- Layout of files revised, inital attempt to make package Module::Build compatible
+	- Layout of files revised, initial attempt to make package Module::Build compatible - still not complete
 
 0.12  Thu 12 June 2003
 	- Lots of fixes to the build & test process
@@ -14,11 +16,11 @@ Revision history for Perl extension XML::RSS::Tools.
 	- NO changes to the actual module
 
 0.11  Wed 11 June 2003
-	- POD Improvments
+	- POD Improvements
 	- Corrections to included RSS feed
 	- Example 5 added
-	- Documentation improvments, print stylesheet added for easier printing
-	- Fix & changes to Makefile.PL, should auto detect a HTTP server for tesing purposes
+	- Documentation improvements, print style-sheet added for easier printing
+	- Fix & changes to Makefile.PL, should auto detect a HTTP server for testing purposes
 	- Tests overhauled and cleaned up
 	- Defect in xsl_uri subroutine detected and corrected
 
@@ -34,7 +36,7 @@ Revision history for Perl extension XML::RSS::Tools.
 	- Tested with latest XML::RSS Versions 0.98 and 1.02
 	- Changes and additions to documentation and HTML
 	- Warning message in Makefile.PL removed now that XML::RSS has moved out of beta
-	- Bump versions of dependants up in Makefile.PL
+	- Bump versions of dependents up in Makefile.PL
 	- Experimental support for FileHandle objects, internally and from an external call
 	- More tests, including a POD test
 

@@ -1,3 +1,5 @@
+#   $Id: rss-introduction.pod,v 1.2 2004/02/14 16:34:23 adam Exp $
+
 =head1 NAME
 
 Introduction - A Simple Introduction To RSS

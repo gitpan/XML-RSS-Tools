@@ -2,7 +2,8 @@
 #
 # XML::RSS::Tools
 # Version 0.13
-# January 2004
+# $Id: Tools.pm,v 1.2 2004/02/14 16:34:23 adam Exp $
+# March 2004
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
 #
@@ -27,7 +28,7 @@ use XML::LibXSLT;				# Hand the XSL file and do the XSLT
 use URI;						# Deal with URIs nicely
 use FileHandle;					# Allow the use of File Handle Objects
 
-our $VERSION = '0.13_7';
+our $VERSION = '0.13';
 
 #
 #	Tools Constructor
@@ -958,8 +959,6 @@ None.
 
 0.11 POD and doc corrections. Minor bug fixes.
 
-0.10 Initial XML Catalog support. HTTP client selection.
-
 ...
 
 0.01 Initial Build. Shown to the public on PerlMonks May 2002, for feedback.
@@ -1025,6 +1024,14 @@ Debug mode doesn't actually do much yet.
 =item *
 
 Support Piers Harding's C<HTTP::MHTTP> module, it seems to be even faster than GHTTP.
+
+=item *
+
+Support HTTP::CURL, it's very fast, and GHTTP is depracated.
+
+=item *
+
+Investigae supporting Atom feeds.
 
 =item *
 

@@ -1,3 +1,5 @@
+#	$Id: Makefile.PL,v 1.2 2004/02/14 16:34:23 adam Exp $
+
 use ExtUtils::MakeMaker;
 use strict;
 use 5.006;

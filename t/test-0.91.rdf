@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- $Id: test-0.91.rdf,v 1.2 2004/02/14 16:34:23 adam Exp $ -->
 <!DOCTYPE rss SYSTEM "http://my.netscape.com/publish/formats/rss-0.91.dtd">
 <rss version="0.91">
   <channel>

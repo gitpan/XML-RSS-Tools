@@ -1,4 +1,5 @@
 #!/usr/bin/env perl -w
+#   $Id: pod-test.t,v 1.2 2004/02/14 16:34:23 adam Exp $
 
 use strict;
 use Test::Pod;

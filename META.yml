@@ -1,0 +1,21 @@
+--- #YAML:1.0
+name: XML-RSS-Tools
+version: 0.13
+license: gpl
+distribution_type: module
+requires:
+  LWP: 5.6
+  URI: 1.21
+  XML::LibXML: 1.5
+  XML::LibXSLT: 1.5
+  XML::RSS: 1
+  perl: 5.6.1
+recommends:
+  HTTP::GHTTP: 1
+  HTTP::Lite: 2.1
+build_requires: {}
+conflicts: {}
+provides:
+  XML::RSS::Tools:
+    file: Tools.pm
+    version: 0.13

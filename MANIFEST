@@ -2,6 +2,7 @@ CHANGES
 Makefile.PL
 MANIFEST
 README
+META.yml
 lib/XML/RSS/Tools.pm
 docs/rss-introduction.pod
 docs/example-1.pod

@@ -1,3 +1,5 @@
+#   $Id: example-2.pod,v 1.2 2004/02/14 16:34:23 adam Exp $
+
 =head1 NAME
 
 Example-2 - A Longer example
