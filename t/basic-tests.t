@@ -14,7 +14,7 @@ use XML::RSS::Tools;
 ok(1); # If we made it this far, we're ok.
 
 #########################
-ok($XML::RSS::Tools::VERSION eq "0.13_1");
+ok($XML::RSS::Tools::VERSION eq "0.13_2");
 
 my $rss_object = XML::RSS::Tools->new;
 
