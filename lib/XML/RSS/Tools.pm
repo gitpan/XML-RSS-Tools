@@ -27,7 +27,7 @@ use XML::LibXSLT;				# Hand the XSL file and do the XSLT
 use URI;						# Deal with URIs nicely
 use FileHandle;					# Allow the use of File Handle Objects
 
-our $VERSION = '0.13_6';
+our $VERSION = '0.13_7';
 
 #
 #	Tools Constructor
@@ -65,6 +65,7 @@ sub new {
 	}
 
 	if ($args{xml_catalog}) {
+		croak "XML Catalog Spport not enabled in your version of XML::LibXML" unless $XML::LibXML::VERSION > 1.52;
 		croak "Unable to read XML catalog $args{xml_catalog}" unless set_xml_catalog($object, $args{xml_catalog});
 	}
 
@@ -234,6 +235,9 @@ sub get_xml_catalog {
 sub set_xml_catalog {
 	my $self = shift;
 	my $catalog_file = shift;
+
+	croak "XML Catalog Spport not enabled in your version of XML::LibXML" unless $XML::LibXML::VERSION > 1.52;	
+
 	if ($self->_check_file($catalog_file)) {
 		$self->{_xml_catalog} = $catalog_file;
 		return $self;
@@ -910,6 +914,8 @@ in the catalogue.
 	$rss_object->set_xml_catalog( $xml_catalog_file);
 
 This will pass the specified file to the XML parsers to use as a local XML Catalog.
+If your version of XML::LibXML does not support XML Catalogs it will die if you
+attempt to use this method (see below).
 
 	$rss_object->get_xml_catalog;
 
@@ -1018,7 +1024,7 @@ Debug mode doesn't actually do much yet.
 
 =item *
 
-Possibly support C<HTTP::MHTTP> module, it seems to be even faster than GHTTP.
+Support Piers Harding's C<HTTP::MHTTP> module, it seems to be even faster than GHTTP.
 
 =item *
 
@@ -1065,4 +1071,3 @@ this program; if not, write to the Free Software Foundation, Inc.,
 This module is dedicated to my beloved mother who believed in me, even when I didn't.
 
 =cut
-

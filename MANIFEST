@@ -2,7 +2,7 @@ CHANGES
 Makefile.PL
 MANIFEST
 README
-Tools.pm
+lib/XML/RSS/Tools.pm
 docs/rss-introduction.pod
 docs/example-1.pod
 docs/example-2.pod
@@ -17,12 +17,13 @@ t/standard-tests.t
 t/version-tests.t
 t/filehandle-tests.t
 t/error-tests.t
+t/catalog-tests.t
+t/no-catalog.t
+t/http-tests.t
+t/pod-test.t
 t/test.rdf
 t/test.xsl
 t/empty-file
-t/pod-test.t
 t/catalog.xml
 t/rss-0.91.dtd
 t/test-0.91.rdf
-t/catalog-tests.t
-t/http-tests.t

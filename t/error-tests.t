@@ -8,7 +8,7 @@ use Test;
 use strict;
 use warnings;
 
-BEGIN { plan tests => 44 };
+BEGIN { plan tests => 43 };
 
 use XML::RSS::Tools;
 ok(1); # If we made it this far, we're ok.
@@ -152,10 +152,6 @@ ok($@ =~ /Not configured for HTTP Client Internet Explorer/);
 #	43	Test a duff constructor, bad RSS Version
 eval { $rss_object = XML::RSS::Tools->new(version => 51); };
 ok($@ =~ /No such version of RSS 51/);
-
-#	44	Test a duff constructor, bad RSS Version
-eval { $rss_object = XML::RSS::Tools->new(xml_catalog => "duff"); };
-ok($@ =~ /Unable to read XML catalog duff/);
 
 exit;
 

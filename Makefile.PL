@@ -3,9 +3,6 @@ use strict;
 use 5.006;
 use Sys::Hostname;
 
-# See lib/ExtUtils/MakeMaker.pm for details of how to influence
-# the contents of the Makefile that is written.
-
 my @tests;
 my $test_list  = 't/use.t t/basic-tests.t t/standard-tests.t t/version-tests.t t/filehandle-tests.t t/error-tests.t';
 my $ghttp;
@@ -53,6 +50,7 @@ if ($@) {
 } else {
 	if ($XML::LibXML::VERSION < 1.53) {
 		print "Your version of LibXML is too old to support XML Catalog.\n";
+		$test_list .= " t/no-catalog.t";
 	} else {
 		$test_list .= " t/catalog-tests.t";
 	}
@@ -83,7 +81,7 @@ if ($s) {
 push @tests, test => { TESTS => $test_list};
 WriteMakefile(
     'NAME'		=> 'XML::RSS::Tools',
-    'VERSION_FROM'	   => 'Tools.pm', 
+    'VERSION_FROM'	   => 'lib/XML/RSS/Tools.pm', 
     'PREREQ_PM'		   => {
     	URI            => 1.21,
     	'XML::LibXSLT' => 1.5,
@@ -97,8 +95,8 @@ WriteMakefile(
        SUFFIX        => 'gz'
        }, 
     ($] >= 5.005 ?    
-      (ABSTRACT_FROM => 'Tools.pm', 
-       AUTHOR        => 'Dr A. J. Trickett <adam@iredale.net>') : ()),
+      (ABSTRACT_FROM => 'lib/XML/RSS/Tools.pm', 
+       AUTHOR        => 'Dr A. J. Trickett <adam@cpan.org>') : ()),
 
 );
 

@@ -8,19 +8,19 @@ use Test;
 use strict;
 use warnings;
 
-BEGIN { plan tests => 7 };
+BEGIN { plan tests => 9 };
 
 use XML::RSS::Tools;
 ok(1); # If we made it this far, we're ok.
 
 #########################
 
-my $test_no = 2;
-
 my $rss_object = XML::RSS::Tools->new;
-
 $rss_object->set_version(0);
 $rss_object->set_auto_wash(0);
+
+ok(! $rss_object->set_xml_catalog('duff'));
+ok($rss_object->as_string("error"), 'File error: Cannot find duff');
 
 eval { $rss_object->set_xml_catalog('./t/catalog.xml'); };
 ok(!($@));
