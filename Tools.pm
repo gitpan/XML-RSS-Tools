@@ -1,7 +1,7 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.03 "ALPHA"
+# Version 0.04 "ALPHA"
 # May 2002
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
@@ -28,7 +28,7 @@ use HTML::Entities;				# Try and fix entities
 
 require Exporter;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 our @ISA = qw(Exporter);
 
 #{
@@ -504,9 +504,11 @@ invalid XML constructs.
 
 =head1 PREREQUISITES
 
-To function you must have at least C<XML::RSS> installed, and to be of any real use C<XML::LibXSLT> and C<XML::LibXML>. To clean up dirty HTML, C<HTML::Entities> is required.
+To function you must have at least C<XML::RSS> installed, and to be of any real use C<XML::LibXSLT>
+and C<XML::LibXML>. To clean up dirty HTML, C<HTML::Entities> is required.
 
-Either C<HTTP::GHTTP> or C<LWP> will bring this module to full functionality. HTTP::GHTTP is much faster than LWP but not as widely available.
+Either C<HTTP::GHTTP> or C<LWP> will bring this module to full functionality. HTTP::GHTTP is much
+faster than LWP but not as widely available.
 
 =pod OSNAMES
 
@@ -518,6 +520,8 @@ None by default.
 
 =head1 HISTORY
 
+0.04 Removed un-used test files, other minor changes. Defect in Test script corrected, tested module on Linux.
+
 0.03 Minor code cheanges and defect corrections. Example script included.
 
 0.02 Some code changes, POD expanded, and test suite more developed.
@@ -528,6 +532,13 @@ None by default.
 
 This module needs expanded testing, and beta testing in the wild. It also
 needs the ability to accept rss/xsl files directly from file handles.
+
+The URI handler needs to redirect "file:" requests to the file processor
+rather than the HTTP tool. In theory I could remove the xxx_file method
+all together if we treat all files as URIs.
+
+Provide xmlcatalog exmaple so the the manual removal of DTDs can be taken
+out.
 
 =head2 Defects and Limitations
 
@@ -560,11 +571,17 @@ C<perl>, C<XML::RSS>, C<XML::LibXSLT>, C<XML::LibXML>, C<LWP> and C<HTTP::GHTTP>
 
 XML::RSS::Tools, Copyright iredale Consulting 2002
 
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details. 
 
-You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111, USA.
+You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc.,
+59 Temple Place - Suite 330, Boston, MA  02111, USA.
 
 =cut
 

@@ -3,8 +3,8 @@ Makefile.PL
 MANIFEST
 README
 test.pl
-example.pl
+example
 Tools.pm
 test.rdf
 test.xsl
-rss-intro
+rss-intro.html

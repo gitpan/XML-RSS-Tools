@@ -6,7 +6,7 @@
 # change 'tests => 1' to 'tests => last_test_to_print';
 
 use Test;
-use Strict;
+use strict;
 use warnings;
 
 BEGIN { plan tests => 11 };

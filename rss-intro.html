@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
+	   "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Simple Introduction into RSS</title>
+<style type="text/css">
+<!--
+body     {margin: 40px; color: black; background-color: white; font-size: 12px;}
+h1,h2,h3 {font-face: verdana, arial, sans-serif; color: navy;}
+h1, h2   {font-variant: small-caps;}
+p        {text-align: justify; text-indent: 40px}
+a        {text-decoration: none;}
+a:hover  {color: yellow; background-color: green;}
+hr       {color: green; background-color: green;}
+-->
+</style>
+</head>
+<body>
+
+<hr />
+<h1>Simple Introduction Into RSS</h1>
+<hr />
+
+<h2>RSS/RDF</h2>
+
+<p>Rich Site Summary/Resource Description Framework technology is a
+simple method of a site describing what it has, so that another
+site can summarise the content, and provide links back to the
+original content.</p>
+
+<p>RSS was pioneered by <a href="http://my.netscape.com/publish/formats/rss-spec-0.91.html">Netscape Communications</a> for their my.netscape portal, and adopted quickly
+by many others, notably <a href="http://backend.userland.com/rss092">userland.com</a>.</p>
+
+<h2>XML</h2>
+
+<p>A simple <a href="http://www.w3.org/XML/">XML</a> file is produced by the site
+originating the articles. This file easily obtainable by HTTP is downloaded, and
+parsed by the client, allowing the client to present the site summary in a way
+that suits the client. XML provides a simple human readable format
+that is easy to generate and read, using typical web tools.</p>
+
+<h2>Principle</h2>
+
+<p>The module came from a simple idea, gather RSS feeds, convert them into
+HTML fragments and then template them into a web page on a local web
+server.</p>
+
+<h3>Downloading RSS files</h3>
+
+<p>Originally I used <a href="http://www.gnu.org/software/wget/wget.html">wget</a>,
+to pull files down from their server. Other tools to do this include
+<a href="http://curl.haxx.se/">cURL</a> and any web browser. I cached the RSS feeds 
+on my web server's disk space to reduce unnecessary donwloading.</p>
+
+<h3>RSS Normalisation</h3>
+
+<p>RSS feeds come in several incompatible formats. To make conversion to HTML
+simple I opted to convert all RSS feeds to RSS version 0.91 as this is very
+simple to convert to HTML via <a href="http://www.w3.org/Style/XSL/">XSL-Templating</a>.</p>
+
+<h3>RSS Conversion</h3>
+
+<p>Most online examples of RSS use the <a href="http://search.cpan.org/search?dist=XML-RSS">XML::RSS</a>  module to programmatically convert the feed into HTML, either directly or via using one of the
+many quality HTML templating tools. This I felt was inefficient and so I opted to use "XML Style
+Sheet Language Transformation", which is industry standard and does not require programming.
+There are several XSL-T engines available: <a href="http://saxon.sourceforge.net/">Saxon</a>,
+<a href="http://xml.apache.org/">Xalan</a>, MSXML, and <a href="http://www.gingerall.com/charlie/ga/xml/p_sab.xml">Sablotron</a>, however the fastest and
+easiest one for Perl is Matt Sergeant's <a  href="http://search.cpan.org/search?dist=XML-LibXSLT">LibXSLT</a>.</p>
+
+<h3>Script to Module</h3>
+
+<p>After developing the script to do this I realised that much of the code could be
+converted into a module and distributed to the world. After a popular post to
+<a href="http://www.perlmonks.org/">Perlmonks</a>, I have moved the module up to ALPHA
+state, and it is currently in the process of moving up to <a href="http://www.cpan.org/">CPAN</a>.</p>
+
+<h2>Resources</h2>
+
+<ul>
+<li>Userland.com the home of key RSS developments: <a href="http://backend.userland.com/rss092">backend.userland.com</a></li>
+<li>SOAP CLient RSS to HTML online tool: <a href="http://soapclient.com/rss/rss.html">soapclient.com/rss/rss.html</a></li>
+<li>Netscape Communications: <a href="http://my.netscape.com/publish/formats/rss-spec-0.91.html">my.netscape.com/publish/formats/rss-spec-0.91.html</a></li>
+<li>W3C Standards body: <a href=" http://www.w3.org/RDF/">www.w3.org/RDF/</a></li>
+<li>Blogspace RSS FAQ: <a href="http://blogspace.com/rss/">blogspace.com/rss/</a></li>
+<li>RSS Versions: <a href="http://www.webreference.com/authoring/languages/xml/rss/1/8.html">www.webreference.com/authoring/languages/xml/rss/1.8.html</a></li>
+</ul>
+
+<h2>Some Example RSS Feeds</h2>
+
+<ul>
+<li><a href="http://www.itn.co.uk/itn.rdf">http://www.itn.co.uk/itn.rdf</a></li>
+<li><a href="http://freshmeat.net/backend/fm.rdf">http://freshmeat.net/backend/fm.rdf</a></li>
+<li><a href="http://slashdot.org/slashdot.rdf">http://slashdot.org/slashdot.rdf</a></li>
+<li><a href="http://www.oreillynet.com/meerkat/?_fl=rss10">http://www.oreillynet.com/meerkat/?_fl=rss10</a></li>
+<li><a href="http://www.theregister.co.uk/tonys/slashdot.rdf">http://www.theregister.co.uk/tonys/slashdot.rdf</a></li>
+<li><a href="http://rss.blogspace.com/bbcNews/world?">http://rss.blogspace.com/bbcNews/world?</a></li>
+<li><a href="http://www.sophos.com/virusinfo/infofeed/tenalerts.xml">http://www.sophos.com/virusinfo/infofeed/tenalerts.xml</a></li>
+</ul>
+<hr/>
+<small>Copyright iredale Consulting 2002</small>
+</body>
+</html>
