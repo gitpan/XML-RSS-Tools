@@ -67,7 +67,7 @@ limited purposes of simple display in a web browser.</p>
 &lt;xsl:template match="rss:channel"&gt;
 	&lt;xsl:variable name="link" select="rss:link"/&gt;
 	&lt;xsl:variable name="description" select="rss:description"/&gt;
-	&lt;xsl:variable name="image" select="rss:image/rss:url"/&gt;
+	&lt;xsl:variable name="image" select="/rdf:RDF/rss:image/rss:url"/&gt;
 	&lt;xsl:if test="$image"&gt;	
 		&lt;img src="{$image}" style="float: right; margin: 2px;" /&gt;
 	&lt;/xsl:if&gt;
@@ -78,7 +78,7 @@ limited purposes of simple display in a web browser.</p>
 &lt;xsl:template match="rss09:channel"&gt;
 	&lt;xsl:variable name="link" select="rss09:link"/&gt;
 	&lt;xsl:variable name="description" select="rss09:description"/&gt;
-	&lt;xsl:variable name="image" select="rss09:image/rss09:url"/&gt;
+	&lt;xsl:variable name="image" select="/rdf:RDF/rss09:image/rss09:url"/&gt;
 	&lt;xsl:if test="$image"&gt;	
 		&lt;img src="{$image}" style="float: right; margin: 2px;" /&gt;
 	&lt;/xsl:if&gt;

@@ -1,4 +1,4 @@
-XML/RSS/Tools version 0.09
+XML/RSS/Tools version 0.10
 ==========================
 
 RSS/RDF feeds are commonly available ways of distributing the latest news about a
@@ -21,6 +21,9 @@ To install this module type the following:
    make test
    make install
 
+It will install okay on Windows with ActiveState Perl without a compiler just
+use the free Microsoft nmake tool instead of make.
+
 DEPENDENCIES
 
 This module requires these other non-core modules for full functionality:
@@ -28,7 +31,7 @@ This module requires these other non-core modules for full functionality:
   XML::LibXSLT XML::LibXML
   XML::RSS
   URI
-  LWP or HTTP::GHTTP
+  LWP or HTTP::GHTTP or HTTP::Lite
 
 XML::RSS older versions than version 0.98 have a number of defects and
 limitations, please upgrade if possible.

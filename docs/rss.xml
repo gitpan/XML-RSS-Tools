@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+	<channel>
+		<title>XML::RSS::Tools</title>
+		<link>http://search.cpan.org/search?mode=module;n=5;query=XML::RSS::Tools</link>
+		<description>All about the Perl module XML::RSS::Tools.</description>
+		<language>en-GB</language>
+		<copyright>Copyright 2002-2003 iredale Consulting (A J Trickett)</copyright>
+		<docs>http://backend.userland.com/rss</docs>
+		<item>
+			<title>README</title>
+			<description>Standard Perl module README file, explains what is required and what it does. Start here if you can't think of where else to start.</description>
+			<link>../README</link>
+		</item>
+		<item>
+			<title>Introduction</title>
+			<description>Basic introduction to RSS and the XML::RSS::Tools module.</description>
+			<link>./rss-intro.html</link>
+		</item>
+		<item>
+			<title>Module POD</title>
+			<description>The POD for the module as pretty HTML. This explains how to use the module, and should be enough to get you going.</description>
+			<link>../Tools.pm</link>
+		</item>
+		<item>
+			<title>Example 1</title>
+			<description>This very simple example shows how to create a basic command line tool.</description>
+			<link>./example1.html</link>
+		</item>
+		<item>
+			<title>Example 2</title>
+			<description>This more complex example is designed to show a normal command line or CGI application.</description>
+			<link>./example1.html</link>
+		</item>
+		<item>
+			<title>Example 3</title>
+			<description>Another simple example shows how to create a basic command line tool.</description>
+			<link>./example1.html</link>
+		</item>
+		<item>
+			<title>Example 4</title>
+			<description>A more complex example, we turn off RSS normalisation, and use a single XSLT stylesheet to deal with all possible RSS feeds.</description>
+			<link>./example1.html</link>
+		</item>
+		<item>
+			<title>Processing RSS Files with XSLT</title>
+			<description>A "reprint" of an article first published in the Perl Review using this module.</description>
+			<link>./example1.html</link>
+		</item>
+		<item>
+			<title>MANIFEST</title>
+			<description>The module file manifest.</description>
+			<link>../MANIFEST</link>
+		</item>
+		<item>
+			<title>CHANGES</title>
+			<description>The Module change log, check this if upgrading.</description>
+			<link>../CHANGES</link>
+		</item>
+		</channel>
+	</rss> 

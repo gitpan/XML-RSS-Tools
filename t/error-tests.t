@@ -8,7 +8,7 @@ use Test;
 use strict;
 use warnings;
 
-BEGIN { plan tests => 37 };
+BEGIN { plan tests => 44 };
 
 use XML::RSS::Tools;
 ok(1); # If we made it this far, we're ok.
@@ -343,6 +343,80 @@ if ($error ne 'File error: ./t/empty-file is zero bytes long') {
 	undef $error;
 } else {
 	print "\nok ", $test_no++;
+}
+
+#	38	Does setting a duff HTTP client cause an error?
+
+if ($rss_object->set_http_client("Internet Explorer")) {
+	print "\nNOT ok ", $test_no++;
+} else{
+	print "\nok ", $test_no++;
+}
+
+#	39	Did we get the right error?
+
+$error = $rss_object->as_string('error');
+if ($error ne 'Not configured for HTTP Client Internet Explorer') {
+	dump_debug($error, $test_no);
+	print "\nNOT ok ", $test_no++;
+	undef $error;
+} else {
+	print "\nok ", $test_no++;
+}
+
+#	40	Does setting a null HTTP client cause an error?
+
+if ($rss_object->set_http_client()) {
+	print "\nNOT ok ", $test_no++;
+} else{
+	print "\nok ", $test_no++;
+}
+
+#	41	Did we get the right error?
+
+$error = $rss_object->as_string('error');
+if ($error ne 'No HTTP Client requested') {
+	dump_debug($error, $test_no);
+	print "\nNOT ok ", $test_no++;
+	undef $error;
+} else {
+	print "\nok ", $test_no++;
+}
+
+#	42	Test a duff constructor, bad HTTP client
+
+eval {
+	$rss_object = XML::RSS::Tools->new(http_client => "Internet Explorer");
+};
+
+if ($@ =~ /Not configured for HTTP Client Internet Explorer/) {
+	print "\nok ", $test_no++;
+} else {
+	print "\nNOT ok ", $test_no++;
+}
+
+#	43	Test a duff constructor, bad RSS Version
+
+eval {
+	$rss_object = XML::RSS::Tools->new(version => 51);
+};
+
+if ($@ =~ /No such version of RSS 51/) {
+	print "\nok ", $test_no++;
+} else {
+	print "\nNOT ok ", $test_no++;
+}
+
+#	44	Test a duff constructor, bad RSS Version
+
+eval {
+	$rss_object = XML::RSS::Tools->new(xml_catalog => "duff");
+};
+
+if ($@ =~ /Unable to read XML catalog duff/) {
+	print "\nok ", $test_no++;
+} else {
+	print "\nNOT ok ", $test_no++;
 }
 
 exit;

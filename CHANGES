@@ -1,5 +1,13 @@
 Revision history for Perl extension XML::RSS::Tools.
 
+0.10  Sat 04 May 2003
+	- Initial XML Catalog support, see www.oasis-open.org
+	- Added ability to select which HTTP client to use
+	- Added support for HTTP::Lite as a HTTP client
+	- Syntax tests on constructor added
+	- More tests
+	- Added an RSS feed of the documentation
+
 0.09  Fri 28 March 2003
 	- Tested with latest XML::RSS Versions 0.98 and 1.02
 	- Changes and additions to documentation and HTML

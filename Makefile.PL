@@ -9,9 +9,9 @@ eval {
 };
 
 if ($@) {
-	push @tests, test => { TESTS => 't/use.t t/basic-tests.t t/standard-tests.t t/version-tests.t t/filehandle-tests.t t/error-tests.t'};
+	push @tests, test => { TESTS => 't/use.t t/basic-tests.t t/standard-tests.t t/version-tests.t t/filehandle-tests.t t/error-tests.t t/catalog-tests.t'};
 } else {
-	push @tests, test => { TESTS => 't/use.t t/basic-tests.t t/standard-tests.t t/version-tests.t t/filehandle-tests.t t/error-tests.t t/pod-test.t'};
+	push @tests, test => { TESTS => 't/use.t t/basic-tests.t t/standard-tests.t t/version-tests.t t/filehandle-tests.t t/error-tests.t t/catalog-tests.t t/pod-test.t'};
 }
 
 WriteMakefile(

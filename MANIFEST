@@ -1,4 +1,4 @@
-Changes
+CHANGES
 Makefile.PL
 MANIFEST
 README
@@ -11,6 +11,7 @@ docs/example4.html
 docs/rss_with_xslt.html
 docs/rdf_powered_button.32.gif
 docs/style.css
+docs/rss.xml
 t/use.t
 t/basic-tests.t
 t/standard-tests.t
@@ -21,3 +22,7 @@ t/test.rdf
 t/test.xsl
 t/empty-file
 t/pod-test.t
+t/catalog.xml
+t/rss-0.91.dtd
+t/test-0.91.rdf
+t/catalog-tests.t

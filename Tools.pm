@@ -1,10 +1,12 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.09
-# March 2003
+# Version 0.10
+# May 2003
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
+#
+# OSI Certified Open Source Software
 #
 # --------------------------------------------------
 
@@ -27,7 +29,7 @@ use FileHandle;					# Alow the use of File Handle Objects
 
 require Exporter;
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 our @ISA = qw(Exporter);
 
 #
@@ -37,8 +39,9 @@ our @ISA = qw(Exporter);
 sub new {
 	my $class = shift;
 	my %args = @_;
-	bless {
-		_rss_version	=>	$args{version} || 0.91,				# We convert all feeds to this version
+
+	my $object = bless {
+		_rss_version	=>	0.91,								# We convert all feeds to this version
 		_debug			=>  $args{debug} || 0,					# Debug flag
 		_xml_string	 	=>  "",									# Where we hold the input RSS/RDF
 		_xsl_string     =>  "",									# Where we hold the XSL Template
@@ -48,9 +51,24 @@ sub new {
 		_error_message  =>  "",									# Error message
 		_uri_url        =>  "",									# URI URL
 		_uri_file       =>  "",									# URI File
-		_uri_scheme     =>  ""									# URI Scheme
+		_uri_scheme     =>  "",									# URI Scheme
+		_xml_catalog	=>	"",									# XML Catalog file
+		_http_client	=>	"auto"								# Which HTTP Client to use
 	}, ref($class) || $class;
 
+	if ($args{version}) {
+		croak "No such version of RSS $args{version}" unless set_version($object, $args{version});
+	}
+
+	if ($args{http_client}) {
+		croak "Not configured for HTTP Client $args{http_client}" unless set_http_client($object, $args{http_client});
+	}
+
+	if ($args{xml_catalog}) {
+		croak "Unable to read XML catalog $args{xml_catalog}" unless set_xml_catalog($object, $args{xml_catalog});
+	}
+
+	return $object;
 }
 
 
@@ -116,6 +134,32 @@ sub set_auto_wash {
 
 
 #
+#	Read the HTTP Client mode
+#
+sub get_http_client {
+	my $self = shift;
+	return $self->{_http_client};
+}
+
+
+#
+#	Set the auto_wash level
+#
+sub set_http_client {
+	my $self = shift;
+	my $client = shift;
+	
+	return $self->_raise_error("No HTTP Client requested")
+		unless defined $client;
+	return $self->_raise_error("Not configured for HTTP Client $client")
+		unless (grep {/$client/} qw(auto ghttp lwp lite));
+		
+	$self->{_http_client} = lc($client);
+	return $self->{_http_client};
+}
+
+
+#
 #	Get the RSS Version
 #
 sub get_version {
@@ -141,6 +185,30 @@ sub set_version {
 		return $self->{_rss_version};
 	} else {
 		return "0.0";
+	}
+}
+
+
+#
+#	Get XML Catalog File
+#
+sub get_xml_catalog {
+	my $self = shift;
+	return $self->{_xml_catalog};
+}
+
+
+#
+#	Set XML catalog file
+#
+sub set_xml_catalog {
+	my $self = shift;
+	my $catalog_file = shift;
+	if ($self->_check_file($catalog_file)) {
+		$self->{_xml_catalog} = $catalog_file;
+		return $self;
+	} else {
+		return undef;
 	}
 }
 
@@ -182,6 +250,7 @@ sub xsl_file {
 		return undef
 	}
 }
+
 
 #
 #	Load an RSS file from a FH, and call RSS conversion to standard RSS format
@@ -300,14 +369,15 @@ sub transform {
 	
 	my $xslt       = XML::LibXSLT->new;
 	my $xml_parser = XML::LibXML->new;
-	
+	if ($self->{_xml_catalog}) {
+		$xml_parser->load_catalog($self->{_xml_catalog});				# Load the catalogue
+	} else {
+		$xml_parser->expand_entities(0);								# Otherwise don't touch entities
+	}
 	$xml_parser->keep_blanks(0);
-	$xml_parser->expand_entities(0);
 	$xml_parser->validation(0);
 	$xml_parser->complete_attributes(0);
 	
-	$self->{_rss_string} =~ s/<!DOCTYPE.*?>//s;							# Evil hack to remove DTD
-
 	my $source_xml = $xml_parser->parse_string($self->{_rss_string});	# Parse the source XML
 	my $style_xsl  = $xml_parser->parse_string($self->{_xsl_string});	# and Template XSL files
 	my $stylesheet = $xslt->parse_stylesheet($style_xsl);				# Load the parsed XSL into XSLT
@@ -418,28 +488,54 @@ sub _http_get {
 	my $self= shift;
 	my $uri = shift;
 
-	eval {													# Try and use Gnome HTTP, it's faster
-		require HTTP::GHTTP;
-	};
-	if ($@) {												# Otherwise use LWP
- 		require LWP::UserAgent;
+	if ($self->{_http_client} eq "auto"){
+		my @modules = qw "HTTP::GHTTP HTTP::Lite LWP";
+
+		foreach my $module (@modules) {
+			eval "require $module";
+
+			if (! $@) {
+				$self->{_http_client} = lc($module);
+				$self->{_http_client} =~ s/.*:://;
+				last;
+			}
+		}
+
+		if ($self->{_http_client} eq "auto") {
+			return $self->_raise_error("HTTP error: No HTTP client library installed");
+		}
+	}
+
+	if ($self->{_http_client} eq "lite") {
+		require HTTP::Lite;
+		my $ua = HTTP::Lite->new;
+		my $r = $ua->request($uri) or return $self->_raise_error("Unable to get document: $!");
+		return $self->_raise_error("HTTP error: $r, " . $ua->status_message) unless $r == 200;
+		return $ua->body;
+	}
+	
+	if ($self->{_http_client} eq "lwp" || $self->{_http_client} eq "useragent") {
+		require LWP::UserAgent;
 		my $ua = LWP::UserAgent->new;
-		$ua->agent("iC-XML::RSS::Tools/$VERSION " . $ua->agent . " ($^O)");
+		$ua->agent("XML::RSS::Tools/$VERSION " . $ua->agent . " ($^O)");
 		my $response = $ua->request(HTTP::Request->new('GET', $uri));
 		return $self->_raise_error("HTTP error: " . $response->status_line) if $response->is_error;
 		return $response->content();
-	} else {
-		my $r = HTTP::GHTTP->new($uri);
-		$r->process_request;
-		my $xml = $r->get_body;
+	}
+
+	if ($self->{_http_client} eq "ghttp") {
+		require HTTP::GHTTP;
+		my $ua = HTTP::GHTTP->new($uri);
+		$ua->process_request;
+		my $xml = $ua->get_body;
 		if ($xml) {
-			my ($status, $message) = $r->get_status;
+			my ($status, $message) = $ua->get_status;
 			return $self->_raise_error("HTTP error: $status, $message") unless $status == 200;
 			return $xml;
 		} else {
 			return $self->_raise_error("HTTP error: Unable to connect to server: $uri");
 		}
-	}	
+	}
 }
 
 
@@ -577,7 +673,8 @@ __END__
 
 =head1 NAME
 
-XML::RSS::Tools - Perl extension for very high level RSS feed manipulation
+XML::RSS::Tools - A toolkit providing a wrapper around an HTTP client, an RSS parser, and a
+XSLT engine.
 
 =head1 SYNOPSIS
 
@@ -590,10 +687,11 @@ XML::RSS::Tools - Perl extension for very high level RSS feed manipulation
 
 =head1 DESCRIPTION
 
-RSS/RDF feeds are commonly available ways of distributing the latest news about a
-given web site for news syndication. This module provides a VERY high level way of
+RSS/RDF feeds are commonly available ways of distributing or syndicating the latest
+news about a given web site. This module provides a VERY high level way of
 manipulating them. You can easily use LWP, the XML::RSS and XML::LibXSLT do to this
-yourself.
+yourself, but this module is a wrapper around these modules, allowing for the simple
+creation of a RSS client.
 
 When working with XML if the file is invalid for some reason this module will craok
 bringing your application down. When calling methods that deal with XML manipulation
@@ -619,9 +717,12 @@ proceeding with your code:
 Or with optional parameters.
 
   my $rss_object = XML::RSS::Tools->new(
-    version   => 0.91,
-    auto_wash => 1,
-    debug     => 1);
+    version     => 0.91,
+    http_client => "lwp",
+    auto_wash   => 1,
+    debug       => 1);
+
+The module will die if it's created with invalid parameters.
 
 =head1 METHODS
 
@@ -649,9 +750,13 @@ All return true on success, false on failure. The XSLT file is NOT parsed or ver
 
 =head2 Other Methods
 
+=head3 transform
+
   $rss_object->transform();
 
-Perfomrs the XSL transformation on the source RSS file with the loaded XSLT file.
+Performs the XSL transformation on the source RSS file with the loaded XSLT file.
+
+=head3 as_string
 
   $rss_object->as_string;
 
@@ -664,24 +769,62 @@ one additional parameter to obtain the source RSS, XSL Tempate and any error mes
 
 If there is nothing to stringify you will get nothing.
 
+=head3 debug
+
   $rss_object->debug(1);
 
 A simple switch that control the debug status of the module. By default debug is off. Returns the
 current status.
 
-  $rss_object->get_auto_wash;
-  $rss_object->get_version;
-
-and
+=head3 set_auto_wash and get_auto_wash
 
   $rss_object->set_auto_wash(1);
-  $rss_object->set_version(0.92);  
+  $rss_object->get_auto_wash;
+  
+If auto_wash is true, then all RSS files are cleaned before RSS normaisation to replace
+known entities by their numeric value, and fix known invalid XML constructs. By default
+auto_wash to true.
 
-These methods control the core RSS functionality. The get methods return the current setting, and
-set method sets the value. By default RSS version is set to 0.91, and auto_wash to true. All incoming
-RSS feeds are automatically converted to one RSS version. If RSS version is set to 0 then normalisation
-is not performed. If auto_wash is true, then all RSS files are cleaned before RSS normaisation to replace
-known entities by their numeric value, and fix known invalid XML constructs.
+=head3 set_version and get_version
+  
+  $rss_object->set_version(0.92);  
+  $rss_object->get_version;
+
+All incoming RSS feeds are automatically converted to one default RSS version. If RSS version
+is set to 0 then normalisation is not performed. The default RSS version is 0.91.
+
+=head3 set_http_client and get_http_client
+
+  $rss_object->set_http_client('lwp');
+  $rss_object->get_http_client;
+
+These methods set the HTTP client to use, and get back the one selected. Acceptable values are: C<auto>;
+C<ghttp>; C<Lite> and C<lwp>. If set to auto the module will first try C<GHTTP> then C<Lite> then C<LWP> to
+retrieve files on the internet. Though C<GHTTP> is much faster than C<LWP> it is far less common and
+doesn't work reliably on Windows Apache 1.3.x/mod_Perl, so this method allows you to specify which
+client to use if you need to.
+
+=head2 XML Catalog
+
+To speed up large scale XML processing it is advised to create an XML Catalog (sic) so that the XML parser
+does not have to make slow and expensive requests to files on the internet. The catalogue contains details
+of the DTD and enternal entities so that they can be retrieved from the local file system quicker and at
+lower load that from the internet. If XML processing is being carried out on a system not connected to
+the internet, the libxml2 parser will still attempt to connect to the internet which will add a delay of
+about 60 seconds per XML file. If an catalogue is created then the process will be much quicker as
+the libxml2 parser will use the local information stored in the catalogue.
+
+	$rss_object->set_xml_catalog( $xml_catalog_file);
+
+This will pass the specified file to the XML parsers to use as a local XML Catalog.
+
+	$rss_object->get_xml_catalog;
+
+This will return the file name of the XML Catalog in use.
+
+Depending upon how your core libxml2 library is compiled, you should also be able to use pre-configured
+XML Catalog files stored in your C</etc/xml/catalog>.
+
 
 =head1 PREREQUISITES
 
@@ -689,9 +832,9 @@ To function you must have C<URI> installed. If you plan to normalise your RSS be
 must also have C<XML::RSS> installed. To transform any RSS files to HTML you will also need to use
 C<XML::LibXSLT> and C<XML::LibXML>.
 
-Either C<HTTP::GHTTP> or C<LWP> will bring this module to full functionality. HTTP::GHTTP is much
-faster than LWP, but is it not as widely available as LWP. By default GHTTP will be used if it is
-available.
+One of C<HTTP::GHTTP>, C<HTTP::Lite> or C<LWP> will bring this module to full functionality. GHTTP
+is much faster than LWP, but is it not as widely available as LWP. By default GHTTP will be used if
+it is available. If you have both it is possible to choose which to use.
 
 =pod OSNAMES
 
@@ -702,6 +845,8 @@ Any OS able to run the core requirments.
 None by default.
 
 =head1 HISTORY
+
+0.10 Initial XML Catalog support. HTTP client selection.
 
 0.09 Started to test with XML::RSS 1.x family. Now accepts FileHandle objects as inputs.
 
@@ -723,11 +868,6 @@ None by default.
 
 See Changes file for more detail
 
-=head2 ToDo
-
-Provide xmlcatalog exmaple so the the manual (hack) removal of DTDs can be taken
-out.
-
 =head2 Defects and Limitations
 
 If an RSS or XSLT file is passed into LibXML and it contains references to
@@ -737,7 +877,9 @@ refered to are on the public INTERNET, and you do not have a connection when thi
 happens you may find that the process waits around for several minutes until
 LibXML gives up. If you plan to use this module in an asyncronous manner, you
 should setup an XML Catalog for LibXML using the xmlcatalog command. See:
-http://www.xmlsoft.org/catalog.html for more details.
+http://www.xmlsoft.org/catalog.html for more details. You can pass your catalog
+into the module, and a local copy will then be used rather than the one on the
+internet.
 
 Many commercial RSS feeds are derived from the Content Management System in use
 at the site. Often the RSS feed is not well formed and is thus invalid. This will
@@ -747,13 +889,18 @@ perfect nor ideal. Some people report good succes with complaining to the site.
 Mark Pilgrim estimates that about 10% of RSS feeds have defective XML.
 
 XML::RSS upto and including version 0.96 has a number of defects. This module had
-also been out of active development for some time, and had fallen behind the currect
-RSS/RDF specifications. As of October 2002 brian d foy has taken over the module,
-and it is again under active devlopment on http://perl-rss.sourceforge.net/.
+also been out of active development for some time. As of October 2002 brian d foy
+has taken over the module, and it is again under active devlopment on
+http://perl-rss.sourceforge.net/.
 
 Perl pre 5.7.x is not able to handle Unicode properly, strange things happen...
-Things should get better as 5.8.0 is now available, but have as yet not been
-tested.
+Things should get better as 5.8.0 is now available.
+
+=head2 Todo
+
+Debug mode doesn't actually do much yet.
+
+Possibly support HTTP::MHTTP module, it seems to be even faster than GHTTP
 
 =head1 AUTHOR
 
@@ -769,6 +916,8 @@ C<perl>, C<XML::RSS>, C<XML::LibXSLT>, C<XML::LibXML>, C<URI>, C<LWP> and C<HTTP
 =head1 COPYRIGHT
 
 XML::RSS::Tools, Copyright iredale Consulting 2002-2003
+
+OSI Certified Open Source Software
 
 This program is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
