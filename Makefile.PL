@@ -1,19 +1,74 @@
 use ExtUtils::MakeMaker;
+use strict;
+use 5.006;
+use Sys::Hostname;
+
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 
 my @tests;
+my $test_list  = 't/use.t t/basic-tests.t t/standard-tests.t t/version-tests.t t/filehandle-tests.t t/error-tests.t t/catalog-tests.t';
+my $ghttp;
+my $lite;
 
-eval {
-	require Test::Pod;
-};
+eval { require Test::Pod; };
+$test_list .= ' t/pod-test.t' unless ($@);
 
+print "Checking which HTTP clients you have installed...\n";
+
+eval { require HTTP::GHTTP; };
 if ($@) {
-	push @tests, test => { TESTS => 't/use.t t/basic-tests.t t/standard-tests.t t/version-tests.t t/filehandle-tests.t t/error-tests.t t/catalog-tests.t'};
+	print "You don't have HTTP::GHTTP installed.\nIt's not a requirment, but it's one\nof the fastest HTTP clients about.\n";
 } else {
-	push @tests, test => { TESTS => 't/use.t t/basic-tests.t t/standard-tests.t t/version-tests.t t/filehandle-tests.t t/error-tests.t t/catalog-tests.t t/pod-test.t'};
+	print "Good you have HTTP::GHTTP installed.\n";
+	$ghttp++;
 }
 
+eval { require HTTP::Lite; };
+if ($@) {
+	print "\nYou don't have HTTP::Lite installed either.\nIt's also not a requirment, but it's faster\nthan LWP.\n" unless $ghttp;
+} else {
+	if ($ghttp) {
+		print "You have HTTP::Lite installed too.\n";
+	} else {
+		print "\nBut you do have HTTP::Lite installed.\n";
+	}
+}
+
+eval { require LWP };
+if ($@) {
+	print "\nYou don't have LWP installed!\n" unless $ghttp && $lite;
+} else {
+	if ($ghttp || $lite) {
+		print "You have LWP installed too.\n";
+	} else {
+		print "\nBut at least you have LWP installed.\n";
+	}
+}
+
+# Check if we have internet connection
+# (I lifted this code from Net::DNS which lifted it from LWP...)
+print "Probing for a HTTP Server, this may take a few seconds...\n";
+require IO::Socket;
+my $hostname =hostname;
+my $s = IO::Socket::INET->new(
+	PeerAddr => "www.iredale.net:80",
+	Timeout  => 10
+);
+
+if ($s) {
+	close($s);
+	print "Good, you are connected to the Internt!\nWill test HTTP clients for you...\n";
+	$test_list .= " t/http-tests.t";
+} elsif ($s = IO::Socket::INET->new(PeerAddr => "$hostname:80", Timeout  => 10)) {
+		print "Good, $hostname is running a HTTP server.\nWill test HTTP clients for you...\n";
+		$test_list .= " t/http-tests.t";
+		close($s);
+} else {
+	print "Can't reach the Internet or find a HTTP server on $hostname\nAborting HTTP client tests.\n";
+}
+
+push @tests, test => { TESTS => $test_list};
 WriteMakefile(
     'NAME'		=> 'XML::RSS::Tools',
     'VERSION_FROM'	 => 'Tools.pm', 
@@ -26,8 +81,8 @@ WriteMakefile(
     	},
     @tests,
     dist             => {
-       COMPRESS      => 'gzip',
-       SUFFIX        => 'gz -9f'
+       COMPRESS      => 'gzip -9f',
+       SUFFIX        => 'gz'
        }, 
     ($] >= 5.005 ?    
       (ABSTRACT_FROM => 'Tools.pm', 

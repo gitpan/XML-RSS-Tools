@@ -1,5 +1,14 @@
 Revision history for Perl extension XML::RSS::Tools.
 
+0.11  Wed 11 June 2003
+	- POD Improvments
+	- Corrections to included RSS feed
+	- Example 5 added
+	- Documentation improvments, print stylesheet added for easier printing
+	- Fix & changes to Makefile.PL, should auto detect a HTTP server for tesing purposes
+	- Tests overhauled and cleaned up
+	- Defect in xsl_uri subroutine detected and corrected
+
 0.10  Sat 04 May 2003
 	- Initial XML Catalog support, see www.oasis-open.org
 	- Added ability to select which HTTP client to use
@@ -41,7 +50,7 @@ Revision history for Perl extension XML::RSS::Tools.
 	- Null URIs dealt with
 	- Extra example script provided
 	- Minor changes
-	- Tests added for extra CPANPLUS compatibility
+	- Tests changed for extra CPANPLUS compatibility
 
 0.04  Mon 13 May 2002
 	- Minor changes
@@ -53,7 +62,7 @@ Revision history for Perl extension XML::RSS::Tools.
 	- Uploaded to more sensible location on CPAN
 
 0.02  Sat 11 May 2002
-	- Test suite developed properly
+	- Test suite created
 	- Uploaded to CPAN as alpha code
 
 0.01  Sun 28 Apr 2002

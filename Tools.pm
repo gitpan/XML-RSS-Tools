@@ -1,8 +1,8 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.10
-# May 2003
+# Version 0.11
+# June 2003
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
 #
@@ -29,7 +29,7 @@ use FileHandle;					# Alow the use of File Handle Objects
 
 require Exporter;
 
-our $VERSION = '0.10';
+our $VERSION = '0.11';
 our @ISA = qw(Exporter);
 
 #
@@ -321,7 +321,7 @@ sub xsl_uri {
 	return $self->xsl_file($self->{_uri_file}) if ($self->{_uri_scheme} eq "file");
 
 	my $xml = $self->_http_get($uri);
-	return uless $xml;
+	return unless $xml;
 	$self->{_xsl_string} = $xml;
 	$self->{_transformed} = 0;
 	return $self;
@@ -490,25 +490,21 @@ sub _http_get {
 
 	if ($self->{_http_client} eq "auto"){
 		my @modules = qw "HTTP::GHTTP HTTP::Lite LWP";
-
 		foreach my $module (@modules) {
 			eval "require $module";
-
 			if (! $@) {
 				$self->{_http_client} = lc($module);
 				$self->{_http_client} =~ s/.*:://;
 				last;
 			}
 		}
-
-		if ($self->{_http_client} eq "auto") {
-			return $self->_raise_error("HTTP error: No HTTP client library installed");
-		}
+		return $self->_raise_error("HTTP error: No HTTP client library installed") if $self->{_http_client} eq "auto";
 	}
 
 	if ($self->{_http_client} eq "lite") {
 		require HTTP::Lite;
 		my $ua = HTTP::Lite->new;
+		$ua->add_req_header("User-Agent", "XML::RSS::Tools/$VERSION HTTP::Lite/$HTTP::Lite::VERSION ($^O)");
 		my $r = $ua->request($uri) or return $self->_raise_error("Unable to get document: $!");
 		return $self->_raise_error("HTTP error: $r, " . $ua->status_message) unless $r == 200;
 		return $ua->body;
@@ -526,6 +522,7 @@ sub _http_get {
 	if ($self->{_http_client} eq "ghttp") {
 		require HTTP::GHTTP;
 		my $ua = HTTP::GHTTP->new($uri);
+		$ua->set_header("User-Agent", "XML::RSS::Tools/$VERSION libghttp/1.x ($^O)");
 		$ua->process_request;
 		my $xml = $ua->get_body;
 		if ($xml) {
@@ -541,8 +538,9 @@ sub _http_get {
 
 #
 #	Fix Entities
-#	This subroutine is a mix of Matt Sergents rss-mirror script
-#	And chunks of the HTML::Entites module
+#	This subroutine is a mix of Matt Sergent's rss-mirror script
+#	And chunks of the HTML::Entites module if you have Perl 5.8.x you
+#	don't need this code.
 #
 sub	_clean_entities {
 	my $xml  = shift;
@@ -673,7 +671,7 @@ __END__
 
 =head1 NAME
 
-XML::RSS::Tools - A toolkit providing a wrapper around an HTTP client, an RSS parser, and a
+XML::RSS::Tools - A tool-kit providing a wrapper around a HTTP client, a RSS parser, and a
 XSLT engine.
 
 =head1 SYNOPSIS
@@ -688,14 +686,15 @@ XSLT engine.
 =head1 DESCRIPTION
 
 RSS/RDF feeds are commonly available ways of distributing or syndicating the latest
-news about a given web site. This module provides a VERY high level way of
+news about a given web site. Weblog (blog) sites in particular are prolific
+generators of RSS feeds. This module provides a VERY high level way of
 manipulating them. You can easily use LWP, the XML::RSS and XML::LibXSLT do to this
 yourself, but this module is a wrapper around these modules, allowing for the simple
 creation of a RSS client.
 
-When working with XML if the file is invalid for some reason this module will craok
+When working with XML if the file is invalid for some reason this module will croak
 bringing your application down. When calling methods that deal with XML manipulation
-you should enclose them in an eval statemanet should you wish your program to fail
+you should enclose them in an eval statement should you wish your program to fail
 gracefully.
 
 Otherwise method calls will return true on success, and false on failure. For example
@@ -710,7 +709,11 @@ proceeding with your code:
   	# carry on...
   }
 
+Check the HTML documentation for extra examples, and background.
+
 =head1 CONSTRUCTOR
+
+=head2 new
 
   my $rss_object = XML::RSS::Tools->new;
 
@@ -736,7 +739,7 @@ The module will die if it's created with invalid parameters.
 
 All return true on success, false on failure. If an XML file was provided but was invalid
 XML the parser will fail fataly at this time. The input RSS feed will automatically be
-normalised to the prefered RSS version at this time. Chose your version before you load it!
+normalised to the preferred RSS version at this time. Chose your version before you load it!
 
 =head2 Source XSL Template
 
@@ -761,7 +764,7 @@ Performs the XSL transformation on the source RSS file with the loaded XSLT file
   $rss_object->as_string;
 
 Returns the RSS file after it's been though the XSLT process. Optionally you can pass this method
-one additional parameter to obtain the source RSS, XSL Tempate and any error message:
+one additional parameter to obtain the source RSS, XSL Template and any error message:
 
   $rss_object->as_string(xsl);
   $rss_object->as_string(rss);
@@ -780,10 +783,10 @@ current status.
 
   $rss_object->set_auto_wash(1);
   $rss_object->get_auto_wash;
-  
-If auto_wash is true, then all RSS files are cleaned before RSS normaisation to replace
+
+If auto_wash is true, then all RSS files are cleaned before RSS normalisation to replace
 known entities by their numeric value, and fix known invalid XML constructs. By default
-auto_wash to true.
+auto_wash is set to true.
 
 =head3 set_version and get_version
   
@@ -798,20 +801,50 @@ is set to 0 then normalisation is not performed. The default RSS version is 0.91
   $rss_object->set_http_client('lwp');
   $rss_object->get_http_client;
 
-These methods set the HTTP client to use, and get back the one selected. Acceptable values are: C<auto>;
-C<ghttp>; C<Lite> and C<lwp>. If set to auto the module will first try C<GHTTP> then C<Lite> then C<LWP> to
+These methods set the HTTP client to use, and get back the one selected. Acceptable values are:
+
+=over
+
+=item	*
+
+auto
+
+Will use attempt to use the HTTP client modules in order of performance.
+
+=item	*
+
+ghttp
+
+Matt Sergeant's libghttp based C<HTTP::GHTTP>.
+
+=item	*
+
+lite
+
+Roy Hooper's pure Perl C<HTTP::Lite> client. Slower than ghttp, but still faster than lwp.
+
+=item	*
+
+lwp
+
+LWP is the Rolls-Royce solution, it can do everything, but it's rather big, so it's slow to
+load, and it's not exactly fast. It is however far more common, and is the most complete.
+
+=back
+
+If set to auto the module will first try C<HTTP::GHTTP> then C<HTTP::Lite> then C<LWP>, to
 retrieve files on the internet. Though C<GHTTP> is much faster than C<LWP> it is far less common and
 doesn't work reliably on Windows Apache 1.3.x/mod_Perl, so this method allows you to specify which
-client to use if you need to.
+client to use if you wish to.
 
 =head2 XML Catalog
 
-To speed up large scale XML processing it is advised to create an XML Catalog (sic) so that the XML parser
-does not have to make slow and expensive requests to files on the internet. The catalogue contains details
-of the DTD and enternal entities so that they can be retrieved from the local file system quicker and at
-lower load that from the internet. If XML processing is being carried out on a system not connected to
-the internet, the libxml2 parser will still attempt to connect to the internet which will add a delay of
-about 60 seconds per XML file. If an catalogue is created then the process will be much quicker as
+To speed up large scale XML processing it is advised to create an XML Catalog (I<sic>) so that the XML parser
+does not have to make slow and expensive requests to files on the Internet. The catalogue contains details
+of the DTD and external entities so that they can be retrieved from the local file system quicker and at
+lower load that from the Internet. If XML processing is being carried out on a system not connected to
+the Internet, the libxml2 parser will still attempt to connect to the Internet which will add a delay of
+about 60 seconds per XML file. If a catalogue is created then the process will be much quicker as
 the libxml2 parser will use the local information stored in the catalogue.
 
 	$rss_object->set_xml_catalog( $xml_catalog_file);
@@ -834,11 +867,12 @@ C<XML::LibXSLT> and C<XML::LibXML>.
 
 One of C<HTTP::GHTTP>, C<HTTP::Lite> or C<LWP> will bring this module to full functionality. GHTTP
 is much faster than LWP, but is it not as widely available as LWP. By default GHTTP will be used if
-it is available. If you have both it is possible to choose which to use.
+it is available, then Lite, finally LWP. If you have two or more installed you may manually
+select which one you wish to use.
 
 =pod OSNAMES
 
-Any OS able to run the core requirments.
+Any OS able to run the core requirements.
 
 =head2 EXPORT
 
@@ -846,72 +880,102 @@ None by default.
 
 =head1 HISTORY
 
+0.11 POD and doc corrections. Minor bug fixes.
+
 0.10 Initial XML Catalog support. HTTP client selection.
 
 0.09 Started to test with XML::RSS 1.x family. Now accepts FileHandle objects as inputs.
 
-0.08 Removed Diagnostics pragma. Minor changes. Documentatoin additions and corrections.
+0.08 Removed Diagnostics pragma. Minor changes. Documentation additions and corrections.
 
 0.07 POD corrections. More changes to HTML documentation. Now uses URI for URI processing.
 
-0.06 Changes to HTML Documentation. Tests fixed. No change to module code.
-
-0.05 More minor stuff. Change to entities routine - still not ideal. Test suite upgraded and expanded again.
-
-0.04 Removed un-used test files, other minor changes. Defect in Test script corrected, tested module on Linux.
-
-0.03 Minor code changes and defect corrections. Example script included.
-
-0.02 Some code changes, POD expanded, and test suite more developed.
+...
 
 0.01 Initial Build. Shown to the public on PerlMonks May 2002, for feedback.
 
-See Changes file for more detail
+See CHANGES file for more detail
 
 =head2 Defects and Limitations
 
+=over
+
+=item *
+
+External Entities
+
 If an RSS or XSLT file is passed into LibXML and it contains references to
-external files, such as a DTD or external entites, LibXML will automatically
+external files, such as a DTD or external entities, LibXML will automatically
 attempt to obtain the files, before performing the transformation. If the files
-refered to are on the public INTERNET, and you do not have a connection when this
+referred to are on the public INTERNET, and you do not have a connection when this
 happens you may find that the process waits around for several minutes until
-LibXML gives up. If you plan to use this module in an asyncronous manner, you
+LibXML gives up. If you plan to use this module in an asynchronous manner, you
 should setup an XML Catalog for LibXML using the xmlcatalog command. See:
 http://www.xmlsoft.org/catalog.html for more details. You can pass your catalog
 into the module, and a local copy will then be used rather than the one on the
-internet.
+Internet.
+
+=item *
+
+Defective XML
 
 Many commercial RSS feeds are derived from the Content Management System in use
 at the site. Often the RSS feed is not well formed and is thus invalid. This will
 prevent the RSS parser and/or XSLT engine from functioning, and you will get
 no output. The auto_wash option attempts to fix these errors, but it's is neither
-perfect nor ideal. Some people report good succes with complaining to the site.
+perfect nor ideal. Some people report good success with complaining to the site.
 Mark Pilgrim estimates that about 10% of RSS feeds have defective XML.
 
-XML::RSS upto and including version 0.96 has a number of defects. This module had
-also been out of active development for some time. As of October 2002 brian d foy
-has taken over the module, and it is again under active devlopment on
-http://perl-rss.sourceforge.net/.
+=item *
+
+XML::RSS Limitations
+
+XML::RSS upto and including version 0.96 has a number of defects. As of October
+2002 brian d foy has taken over the module, and it is again under active
+development on http://perl-rss.sourceforge.net/. Since the 1.xx family
+have been release most problems have been fixed, please upgrade if you can.
+
+=item *
+
+Perl and Unicode
 
 Perl pre 5.7.x is not able to handle Unicode properly, strange things happen...
 Things should get better as 5.8.0 is now available.
 
-=head2 Todo
+=back
+
+=head2 To Do
+
+=over
+
+=item *
 
 Debug mode doesn't actually do much yet.
 
-Possibly support HTTP::MHTTP module, it seems to be even faster than GHTTP
+=item *
+
+Possibly support C<HTTP::MHTTP> module, it seems to be even faster than GHTTP.
+
+=item *
+
+Implement HTTP Proxy support.
+
+=item *
+
+Fully test with Perl 5.8.x
+
+=back
 
 =head1 AUTHOR
 
 Adam Trickett, E<lt>atrickett@cpan.orgE<gt>
 
-This module contains the direct and indirect input of a number of Perlmonks: Ovid,
-Matts and more...
+This module contains the direct and indirect input of a number of friendly Perl Hackers on
+Perlmonks/use.perl: Ovid; Matts; Merlyn and more...
 
 =head1 SEE ALSO
 
-C<perl>, C<XML::RSS>, C<XML::LibXSLT>, C<XML::LibXML>, C<URI>, C<LWP> and C<HTTP::GHTTP>.
+L<perl>, L<XML::RSS>, L<XML::LibXSLT>, L<XML::LibXML>, L<URI>, L<LWP>, L<HTTP::Lite>, L<HTTP::GHTTP>.
 
 =head1 COPYRIGHT
 

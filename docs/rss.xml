@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <rss version="2.0">
 	<channel>
 		<title>XML::RSS::Tools</title>
@@ -7,55 +7,65 @@
 		<language>en-GB</language>
 		<copyright>Copyright 2002-2003 iredale Consulting (A J Trickett)</copyright>
 		<docs>http://backend.userland.com/rss</docs>
+		<image>
+			<link>http://www.perl.com/</link>
+			<url>http://perl.oreilly.com/images/perl/powered_by_perl.gif</url>
+			<title>Perl Powered</title>
+		</image>
 		<item>
 			<title>README</title>
 			<description>Standard Perl module README file, explains what is required and what it does. Start here if you can't think of where else to start.</description>
-			<link>../README</link>
+			<link>http://search.cpan.org/src/ATRICKETT/XML-RSS-Tools-0.11/README</link>
 		</item>
 		<item>
 			<title>Introduction</title>
 			<description>Basic introduction to RSS and the XML::RSS::Tools module.</description>
-			<link>./rss-intro.html</link>
+			<link>http://search.cpan.org/src/ATRICKETT/XML-RSS-Tools-0.11/docs/rss-intro.html</link>
 		</item>
 		<item>
 			<title>Module POD</title>
 			<description>The POD for the module as pretty HTML. This explains how to use the module, and should be enough to get you going.</description>
-			<link>../Tools.pm</link>
+			<link>http://search.cpan.org/src/ATRICKETT/XML-RSS-Tools-0.11Tools.pm</link>
 		</item>
 		<item>
 			<title>Example 1</title>
 			<description>This very simple example shows how to create a basic command line tool.</description>
-			<link>./example1.html</link>
+			<link>http://search.cpan.org/src/ATRICKETT/XML-RSS-Tools-0.11/docs/example1.html</link>
 		</item>
 		<item>
 			<title>Example 2</title>
 			<description>This more complex example is designed to show a normal command line or CGI application.</description>
-			<link>./example1.html</link>
+			<link>http://search.cpan.org/src/ATRICKETT/XML-RSS-Tools-0.11/docs/example2.html</link>
 		</item>
 		<item>
 			<title>Example 3</title>
 			<description>Another simple example shows how to create a basic command line tool.</description>
-			<link>./example1.html</link>
+			<link>http://search.cpan.org/src/ATRICKETT/XML-RSS-Tools-0.11/docs/example3.html</link>
 		</item>
 		<item>
 			<title>Example 4</title>
 			<description>A more complex example, we turn off RSS normalisation, and use a single XSLT stylesheet to deal with all possible RSS feeds.</description>
-			<link>./example1.html</link>
+			<link>http://search.cpan.org/src/ATRICKETT/XML-RSS-Tools-0.11/docs/example4.html</link>
+		</item>
+				<item>
+			<title>Example 5</title>
+			<description>This example is a complete RSS client application. It has been designed to run as a CGI or Apache::Registry application, generating neat "portlet" style HTML pages from RSS feeds. It includes local file cacheing and is fully functional and complete.</description>
+			<link>http://search.cpan.org/src/ATRICKETT/XML-RSS-Tools-0.11/docs/example5.html</link>
 		</item>
 		<item>
 			<title>Processing RSS Files with XSLT</title>
-			<description>A "reprint" of an article first published in the Perl Review using this module.</description>
-			<link>./example1.html</link>
+			<description>A "reprint" of an article first published in the Perl Review using this module. Has some corrections and updates.</description>
+			<link>http://search.cpan.org/src/ATRICKETT/XML-RSS-Tools-0.11/docs/rss_with_xslt.html</link>
 		</item>
 		<item>
 			<title>MANIFEST</title>
 			<description>The module file manifest.</description>
-			<link>../MANIFEST</link>
+			<link>http://search.cpan.org/src/ATRICKETT/XML-RSS-Tools-0.11/MANIFEST</link>
 		</item>
 		<item>
 			<title>CHANGES</title>
 			<description>The Module change log, check this if upgrading.</description>
-			<link>../CHANGES</link>
+			<link>http://search.cpan.org/src/ATRICKETT/XML-RSS-Tools-0.11/CHANGES</link>
 		</item>
 		</channel>
 	</rss> 

@@ -15,93 +15,34 @@ ok(1); # If we made it this far, we're ok.
 
 #########################
 
-my $test_no = 2;
-
 my $rss_object = XML::RSS::Tools->new;
 
-#
 #	By default the initial version is 0.91
-#
-if ($rss_object->get_version == 0.91) {
-	print "\nok ", $test_no++;
-} else {
-	print "\nNOT ok ", $test_no++;
-}
+ok($rss_object->get_version, 0.91);
 
-#
 #	There is no version 5 so it should fail
-#
-if ($rss_object->set_version(5)) {
-	print "\nNOT ok ", $test_no++;
-} else{
-	print "\nok ", $test_no++;
-}
+ok(!($rss_object->set_version(5)));
 
-#
 #	As the last set fail it should still be 0.91
-#
-if ($rss_object->get_version == 0.91) {
-	print "\nok ", $test_no++;
-} else {
-	print "\nNOT ok ", $test_no++;
-}
+ok($rss_object->get_version, 0.91);
 
-#
 #	There is an RSS version of 2.0
-#
-if ($rss_object->set_version(2.0)) {
-	print "\nok ", $test_no++;
-} else{
-	print "\nNOT ok ", $test_no++;
-}
+ok($rss_object->set_version(2.0));
 
-#
 #	As the last set should work it should be 2.0
-#
-if ($rss_object->get_version == 2.0) {
-	print "\nok ", $test_no++;
-} else {
-	print "\nNOT ok ", $test_no++;
-}
+ok($rss_object->get_version, 2.0);
 
-#
 #	Trying to set nothing should do nothing, but not raise an error
-#
-if ($rss_object->set_version()) {
-	print "\nNOT ok ", $test_no++;
-} else{
-	print "\nok ", $test_no++;
-}
+ok(!($rss_object->set_version()));
 
-#
 #	As the last set did nothing it should still be 2.0
-#
+ok($rss_object->get_version, 2.0);
 
-if ($rss_object->get_version == 2.0) {
-	print "\nok ", $test_no++;
-} else {
-	print "\nNOT ok ", $test_no++;
-}
-
-#
 #	Turn off normalisation by setting to 0
-#
+ok($rss_object->set_version(0));
 
-if ($rss_object->set_version(0)) {
-	print "\nok ", $test_no++;
-} else{
-	print "\nNOT ok ", $test_no++;
-}
-
-#
 #	As the last set it to 0 it should be 0
-#
 my $version = $rss_object->get_version;
-if (defined($version) && not $version) {
-	print "\nok ", $test_no++;
-} else {
-	print "\nNOT ok ", $test_no++;
-}
+ok(defined($version) && not $version);
 
 exit;
-

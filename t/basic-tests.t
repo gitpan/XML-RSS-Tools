@@ -8,33 +8,18 @@ use Test;
 use strict;
 use warnings;
 
-BEGIN { plan tests => 4 };
+BEGIN { plan tests => 5 };
 
 use XML::RSS::Tools;
 ok(1); # If we made it this far, we're ok.
 
 #########################
 
-my $test_no = 2;
-
 my $rss_object = XML::RSS::Tools->new;
 
-if ($rss_object->debug) {
-	print "NOT ok ", $test_no++;
-} else {
-	print "ok ", $test_no++;
-}
+ok($rss_object);
+ok(!($rss_object->debug));
+ok($rss_object->get_version, 0.91);
+ok($rss_object->get_auto_wash);
 
-if ($rss_object->get_version == 0.91) {
-	print "\nok ", $test_no++;
-} else {
-	print "\nNOT ok ", $test_no++;
-}
-
-if ($rss_object->get_auto_wash) {
-	print "\nok ", $test_no++;
-} else {
-	print "\nNOT ok ", $test_no++;
-}
 exit;
-

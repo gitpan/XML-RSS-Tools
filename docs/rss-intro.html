@@ -3,9 +3,10 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>XML::RSS::Tools &gt; Simple Introduction</title>
-<meta http-equiv="content-type" content="text/html; charset=iso-8859-15" />
-<link rel="StyleSheet" href="./style.css" type="text/css" />
+	<title>XML::RSS::Tools &gt; Simple Introduction</title>
+	<meta http-equiv="content-type" content="text/html; charset=iso-8859-15" />
+	<link rel="StyleSheet" href="./style.css" type="text/css" />
+	<link rel="StyleSHeet" href="./print.css" type="text/css" media="print" />
 </head>
 <body>
 
@@ -51,7 +52,7 @@ turn off normalisation if you plan to use just one XSLT stylesheet.</p>
 
 <p>The underlying <a href="http://perl-rss.sourceforge.net/">XML::RSS</a> (up to version 0.97) core can
 parse and interconvert RSS Versions 0.9, 0.91 and 1.0, versions of XML::RSS 0.98 and beyond can
-additionally process RSS version 2.0, though it is unlikley to ever be able to process the largly
+additionally process RSS version 2.0, though it is unlikely to ever be able to process the largely
 unused versions 0.92, 0.93, and 0.94, which are the evolutionary steps from 0.91 to 2.0.</p>
 
 <h3>RSS Conversion</h3>
@@ -70,37 +71,42 @@ title="The XML C Library for Gnome">XML C Library for Gnome</a> based
 
 <p>After developing the script to do this I realised that much of the code could be
 converted into a module and distributed to the world. After a popular post to
-<a href="http://www.perlmonks.org/">Perlmonks</a>, I have moved the module up to <a href="http://www.cpan.org/">CPAN</a>. The code should be considered as <strong>beta</strong>
+<a href="http://www.perlmonks.org/">Perlmonks</a>, I have moved the module up to <a href="http://www.cpan.org/">CPAN</a>. The code should be considered as <strong>pre-release</strong>
 code, and the API may be extended in the future.</p>
 
 <h2>Examples</h2>
 
-<p>Some basic examples of how to use this module are provided in the examples folder. Simple
+<p>Some basic examples of how to use this module are provided in the examples folder. The following examples
+and this page should print fine if you have a modern standard compliant browser Simple
 explanations can be found here:</p>
 <ul>
 <li><a href="./example1.html">Example 1</a> - simple example</li>
 <li><a href="./example2.html">Example 2</a> - complete example</li>
-<li><a href="./example3.html">Example 3</a> - consise example</li>
+<li><a href="./example3.html">Example 3</a> - concise example</li>
 <li><a href="./example4.html">Example 4</a> - single stylesheet example with no normalisation</li>
+<li><a href="./example5.html">Example 5</a> - a complete RSS client mini-application</li>
+<li><a href="./rss.xml">rss.xml</a> - the RSS feed for this module</li>
 <li><a href="./rss_with_xslt.html">Processing RSS with XSLT</a> - an article from The Perl Review</li>
 </ul>
 
 <h2>Resources</h2>
 
 <ul>
-<li>Userland.com the home of key RSS developments: <a href="http://backend.userland.com/rss092">backend.userland.com</a></li>
-<li>SOAP Client RSS to HTML online tool: <a href="http://soapclient.com/rss/rss.html">soapclient.com/rss/rss.html</a></li>
-<li>Netscape Communications: <a href="http://my.netscape.com/publish/formats/rss-spec-0.91.html">my.netscape.com/publish/formats/rss-spec-0.91.html</a></li>
-<li>W3C Standards body: <a href="http://www.w3.org/RDF/">www.w3.org/RDF/</a> &amp; Validator: <a href="http://www.w3.org/RDF/Validator/">www.w3.org/RDF/Validator/</a></li>
-<li>Blogspace RSS FAQ: <a href="http://blogspace.com/rss/">blogspace.com/rss/</a></li>
-<li>RSS Versions: <a href="http://www.webreference.com/authoring/languages/xml/rss/1/8.html">www.webreference.com/authoring/languages/xml/rss/1.8.html</a></li>
-<li>Ben Hammersley's Content Syndication with XML and RSS: <a href="http://rss.benhammersley.com/">rss.benhammersley.com</a> and book <a href="http://www.oreilly.com/catalog/consynrss/">Content Syndication with RSS</a></li>
-<li>Dave Beckett's Resource Description Framework Resource Guide: <a href="http://www.ilrt.bristol.ac.uk/discovery/rdf/resources/">www.ilrt.bristol.ac.uk/discovery/rdf/resources/</a></li>
-<li>Mark Pilgrim and Sam Ruby's RSS Validator: <a href="http://feeds.archive.org/validator/">feeds.archive.org/validator/</a></li>
-<li><tt>brian d foy</tt> has an interesting, article in The Perl Review: <a href="http://www.theperlreview.com/Issues/v0i6.shtml">www.theperlreview.com/Issues/v0i6.shtml</a></li>
+<li><a href="http://backend.userland.com/rss092">Userland.com</a> the home of key RSS developments</li>
+<li><a href="http://soapclient.com/rss/rss.html">SOAP Client</a> a RSS to HTML online tool</li>
+<li>Netscape Communications, home of the original <a href="http://my.netscape.com/publish/formats/rss-spec-0.91.html">specifications</a></li>
+<li>W3C Standards body: <a href="http://www.w3.org/RDF/">RDF</a> &amp; <a href="http://www.w3.org/RDF/Validator/">Validator</a></li>
+<li><a href="http://blogspace.com/rss/">Blogspace RSS FAQ</a></li>
+<li><a href="http://www.webreference.com/authoring/languages/xml/rss/1/8.html">Webreference.com</a> RSS Versions</li>
+<li><a href="http://rss.benhammersley.com/">Ben Hammersley's Webloggery</a> and book <a href="http://www.oreilly.com/catalog/consynrss/">Content Syndication with RSS</a></li>
+<li>Dave Beckett's Resource Description Framework <a href="http://www.ilrt.bristol.ac.uk/discovery/rdf/resources/">Resource Guide</a></li>
+<li>Mark Pilgrim and Sam Ruby's <a href="http://feeds.archive.org/validator/">RSS Validator</a></li>
+<li><tt>brian d foy</tt> has an interesting, article in
+the <a href="http://www.theperlreview.com/Issues/v0i6.shtml">The Perl Review</a></li>
 <li>Mark Pilgrim has some nice RSS articles on XML.com (in Python): <a href="http://www.xml.com/lpt/a/2002/12/18/dive-into-xml.html">What is RSS?</a>; <a href="http://www.xml.com/lpt/a/2003/01/22/dive-into-xml.html">Parsing RSS At All Costs</a> and <a href="http://www.xml.com/lpt/a/2003/02/26/dive-into-xml.html">Inside the RSS Validator</a></li>
 <li>Bob DuCharme wrote a simple introduction to using XSLT with RSS on XML.com: <a href="http://www.xml.com/lpt/a/2003/01/02/tr.html">Never Mind the Namespaces: An XSLT RSS Client</a></li>
-<li>The Perl-RSS Group has a nice selection of articles on the XML:RSS Site: <a href="http://perl-rss.sourceforge.net/bibliography.html">XML::RSS | Bibliography</a></li>
+<li>The Perl-RSS Group has a nice selection of articles on the <a href="http://perl-rss.sourceforge.net/bibliography.html">XML:RSS Site</a></li>
+<li>O'Reilly has a dedicated RSS section in <a href="http://www.oreillynet.com/rss/">O'Reilly Network: RSS DevCenter</a></li>
 </ul>
 
 <h2>Some Example RSS Feeds</h2>
@@ -111,7 +117,7 @@ explanations can be found here:</p>
 <li><a href="http://freshmeat.net/backend/fm.rdf">freshmeat.net/backend/fm.rdf</a></li>
 <li><a href="http://slashdot.org/slashdot.rdf">slashdot.org/slashdot.rdf</a></li>
 <li><a href="http://www.oreillynet.com/meerkat/?_fl=rss10">www.oreillynet.com/meerkat/?_fl=rss10</a></li>
-<li><a href="http://www.theregister.co.uk/tonys/slashdot.rdf">www.theregister.co.uk/tonys/slashdot.rdf</a> - this one is often malformed.</li>
+<li><a href="http://www.theregister.co.uk/tonys/slashdot.rdf">www.theregister.co.uk/tonys/slashdot.rdf</a> - this one has often been malformed.</li>
 <li><a href="http://www.sophos.com/virusinfo/infofeed/tenalerts.xml">www.sophos.com/virusinfo/infofeed/tenalerts.xml</a></li>
 <li><a href="http://www.perl.com/pace/perlnews.rdf">www.perl.com/pace/perlnews.rdf</a></li>
 </ul>

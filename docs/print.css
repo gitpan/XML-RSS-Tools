@@ -1,0 +1,87 @@
+/*
+	Simple Stlye Sheet for RSS printed HTML Documents
+*/
+
+body {
+	margin: 1.5cm 0.75cm;
+	padding: 0;
+	color: black;
+	background-color: white;
+	font-size: 11pt;
+	line-height: 1.4;
+	font-family: verdana, arial, helvetica, sans-serif;
+}
+
+h1,h2,h3 {
+	color: black;
+	border-bottom: 1px dotted black;
+	padding: 0.5em 0;
+}
+
+h2 {
+	border-bottom: 4px solid black;
+}
+
+h1 {
+	border: 4px solid #110;
+	background-color: #EEF;
+	padding: 0.5em;
+	text-align: center;
+}
+
+p{
+	text-align: justify;
+	text-indent: 1cm;
+}
+
+a {
+	text-decoration: none;
+}
+
+
+hr {
+	color: #012;
+	background-color: #012;
+	height: 0.25em;
+}
+
+pre, tt, code {
+	font-family: "Bitstream Vera Sans Mono", "Anadale mono", "Lucida Console", Courier, Monospace;
+}
+
+code {
+	background-color: white;
+}
+
+.code {
+	background-color: #EEF;
+	color: black;
+	padding: 0.5em;
+	margin: 0.5em;
+	border: 2px solid black;
+	font-size: 7pt;
+	line-height: 1.2;
+}
+
+.code h3 {
+	color: black;
+}
+
+#footnote {
+	padding: 5px 0px 0px 0px;
+	margin: 5px 0px 0px 0px;
+	border-top: 4px solid #069;
+}
+
+#footnote p {
+	text-indent: 0px;
+	font-size: 8pt;
+}
+
+ul li, li, ul {
+	line-height: 1.4;
+}
+
+.nav {
+	display: none;
+}

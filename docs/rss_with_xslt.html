@@ -8,10 +8,11 @@
       XML::RSS::Tools &gt; Processing RSS Files with XSLT
     </title>
     <link rel="StyleSheet" href="./style.css" type="text/css" />
+		<link rel="StyleSHeet" href="./print.css" type="text/css" media="print" />
   </head>
   <body>
     <h1>
-      Processing RSS Files with XSLT <sup>*</sup>
+      Processing RSS Files with XSLT<sup>1</sup>
     </h1>
     <h2>
       Synopsis
@@ -36,7 +37,7 @@
       Returning to Europe I abandoned my academic training and rushed headlong into enterprise web content
       management working for one of the pioneering XML companies. We were so pioneering that we never made a profit
       and as the boom turned to bust the company imploded. My thoughts again turned to syndicated news and
-      portals---How was it done? Was it easy? Could we use it to build a web site with multiple-content chanels
+      portals&mdash;How was it done? Was it easy? Could we use it to build a web site with multiple-content channels
       that was easy for a small company to build and maintain?
     </p>
     <h2>
@@ -69,22 +70,24 @@
       references at the end.
     </p>
     <p>
-      At the simplest level XSLT takes one XML document as a document-tree, and coverts it to another format. The
+      At the simplest level XSLT takes one XML document as a document-tree, and converts it to another format. The
       XSLT file is a list of transformation templates that apply to specific parts of the input tree. Each
       individual template may operate in isolation of other rules, to give a result tree.
     </p>
     <p>
       As an example I shall transform a simple XML document into a HTML fragment using XSLT. Code listing
-      <strong>1</strong> shows a simple XML document with a &lt;statement&gt; tag and a &lt;footer&gt; tag. I want
-      to apply a stylesheet to it to produce the output in code listing <strong>3</strong>.
+      <strong>1</strong> shows a simple XML document with a <code>&lt;statement&gt;</code> tag and a 
+			<code>&lt;footer&gt;</code> tag. I want to apply a stylesheet to it to produce the output in code
+			listing <strong>3</strong>.
     </p>
     <p>
       In code listing <strong>2</strong>, the first rule of my style sheet tells the engine to start at the root of
-      the tree &lt;/&gt;. It then outputs a &lt;div&gt; tag. Then the second rule tells the engine to look in the
-      tree for a path than matches &lt;root/statement&gt; from the current context. If it finds a match it calls
-      the second template, if no match is found flow proceeds to the next line. The second template outputs a
-      &lt;p&gt; tag, followed by the content of the current input tree node value Hello World!, then a &lt;/p&gt;
-      tag. Flow returns to the calling rule, and outputs a &lt;/div&gt; tag.
+      the tree <code>&lt;/&gt;</code>. It then outputs a <code>&lt;div&gt;</code> tag. Then the second rule tells
+			the engine to look in the tree for a path than matches <code>&lt;root/statement&gt;</code> from the current
+			context. If it finds a match it calls the second template, if no match is found flow proceeds to the next
+			line. The second template outputs a <code>&lt;p&gt;</code> tag, followed by the content of the current input
+			tree node value Hello World!, then a <code>&lt;/p&gt;</code> tag. Flow returns to the calling rule, and
+			outputs a <code>&lt;/div&gt;</code> tag.
     </p>
     <div class="code">
       <h3>
@@ -134,11 +137,12 @@
       Using Perl
     </h2>
     <p>
-      Code listing 4 uses the LWP::Simple module to retrieve XML files, and the libxslt-based XML::LibXSLT to
-      transform them. The first command line argument to the script specifies the file to fetch, and the second
-      specifies the XSLT template to use. Once LWP::Simple fetches the XML file, XML::LibXML and XML::LibXSLT
-      convert it to HTML via XSLT. Perl provides the framework for the download and conversion, and the XSLT
-      stylesheet provides the rules of the conversion.
+      Code listing 4 uses the <code>LWP::Simple</code> module to retrieve XML files, and the libxslt-based
+			<code>XML::LibXSLT</code> to transform them. The first command line argument to the script specifies
+			the file to fetch, and the second specifies the XSLT template to use. Once <code>LWP::Simple</code>
+			fetches the XML file, <code>XML::LibXML</code> and <code>XML::LibXSLT</code> convert it to HTML via XSLT.
+			Perl provides the framework for the download and conversion, and the XSLT stylesheet provides the rules
+			of the conversion.
     </p>
     <div class="code">
       <h3>
@@ -207,21 +211,22 @@ print $stylesheet-&gt;output_string($transformed);
     </h2>
     <p>
       To make it easier to transform any RSS file with a single stylesheet, I first convert all RSS files to my
-      prefered version of RSS.
+      preferred version of RSS.
     </p>
     <p>
       The <a href="http://perl-rss.sourceforge.net/">XML::RSS</a> module interconverts Perl structures and RSS
       files. I can use it to convert a file in one RSS version into another version; however, the module has a
       number of problems and limitations, including one fatal flaw as of version 0.97, it does not output properly
-      escaped XML. Thus any '&amp;amp;' is incorrectly outputted as '&amp;', a special character in XML signalling
-      the start of an entity encoding. The module should encode any literal '&amp;' as an '&amp;amp;'.
+      escaped XML. Thus any '<code>&amp;amp;</code>' is incorrectly outputted as '<code>&amp;</code>', a special
+			character in XML signalling the start of an entity encoding. The module should encode any literal
+			'<code>&amp;</code>' as an '<code>&amp;amp;</code>'.
     </p>
     <p>
-      As a result of an email I sent to brian d foy regarding his recent article in this journal using the
-      XML::RSS, he took it upon himself to fix the module, and another project on SourceForge was born. <span
-			class="delete">The project developers have not yet released a version that fixes this problem, however
-			they are working on it</span> <span class="insert">In January 2003 the group released a much revised
-			1.x version, fixing many of the problems in the module</span>.
+      As a result of an email I sent to <tt>brian d foy</tt> regarding his recent article in this journal using
+			the <code>XML::RSS</code>, he took it upon himself to fix the module, and another project on SourceForge was
+			born. <span class="delete">The project developers have not yet released a version that fixes this problem,
+			however they are working on it</span> <span class="insert">In January 2003 the group released a much revised
+			1.x version, fixing most of the problems in the module</span>.
     </p>
     <h2>
       XML::RSS::Tools
@@ -231,15 +236,15 @@ print $stylesheet-&gt;output_string($transformed);
       poor source XML, multiple RSS versions and XML::RSS escaping defect.
     </p>
     <p>
-      The XML::RSS::Tools module incorporates HTTP tools and "The XML C library for Gnome" based XSLT processor,
-      giving a complete tool-kit. Code listing <strong>5</strong> uses the module to download the file, then to
-      transform and to output the result in one step. It has the same command line arguments as the earlier example
-      - an RSS file location and an XSLT stylesheet.
+      The <code>XML::RSS::Tools</code> module incorporates HTTP tools and "The XML C library for Gnome" based
+			XSLT processor, giving a complete tool-kit. Code listing <strong>5</strong> uses the module to download the
+			file, then to transform and to output the result in one step. It has the same command line arguments as
+			the earlier example - an RSS file location and an XSLT stylesheet.
     </p>
     <p>
-      I create an XML::RSS::Tools object by initialising the module to its default configuration. Inside an eval, I
-      use the object to load the source file and the XSLT file, to transform the source, and to output the result
-      as a string. I use an eval block in case an invalid RSS file causes the XML parser to die.
+      I create an <code>XML::RSS::Tools</code> object by initialising the module to its default configuration.
+			Inside an eval, I use the object to load the source file and the XSLT file, to transform the source, and
+			to output the result as a string. I use an eval block in case an invalid RSS file causes the XML parser to die.
     </p>
     <div class="code">
       <h3>
@@ -262,25 +267,27 @@ print $rss-&gt;as_string('error') if ($@);
       The XSLT stylesheet in code listing <strong>6</strong> converts a single RSS feed code listing
       <strong>7</strong> into a XHTML fragment. It starts with the standard XML and XSLT header details. I tell the
       processor to turn off the XML declaration to make the fragment easier to directly incorporate in a XHTML
-      document. I select XML output and turne on indents to give a neater document.
+      document. I select XML output and turn on indents to give a neater document.
     </p>
     <p>
-      The first template rule selects the XML root of the document, outputs a literal &lt;div&gt; tag, then applies
-      the &lt;rss/channel&gt; rule, and outputs a &lt;/div&gt; tag.
+      The first template rule selects the XML root of the document, outputs a literal <code>&lt;div&gt;</code>
+			tag, then applies the <code>&lt;rss/channel&gt;</code> rule, and outputs a <code>&lt;/div&gt;</code> tag.
     </p>
     <p>
-      The &lt;rss/channel&gt; rule is where I process the details of the channel. I start by creating a number of
-      variables, and populating them with the details to create an image link and the heading. I use an
-      &lt;xsl:if&gt; to check if there is a image to link to, and if so populate an &lt;img&gt; tag with it. I
-      create &lt;h3&gt; and &lt;a&gt; tags which link to the originating site. I output an &lt;hr/&gt; tag to
-      separate the title, and then create an un-ordered list to put the individual story titles in. Inside the
-      &lt;ul&gt;&lt;/ul&gt; tags I place an &lt;xsl:apply-templates&gt; command which inserts the content of each
-      item. One of the many nice things about the XSLT language is that I do not need to know how many items there
-      are in a given story - the simple rule will find them all.
+      The <code>&lt;rss/channel&gt;</code> rule is where I process the details of the channel. I start by
+			creating a number of variables, and populating them with the details to create an image link and the
+			heading. I use an <code>&lt;xsl:if&gt;</code> to check if there is a image to link to, and if so populate
+			an <code>&lt;img&gt;</code> tag with it. I create <code>&lt;h3&gt;</code> and <code>&lt;a&gt;</code> tags
+			which link to the originating site. I output an <code>&lt;hr/&gt;</code> tag to separate the title, and
+			then create an un-ordered list to put the individual story titles in. Inside the
+			<code>&lt;ul&gt;&lt;/ul&gt;</code> tags I place an <code>&lt;xsl:apply-templates&gt;</code> command which
+			inserts the content of each item. One of the many nice things about the XSLT language is that I do not
+			need to know how many items there are in a given story - the simple rule will find them all.
     </p>
     <p>
-      The &lt;item&gt; rule creates a pair of variables for the link, outputs a &lt;li&gt; tag, constructs an
-      &lt;a&gt; tag, and closes with a literal &lt;/li&gt; since this is XML.
+      The <code>&lt;item&gt;</code> rule creates a pair of variables for the link, outputs a
+			<code>&lt;li&gt;</code> tag, constructs an <code>&lt;a&gt;</code> tag, and closes with a literal
+			<code>&lt;/li&gt;</code> since this is XML.
     </p>
     <p>
       Code listing <strong>8</strong> shows the XHTML fragment generated by this stylesheet.
@@ -392,9 +399,9 @@ print $rss-&gt;as_string('error') if ($@);
       Conclusion
     </h2>
     <p>
-      Perl is a powerful language for collecting, downloading and manipulating data. The XML::RSS::Tools module
-      works around some problems in XML::RSS and incorporates the XSLT processing. Thus the application code is
-      separate from the markup details.
+      Perl is a powerful language for collecting, downloading and manipulating data. The <code>XML::RSS::Tools</code>
+			module works around some problems <span class="insert">historically found</span> in <code>XML::RSS</code> and
+			incorporates the XSLT processing. Thus the application code is  separate from the markup details.
     </p>
     <h2>
       See Also
@@ -411,11 +418,12 @@ print $rss-&gt;as_string('error') if ($@);
         <a href="http://www.oreilly.com/catalog/xslt/">XSLT</a> by Doug Tidwell, O'Reilly and Associates.
       </li>
       <li>
-        <a href="http://www.wrox.com/books/1861005946.htm">Beginning XSLT</a> by Jeni Tennison, Wrox Press Ltd.
+        <a href="http://www.wrox.com/books/1861005946.htm">Beginning XSLT</a> by Jeni Tennison, Wrox Press
+				Ltd.<sup>2</sup>
       </li>
       <li>
         <a href="http://www.wrox.com/books/1861005067.htm">XSLT Programmer's Reference 2nd Edition</a> by Michael
-        Kay, Wrox Press Ltd.
+        Kay, Wrox Press Ltd.<sup>2</sup>
       </li>
       <li>
         <a href="http://www.oreilly.com/catalog/xsltckbk/">XSLT Cookbook</a> by Sal Mangano O'Reilly and
@@ -464,11 +472,13 @@ print $rss-&gt;as_string('error') if ($@);
       </li>
     </ul>
     <div id="footnote">
-      <p>
-        * This <a href="http://www.theperlreview.com/Articles/v0i7/xslt.pdf">article</a> first appeared in
+      <ol>
+				<li>This <a href="http://www.theperlreview.com/Articles/v0i7/xslt.pdf">article</a> first appeared in
 				<a href="http://www.theperlreview.com/">The Perl Review</a> in January 2003. This version will be
-				continually updated as appropiate. Revision 3, March 2003.
-      </p>
+				continually updated as appropriate. Revision 4, May 2003.</li>
+				<li>Wrox Press Ltd have gone out of business since the article was written, I'm therefore not sure of the
+				status of any Wrox books reference in this article.</li>
+			</ol>
     </div>
   </body>
 </html>
