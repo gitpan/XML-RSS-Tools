@@ -29,6 +29,7 @@ if ($uri) {
 
 	my $rss = XML::RSS::Tools->new;
 	ok($rss);
+#	$rss->set_http_proxy(proxy_server => "http://marmot:3128/");		# HTTP PROXY TEST
 	
 	eval { require HTTP::GHTTP };
 	if ($@) {

@@ -1,6 +1,7 @@
 Revision history for Perl extension XML::RSS::Tools.
 
-0.13  Xxx XX June 2003
+0.13  Sun 28 September 2003
+	- Implment HTTP Proxy support - no tests yet
 	- Suplementary documentation converted from HTML to POD
 	- Minor code changes
 

@@ -1,6 +1,6 @@
 =head1 NAME
 
-Introduction: Simple Introduction To RSS
+Introduction - A Simple Introduction To RSS
 
 =head2 RSS/RDF
 
@@ -74,31 +74,31 @@ explanations can be found here:
 
 =item *
 
-L<XML::RSS::Tools::example-1> - simple example
+Example 1 - simple example
 
 =item *
 
-L<XML::RSS::Tools::example-2> - complete example
+Example 2 - complete example
 
 =item *
 
-L<XML::RSS::Tools::example-3> - concise example
+Example 3 - concise example
 
 =item *
 
-L<XML::RSS::Tools::example-4> - single stylesheet example with no normalisation
+Example 4 - single stylesheet example with no normalisation
 
 =item *
 
-L<XML::RSS::Tools::example-5> - a complete RSS client mini-application
+Example 5 - a complete RSS client mini-application
 
 =item *
 
-L<XML::RSS::Tools::rss_with_xslt> - an article from The Perl Review
+RSS With XSLT - An article from The Perl Review
 
 =item *
 
-./rss.xml - the RSS feed for this module
+rss.xml - the RSS feed for this module
 
 =back
 

@@ -1,6 +1,6 @@
 =head1 NAME
 
-Article: Processing RSS Files with XSLT I<1>
+Article - Processing RSS Files with XSLT 
 
 =head1 SYNOPSIS
 
@@ -322,11 +322,11 @@ XSLT by Doug Tidwell, O'Reilly and Associates. http://www.oreilly.com/catalog/xs
 
 =item *
 
-Beginning XSLT by Jeni Tennison, Wrox Press Ltd. I<2> http://www.wrox.com/books/1861005946.htm
+Beginning XSLT by Jeni Tennison, Wrox Press Ltd. I<2>
 
 =item *
 
-XSLT Programmer's Reference 2nd Edition by Michael Kay, Wrox Press Ltd. I<2> http://www.wrox.com/books/1861005067.htm
+XSLT Programmer's Reference 2nd Edition by Michael Kay, Wrox Press Ltd. I<2> http://www.wrox.com/books/0764543814.shtml
 
 =item *
 
@@ -338,7 +338,7 @@ Content Syndication with RSS</a> by Ben Hammersley, O'Reilly and Associates. htt
 
 =item *
 
-What is RSS? http://www.xml.com/lpt/a/2002/12/18/dive-into-xml.html and Parsing RSS At All Costs http://www.xml.com/lpt/a/2003/01/22/dive-into-xml.html by Mark Pilgrim http://www.diveintomark.org/, XML.com.
+What is RSS? http://www.xml.com/lpt/a/2002/12/18/dive-into-xml.html and Parsing RSS At All Costs http://www.xml.com/lpt/a/2003/01/22/dive-into-xml.html by Mark Pilgrim http://www.diveintomark.org/ , XML.com.
 
 =item *
 

@@ -2,7 +2,7 @@
 #
 # XML::RSS::Tools
 # Version 0.13
-# June 2003
+# September 2003
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
 #
@@ -27,7 +27,7 @@ use XML::LibXSLT;				# Hand the XSL file and do the XSLT
 use URI;						# Deal with URIs nicely
 use FileHandle;					# Alow the use of File Handle Objects
 
-our $VERSION = '0.13_4';
+our $VERSION = '0.13_5';
 
 #
 #	Tools Constructor
@@ -50,7 +50,10 @@ sub new {
 		_uri_file       =>  "",									# URI File
 		_uri_scheme     =>  "",									# URI Scheme
 		_xml_catalog	=>	"",									# XML Catalog file
-		_http_client	=>	"auto"								# Which HTTP Client to use
+		_http_client	=>	"auto",								# Which HTTP Client to use
+		_proxy_server   =>  "",									# A Proxy Server
+		_proxy_user     =>  "",									# Username on the proxy server
+		_proxy_password =>  ""									# Password for user on the proxy server
 	}, ref($class) || $class;
 
 	if ($args{version}) {
@@ -131,7 +134,7 @@ sub set_auto_wash {
 
 
 #
-#	Read the HTTP Client mode
+#	Read the HTTP client mode
 #
 sub get_http_client {
 	my $self = shift;
@@ -140,7 +143,7 @@ sub get_http_client {
 
 
 #
-#	Set the auto_wash level
+#	Set which HTTP client to use
 #
 sub set_http_client {
 	my $self = shift;
@@ -153,6 +156,36 @@ sub set_http_client {
 		
 	$self->{_http_client} = lc($client);
 	return $self->{_http_client};
+}
+
+
+#
+#	Get the HTTP proxy
+#
+sub get_http_proxy {
+	my $self = shift;
+	my $proxy;
+
+	if ($self->{_proxy_server}) {
+		$proxy = $self->{_proxy_user} . ":" . $self->{_proxy_password} . '@' if ($self->{_proxy_user} && $self->{_proxy_password});
+		$proxy .= $self->{_proxy_server};
+		return $proxy;
+	}
+}
+
+
+#
+#	Set the HTTP proxy
+#
+sub set_http_proxy {
+	my $self = shift;
+	my %args = @_;
+
+	$self->{_proxy_server}   = $args{proxy_server};
+	$self->{_proxy_user}     = $args{proxy_user};
+	$self->{_proxy_password} = $args{proxy_pass};
+
+	return $self;
 }
 
 
@@ -502,6 +535,7 @@ sub _http_get {
 		require HTTP::Lite;
 		my $ua = HTTP::Lite->new;
 		$ua->add_req_header("User-Agent", "XML::RSS::Tools/$VERSION HTTP::Lite/$HTTP::Lite::VERSION ($^O)");
+		$ua->proxy($self->{_proxy_server}) if $self->{_proxy_server};
 		my $r = $ua->request($uri) or return $self->_raise_error("Unable to get document: $!");
 		return $self->_raise_error("HTTP error: $r, " . $ua->status_message) unless $r == 200;
 		return $ua->body;
@@ -511,6 +545,7 @@ sub _http_get {
 		require LWP::UserAgent;
 		my $ua = LWP::UserAgent->new;
 		$ua->agent("XML::RSS::Tools/$VERSION " . $ua->agent . " ($^O)");
+		$ua->proxy(['http', 'ftp'], $self->{_proxy_server}) if $self->{_proxy_server};
 		my $response = $ua->request(HTTP::Request->new('GET', $uri));
 		return $self->_raise_error("HTTP error: " . $response->status_line) if $response->is_error;
 		return $response->content();
@@ -520,6 +555,10 @@ sub _http_get {
 		require HTTP::GHTTP;
 		my $ua = HTTP::GHTTP->new($uri);
 		$ua->set_header("User-Agent", "XML::RSS::Tools/$VERSION libghttp/1.x ($^O)");
+		if ($self->{_proxy_server}) {
+			$ua->set_proxy($self->{_proxy_server});
+			$ua->set_proxy_authinfo($self->{_proxy_user}, $self->{_proxy_password}) if ($self->{_proxy_user} && $self->{_proxy_password});
+		}
 		$ua->process_request;
 		my $xml = $ua->get_body;
 		if ($xml) {
@@ -622,7 +661,7 @@ sub	_clean_entities {
 		uml		=> '¨',
 		ordf	=> 'ª',
 		laquo	=> '«',
-		'not'	=> '¬',    # not is a keyword in perl
+		'not'	=> '¬',
 		shy		=> '­',
 		macr	=> '¯',
 		deg		=> '°',
@@ -641,7 +680,7 @@ sub	_clean_entities {
 		frac12	=> '½',
 		frac34	=> '¾',
 		iquest	=> '¿',
-		'times'	=> '×',    # times is a keyword in perl
+		'times'	=> '×',
 		divide	=> '÷',
 	);
 	my $entities = join('|', keys %entity);
@@ -834,6 +873,27 @@ retrieve files on the internet. Though C<GHTTP> is much faster than C<LWP> it is
 doesn't work reliably on Windows Apache 1.3.x/mod_Perl, so this method allows you to specify which
 client to use if you wish to.
 
+=head3 set_http_proxy and get_http_proxy
+
+If you are connected to the Internet via a HTTP proxy, then you can pass your HTTP Proxy details
+to the HTTP clients.
+
+  $rss_object->set_http_proxy(proxy_server => "http://proxy.server.com:3128/");
+
+You may also pass BASIC authentication details through if you need.
+
+  $rss_object->set_http_proxy(
+    proxy_server => "http://proxy.server.com:3128/",
+    proxy_user   => "username",
+    proxy_pass   => "password");
+
+If you need to recover the proxy settings there is also the get_http_proxy command
+which returns the proxy and BASIC authentication details as a single URI.
+
+	print $rss_object->get_http_proxy;
+	# username:password@http://proxy.server.com:3128/
+
+
 =head2 XML Catalog
 
 To speed up large scale XML processing it is advised to create an XML Catalog (I<sic>) so that the XML parser
@@ -873,11 +933,11 @@ Any OS able to run the core requirements.
 
 =head2 EXPORT
 
-None by default.
+None.
 
 =head1 HISTORY
 
-0.13
+0.13 Proxy support, doc format changes.
 
 0.12 Numerous build fixes, module untouched.
 
@@ -953,11 +1013,7 @@ Possibly support C<HTTP::MHTTP> module, it seems to be even faster than GHTTP.
 
 =item *
 
-Implement HTTP Proxy support.
-
-=item *
-
-Fully test with Perl 5.8.x
+Fully test with Perl 5.8.x - some partial testing has taken place.
 
 =back
 
