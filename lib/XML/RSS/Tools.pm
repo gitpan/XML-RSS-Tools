@@ -1,9 +1,9 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.14
-# $Id: Tools.pm,v 1.4 2004/04/21 18:11:00 adam Exp $
-# March 2004
+# Version 0.15
+# $Id: Tools.pm,v 1.7 2005/02/06 11:40:00 adam Exp $
+# 
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
 #
@@ -28,7 +28,7 @@ use XML::LibXSLT;				# Hand the XSL file and do the XSLT
 use URI;						# Deal with URIs nicely
 use FileHandle;					# Allow the use of File Handle Objects
 
-our $VERSION = '0.14';
+our $VERSION = '0.15';
 
 #
 #	Tools Constructor
@@ -66,7 +66,7 @@ sub new {
 	}
 
 	if ($args{xml_catalog}) {
-		croak "XML Catalog Spport not enabled in your version of XML::LibXML" unless $XML::LibXML::VERSION > 1.52;
+		croak "XML Catalog Support not enabled in your version of XML::LibXML" unless $XML::LibXML::VERSION > 1.52;
 		croak "Unable to read XML catalog $args{xml_catalog}" unless set_xml_catalog($object, $args{xml_catalog});
 	}
 
@@ -237,7 +237,7 @@ sub set_xml_catalog {
 	my $self = shift;
 	my $catalog_file = shift;
 
-	croak "XML Catalog Spport not enabled in your version of XML::LibXML" unless $XML::LibXML::VERSION > 1.52;	
+	croak "XML Catalog Support not enabled in your version of XML::LibXML" unless $XML::LibXML::VERSION > 1.52;	
 
 	if ($self->_check_file($catalog_file)) {
 		$self->{_xml_catalog} = $catalog_file;
@@ -778,9 +778,17 @@ The module will die if it's created with invalid parameters.
   $rss_object->rss_string($xml_file);
   $rss_object->rss_fh($file_handle);
 
-All return true on success, false on failure. If an XML file was provided but was invalid
-XML the parser will fail fatally at this time. The input RSS feed will automatically be
-normalised to the preferred RSS version at this time. Chose your version before you load it!
+All return true on success, false on failure. If an XML file was provided but
+was invalid XML the parser will fail fatally at this time. The input RSS feed
+will automatically be normalised to the preferred RSS version at this time.
+Chose your version before you load it!
+
+As of version URI version 1.32 the way that URIs are mapped has changed
+slightly, this may result in erroneous file location. The variable
+$URI::file::DEFAULT_AUTHORITY should be set to undef in versions later
+than 1.32 to revert their behaviour to that of the older version, see
+the URI changes file for more details.
+ 
 
 =head2 Source XSL Template
 
@@ -790,7 +798,8 @@ normalised to the preferred RSS version at this time. Chose your version before 
   $rss_object->xsl_string($xml_file);
   $rss_object->xsl_fh($file_handle);
 
-All return true on success, false on failure. The XSLT file is NOT parsed or verified at this time.
+All return true on success, false on failure. The XSLT file is NOT parsed or
+verified at this time.
 
 =head2 Other Methods
 
@@ -798,7 +807,8 @@ All return true on success, false on failure. The XSLT file is NOT parsed or ver
 
   $rss_object->transform();
 
-Performs the XSL transformation on the source RSS file with the loaded XSLT file.
+Performs the XSL transformation on the source RSS file with the loaded XSLT
+file.
 
 =head3 as_string
 
@@ -862,26 +872,29 @@ Matt Sergeant's libghttp based C<HTTP::GHTTP>.
 
 lite
 
-Roy Hooper's pure Perl C<HTTP::Lite> client. Slower than ghttp, but still faster than lwp.
+Roy Hooper's pure Perl C<HTTP::Lite> client. Slower than ghttp, but still
+faster than lwp.
 
 =item	*
 
 lwp
 
-LWP is the Rolls-Royce solution, it can do everything, but it's rather big, so it's slow to
-load, and it's not exactly fast. It is however far more common, and is the most complete.
+LWP is the Rolls-Royce solution, it can do everything, but it's rather big,
+so it's slow to load, and it's not exactly fast. It is however far more
+common, and is the most complete.
 
 =back
 
-If set to auto the module will first try C<HTTP::GHTTP> then C<HTTP::Lite> then C<LWP>, to
-retrieve files on the Internet. Though C<GHTTP> is much faster than C<LWP> it is far less common and
-doesn't work reliably on Windows Apache 1.3.x/mod_Perl, so this method allows you to specify which
+If set to auto the module will first try C<HTTP::GHTTP> then C<HTTP::Lite>
+then C<LWP>, to retrieve files on the Internet. Though C<GHTTP> is much
+faster than C<LWP> it is far less common and doesn't work reliably on
+Windows Apache 1.3.x/mod_Perl, so this method allows you to specify which
 client to use if you wish to.
 
 =head3 set_http_proxy and get_http_proxy
 
-If you are connected to the Internet via a HTTP proxy, then you can pass your HTTP Proxy details
-to the HTTP clients.
+If you are connected to the Internet via a HTTP proxy, then you can pass
+your HTTP Proxy details to the HTTP clients.
 
   $rss_object->set_http_proxy(proxy_server => "http://proxy.server.com:3128/");
 
@@ -892,8 +905,9 @@ You may also pass BASIC authentication details through if you need.
     proxy_user   => "username",
     proxy_pass   => "password");
 
-If you need to recover the proxy settings there is also the get_http_proxy command
-which returns the proxy and BASIC authentication details as a single URI.
+If you need to recover the proxy settings there is also the get_http_proxy
+command which returns the proxy and BASIC authentication details as a
+single URI.
 
 	print $rss_object->get_http_proxy;
 	# username:password@http://proxy.server.com:3128/
@@ -925,23 +939,28 @@ This will return the file name of the XML Catalog in use.
 Depending upon how your core libxml2 library is compiled, you should also be
 able to use pre-configured XML Catalog files stored in your C</etc/xml/catalog>.
 
-XML Catalog support was introduced in version 2.4.3 of libxml2, and significantly
-revised in version 2.4.7. Support for XML Catalog was introduced into version
-1.53 of the XML::LibXML module. Therefore for XML Catalog support your libxml2
-library should be version 2.4.3 or better and your XML::LibXML should be version
-1.5.3 or better.
+XML Catalog support was introduced in version 2.4.3 of libxml2, and
+significantly revised in version 2.4.7. Support for XML Catalog was
+introduced into version 1.53 of the XML::LibXML module. Therefore for XML
+Catalog support your libxml2 library should be version 2.4.3 or better and
+your XML::LibXML should be version 1.5.3 or better. However there appears
+to be bugs in some of the later version of XML::LibXML, at this time I do
+not know which versions work correctly and which do not. Please bear this
+in mind if you wish to use XML Catalogs.
 
 
 =head1 PREREQUISITES
 
-To function you must have C<URI> installed. If you plan to normalise your RSS data
-before transforming you must also have C<XML::RSS> installed. To transform any RSS
-files to HTML you will also need to use C<XML::LibXSLT> and C<XML::LibXML>.
+To function you must have C<URI> installed. If you plan to normalise your
+RSS data before transforming you must also have C<XML::RSS> installed. To
+transform any RSS files to HTML you will also need to use C<XML::LibXSLT>
+and C<XML::LibXML>.
 
 One of C<HTTP::GHTTP>, C<HTTP::Lite> or C<LWP> will bring this module to full
-functionality. GHTTP is much faster than LWP, but is it not as widely available as
-LWP. By default GHTTP will be used if it is available, then Lite, finally LWP.
-If you have two or more installed you may manually select which one you wish to use.
+functionality. GHTTP is much faster than LWP, but is it not as widely
+available as LWP. By default GHTTP will be used if it is available, then
+Lite, finally LWP. If you have two or more installed you may manually select
+which one you wish to use.
 
 =pod OSNAMES
 
@@ -953,11 +972,9 @@ None.
 
 =head1 HISTORY
 
+0.15 Doc and build/test changes, module untouched.
+
 0.14 Doc changes, configuration dump during testing, module untouched.
-
-0.13 Proxy support, doc format changes.
-
-0.12 Numerous build fixes, module untouched.
 
 ...
 
@@ -1008,8 +1025,8 @@ have been release most problems have been fixed, please upgrade if you can.
 
 Perl and Unicode
 
-Perl pre 5.7.x is not able to handle Unicode properly, strange things happen...
-Things should get better as 5.8.x is now available.
+Perl pre 5.7.x is not able to handle Unicode properly. Things are better 
+since the release of 5.8.x.
 
 =item *
 
@@ -1032,7 +1049,8 @@ Debug mode doesn't actually do much yet.
 
 =item *
 
-Support Piers Harding's C<HTTP::MHTTP> module, it seems to be even faster than GHTTP.
+Support Piers Harding's C<HTTP::MHTTP> module, it seems to be even faster
+than GHTTP.
 
 =item *
 
@@ -1044,10 +1062,6 @@ Investigate supporting Atom feeds.
 
 =item *
 
-Fully test with Perl 5.8.x - some partial testing has taken place.
-
-=item *
-
 Import Proxy settings from environment.
 
 =back
@@ -1056,8 +1070,8 @@ Import Proxy settings from environment.
 
 Adam Trickett, E<lt>atrickett@cpan.orgE<gt>
 
-This module contains the direct and indirect input of a number of friendly Perl
-Hackers on Perlmonks/use.perl: Ovid; Matts; Merlyn; hfb and more...
+This module contains the direct and indirect input of a number of friendly
+Perl Hackers on Perlmonks/use.perl: Ovid; Matts; Merlyn; hfb; link and more...
 
 =head1 SEE ALSO
 
@@ -1066,7 +1080,7 @@ L<HTTP::Lite>, L<HTTP::GHTTP>.
 
 =head1 COPYRIGHT
 
-XML::RSS::Tools, Copyright iredale Consulting 2002-2004
+XML::RSS::Tools, Copyright iredale Consulting 2002-2005
 
 OSI Certified Open Source Software
 
@@ -1084,6 +1098,7 @@ this program; if not, write to the Free Software Foundation, Inc.,
 
 =head1 DEDICATION
 
-This module is dedicated to my beloved mother who believed in me, even when I didn't.
+This module is dedicated to my beloved mother who believed in me, even when
+I didn't.
 
 =cut

@@ -1,4 +1,4 @@
-#	$Id: Makefile.PL,v 1.3 2004/04/21 18:10:32 adam Exp $
+#	$Id: Makefile.PL,v 1.5 2005/02/06 11:39:47 adam Exp $
 
 use ExtUtils::MakeMaker;
 use strict;
@@ -53,6 +53,8 @@ if ($@) {
 	if ($XML::LibXML::VERSION < 1.53) {
 		print "Your version of LibXML is too old to support XML Catalog.\n";
 		$test_list .= " t/no-catalog.t";
+	} elsif ($XML::LibXML::VERSION > 1.56) {
+		print "You have a modern, but broken version of LibXML,\nall XML Catalog tests skipped.\n";
 	} else {
 		$test_list .= " t/catalog-tests.t";
 	}
@@ -62,7 +64,7 @@ if ($@) {
 # (I lifted this code from Net::DNS which lifted it from LWP...)
 print "Probing for a HTTP Server, this may take a few seconds...\n";
 require IO::Socket;
-my $hostname =hostname;
+my $hostname = hostname;
 my $s = IO::Socket::INET->new(
 	PeerAddr => "www.iredale.net:80",
 	Timeout  => 10

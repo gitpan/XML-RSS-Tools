@@ -1,6 +1,12 @@
-#   $Id: CHANGES,v 1.5 2004/04/24 09:12:34 adam Exp $
+#   $Id: CHANGES,v 1.9 2005/02/06 11:39:47 adam Exp $
 
 Revision history for Perl extension XML::RSS::Tools.
+
+0.15  Sun 06 February 2005
+	- Catalog support in some versions of XML::LibXML appreas to be broken
+	- Minor test changes and fixes to POD and build process
+	- URI has changed, tests changes to adapt
+	- Module code unchanged
 
 0.14  Sat 24 April 2004
 	- Configuration diagnostics in tests

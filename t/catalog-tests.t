@@ -1,9 +1,5 @@
 #!/usr/bin/env perl -w
-#   $Id: catalog-tests.t,v 1.2 2004/02/14 16:34:23 adam Exp $
-#	Before `make install' is performed this script should be runnable with
-#	`make test'. After `make install' it should work as `perl test.pl'
-
-#########################
+#   $Id: catalog-tests.t,v 1.3 2005/01/07 21:59:27 adam Exp $
 
 use Test;
 use strict;
@@ -13,8 +9,6 @@ BEGIN { plan tests => 9 };
 
 use XML::RSS::Tools;
 ok(1); # If we made it this far, we're ok.
-
-#########################
 
 my $rss_object = XML::RSS::Tools->new;
 $rss_object->set_version(0);

@@ -1,11 +1,18 @@
 #!/usr/bin/env perl -w
-#   $Id: error-tests.t,v 1.2 2004/02/14 16:34:23 adam Exp $
+#   $Id: error-tests.t,v 1.3 2005/01/12 20:53:39 adam Exp $
 
 use Test;
 use strict;
 use warnings;
 
-BEGIN { plan tests => 43 };
+BEGIN {
+    plan tests => 43;
+    use URI::file;
+    if ($URI::VERSION >= 1.32) {
+		no warnings;
+        $URI::file::DEFAULT_AUTHORITY = undef;
+    }
+};
 
 use XML::RSS::Tools;
 ok(1); # If we made it this far, we're ok.
@@ -151,4 +158,3 @@ eval { $rss_object = XML::RSS::Tools->new(version => 51); };
 ok($@ =~ /No such version of RSS 51/);
 
 exit;
-

@@ -2,7 +2,7 @@
 #	Configuration diagnostics idea taken from XML::Simple
 #
 
-#	$Id: config.t,v 1.1 2004/04/21 18:11:26 adam Exp $
+#	$Id: config.t,v 1.2 2005/01/07 21:59:27 adam Exp $
 
 use strict;
 use Test::More tests => 1;
@@ -24,7 +24,9 @@ foreach my $module (@module_list) {
 	eval " require $module; ";
 	unless ($@) {
 		no strict 'refs';
-		$version{$module} = ${$module . '::VERSION'} || "Unkown";
+		$version{$module} = ${$module . '::VERSION'} || "Unknown";
+	} else {
+		$version{module} = "Not Installed"
 	}
 }
 
@@ -34,9 +36,8 @@ unshift @module_list, 'perl';
 
 diag(sprintf("\r# %-30s %s\n", 'Package', 'Version'));
 foreach my $module (@module_list) {
-	$version{module} = "Not Installed" unless(defined($version{module}));
+	$version{$module} = "Not Installed" unless(defined($version{$module}));
 	diag(sprintf(" %-30s %s\n", $module, $version{$module} ));
 }
 
 ok(1, "Dumped Configuration data");
-
