@@ -1,5 +1,6 @@
 CHANGES
 Makefile.PL
+Build.PL
 MANIFEST
 README
 META.yml
@@ -23,6 +24,8 @@ t/catalog-tests.t
 t/no-catalog.t
 t/http-tests.t
 t/pod-test.t
+t/pod-cover-1.t
+t/pod-cover-2.t
 t/test.rdf
 t/test.xsl
 t/empty-file

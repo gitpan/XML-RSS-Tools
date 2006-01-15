@@ -1,6 +1,6 @@
-#   $Id: README,v 1.6 2005/02/06 11:39:47 adam Exp $
+#   $Id: README,v 1.7 2006-01-13 21:19:22 adam Exp $
 
-XML/RSS/Tools version 0.15
+XML/RSS/Tools version 0.16
 ==========================
 
 RSS/RDF feeds are commonly available ways of distributing the latest news
@@ -61,14 +61,7 @@ myself which are also available upon request.
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2002-2005 Adam Trickett
-
-XML::RSS::Tools, Copyright iredale Consulting 2002-2005
-
-This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later
-version.
+XML::RSS::Tools, Copyright (C) iredale Consulting 2002-2006
 
 See POD for full details.
 

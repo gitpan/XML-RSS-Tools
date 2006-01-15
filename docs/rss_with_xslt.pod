@@ -1,4 +1,4 @@
-#   $Id: rss_with_xslt.pod,v 1.2 2004/02/14 16:34:23 adam Exp $
+#   $Id: rss_with_xslt.pod,v 1.3 2005/05/14 15:46:31 adam Exp $
 
 =head1 NAME
 
@@ -160,7 +160,7 @@ escaped XML. Thus any 'C<&amp;amp;>' is incorrectly outputted as 'C<&amp;>', a s
 character in XML signalling the start of an entity encoding. The module should encode any literal
 'C<&amp;>' as an 'C<&amp;amp;>'.
 
-As a result of an email I sent to <tt>brian d foy</tt> regarding his recent article in this journal using
+As a result of an email I sent to C<brian d foy> regarding his recent article in this journal using
 the C<XML::RSS>, he took it upon himself to fix the module, and another project on SourceForge was born.
 In January 2003 the group released a much revised 1.x version, fixing most of the problems in the module.
 
@@ -328,7 +328,7 @@ Beginning XSLT by Jeni Tennison, Wrox Press Ltd. I<2>
 
 =item *
 
-XSLT Programmer's Reference 2nd Edition by Michael Kay, Wrox Press Ltd. I<2> http://www.wrox.com/books/0764543814.shtml
+XSLT Programmer's Reference 2nd Edition by Michael Kay, Wrox Press Ltd. I<2>
 
 =item *
 
@@ -336,11 +336,15 @@ XSLT Cookbook by Sal Mangano O'Reilly and Associates. http://www.oreilly.com/cat
 
 =item *
 
-Content Syndication with RSS</a> by Ben Hammersley, O'Reilly and Associates. http://www.oreilly.com/catalog/consynrss
+Content Syndication with RSS and Developing Feeds with RSS and Atom by Ben Hammersley, O'Reilly and Associates. http://www.oreilly.com/catalog/consynrss
 
 =item *
 
-What is RSS? http://www.xml.com/lpt/a/2002/12/18/dive-into-xml.html and Parsing RSS At All Costs http://www.xml.com/lpt/a/2003/01/22/dive-into-xml.html by Mark Pilgrim http://www.diveintomark.org/ , XML.com.
+Developing Feeds with RSS and Atom by Ben Hammersley, O'Reilly and Associates. http://www.oreilly.com/catalog/deveoprssatom/
+
+=item *
+
+What is RSS? http://www.xml.com/lpt/a/2002/12/18/dive-into-xml.html and Parsing RSS At All Costs http://www.xml.com/lpt/a/2003/01/22/dive-into-xml.html by Mark Pilgrim, XML.com.
 
 =item *
 
@@ -348,7 +352,7 @@ Never Mind the Namespaces: An XSLT RSS Client http://www.xml.com/lpt/a/2003/01/0
 
 =item *
 
-L<XML::RSS>, L<XML::LibXML> and L<XML::LibXSLT> are both available on CPAN.
+L<XML::RSS>, L<XML::LibXML> and L<XML::LibXSLT> are all available on CPAN.
 
 =item *
 
@@ -386,7 +390,7 @@ Dr A. J. Trickett (atrickett AT cpan DOT org)
 =item 1
 
 This article http://www.theperlreview.com/Articles/v0i7/xslt.pdf first appeared in http://www.theperlreview.com/
-in January 2003. This version will be continually updated as appropriate. Revision 4.2, January 2004.
+in January 2003. This version will be continually updated as appropriate. Revision 4.3, May 2004.
 
 =item 2
 

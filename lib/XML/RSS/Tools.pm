@@ -1,8 +1,8 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.15
-# $Id: Tools.pm,v 1.7 2005/02/06 11:40:00 adam Exp $
+# Version 0.16
+# $Id: Tools.pm,v 1.9 2006-01-15 15:24:49 adam Exp $
 # 
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
@@ -28,7 +28,7 @@ use XML::LibXSLT;				# Hand the XSL file and do the XSLT
 use URI;						# Deal with URIs nicely
 use FileHandle;					# Allow the use of File Handle Objects
 
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 
 #
 #	Tools Constructor
@@ -386,7 +386,7 @@ sub xsl_string {
 	my $xml  = shift;
 
 	return unless $xml;
-	_$self->{_xsl_string} = $xml;
+	$self->{_xsl_string} = $xml;
 	$self->{_transformed} = 0;
 	return $self;
 }
@@ -839,13 +839,18 @@ If auto_wash is true, then all RSS files are cleaned before RSS normalisation to
 known entities by their numeric value, and fix known invalid XML constructs. By default
 auto_wash is set to true.
 
-=head3 set_version and get_version
+=head3 set_version
   
   $rss_object->set_version(0.92);  
-  $rss_object->get_version;
 
 All incoming RSS feeds are automatically converted to one default RSS version. If RSS version
 is set to 0 then normalisation is not performed. The default RSS version is 0.91.
+
+=head3 get_version
+  
+  $rss_object->get_version;
+
+Return the default RSS version.
 
 =head3 set_http_client and get_http_client
 
@@ -912,6 +917,13 @@ single URI.
 	print $rss_object->get_http_proxy;
 	# username:password@http://proxy.server.com:3128/
 
+=head3 set_xml_catalog
+
+Set the XML catalog. See below.
+
+=head3 get_xml_catalog
+
+Return the XML catalog in use.
 
 =head2 XML Catalog
 
@@ -972,9 +984,9 @@ None.
 
 =head1 HISTORY
 
-0.15 Doc and build/test changes, module untouched.
+0.16 Bug in xsl_string read fixed.
 
-0.14 Doc changes, configuration dump during testing, module untouched.
+0.15 Doc and build/test changes, module untouched.
 
 ...
 
@@ -1016,10 +1028,11 @@ Mark Pilgrim estimates that about 10% of RSS feeds have defective XML.
 
 XML::RSS Limitations
 
-XML::RSS up-to and including version 0.96 has a number of defects. As of October
-2002 brian d foy has taken over the module, and it is again under active
-development on http://perl-rss.sourceforge.net/. Since the 1.xx family
-have been release most problems have been fixed, please upgrade if you can.
+XML::RSS up-to and including version 0.96 has a number of defects. In October
+2002 brian d foy took over the module and it was again actively developed.
+At the moment the module is languishing. See http://perl-rss.sourceforge.net/
+
+Since version 1.xx most problems have been fixed please upgrade if you can.
 
 =item *
 
@@ -1071,7 +1084,8 @@ Import Proxy settings from environment.
 Adam Trickett, E<lt>atrickett@cpan.orgE<gt>
 
 This module contains the direct and indirect input of a number of friendly
-Perl Hackers on Perlmonks/use.perl: Ovid; Matts; Merlyn; hfb; link and more...
+Perl Hackers on Perlmonks/use.perl: Ovid; Matts; Merlyn; hfb; link; Martin
+and more...
 
 =head1 SEE ALSO
 
@@ -1080,7 +1094,7 @@ L<HTTP::Lite>, L<HTTP::GHTTP>.
 
 =head1 COPYRIGHT
 
-XML::RSS::Tools, Copyright iredale Consulting 2002-2005
+XML::RSS::Tools, Copyright iredale Consulting 2002-2006
 
 OSI Certified Open Source Software
 

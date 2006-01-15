@@ -1,5 +1,5 @@
 #!/usr/bin/env perl -w
-#   $Id: basic-tests.t,v 1.5 2004/04/24 09:39:36 adam Exp $
+#   $Id: basic-tests.t,v 1.6 2006-01-13 21:29:27 adam Exp $
 
 use Test;
 use strict;
@@ -11,7 +11,7 @@ use XML::RSS::Tools;
 ok(1); # If we made it this far, we're ok.
 
 #########################
-ok($XML::RSS::Tools::VERSION eq "0.15");
+ok($XML::RSS::Tools::VERSION eq "0.16");
 
 my $rss_object = XML::RSS::Tools->new;
 

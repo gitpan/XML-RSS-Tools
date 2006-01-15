@@ -1,5 +1,5 @@
 #!/usr/bin/env perl -w
-#   $Id: catalog-tests.t,v 1.3 2005/01/07 21:59:27 adam Exp $
+#   $Id: catalog-tests.t,v 1.4 2006-01-15 15:25:03 adam Exp $
 
 use Test;
 use strict;
@@ -26,13 +26,20 @@ ok(!($@));
 eval { $rss_object->xsl_file('./t/test.xsl'); };
 ok (!($@));
 
-eval { $rss_object->transform; };
-ok (!($@));
+if ($XML::LibXML::VERSION > 1.56) {
+	# Skip on these versions, See RT bug #7912
+	skip ("Your version of LibXML may have broken catalog support");
+	skip ("Your version of LibXML may have broken catalog support");
+	skip ("Your version of LibXML may have broken catalog support");
+} else {
+	eval { $rss_object->transform; };
+	ok (!($@));
 
-my $output_html = $rss_object->as_string;
-ok($output_html);
-my $length = length $output_html;
-ok(($length == 844) || ($length == 1487));
+	my $output_html = $rss_object->as_string;
+	ok($output_html);
+	my $length = length $output_html;
+	ok(($length == 844) || ($length == 1487));
+}
 
 exit;
 

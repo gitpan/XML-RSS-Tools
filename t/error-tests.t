@@ -1,12 +1,12 @@
 #!/usr/bin/env perl -w
-#   $Id: error-tests.t,v 1.3 2005/01/12 20:53:39 adam Exp $
+#   $Id: error-tests.t,v 1.4 2006-01-15 15:25:03 adam Exp $
 
 use Test;
 use strict;
 use warnings;
 
 BEGIN {
-    plan tests => 43;
+    plan tests => 44;
     use URI::file;
     if ($URI::VERSION >= 1.32) {
 		no warnings;
@@ -16,8 +16,6 @@ BEGIN {
 
 use XML::RSS::Tools;
 ok(1); # If we made it this far, we're ok.
-
-#########################
 
 my $rss_object = XML::RSS::Tools->new;
 
@@ -156,5 +154,9 @@ ok($@ =~ /Not configured for HTTP Client Internet Explorer/);
 #	43	Test a duff constructor, bad RSS Version
 eval { $rss_object = XML::RSS::Tools->new(version => 51); };
 ok($@ =~ /No such version of RSS 51/);
+
+#	44 Test bad XML/RSS strings
+eval { $rss_object->rss_string("<rss</rss>"); };
+ok ($@ =~ /not well-formed \(invalid token\) at line 1, column 4, byte 4/);
 
 exit;

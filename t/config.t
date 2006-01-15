@@ -2,7 +2,7 @@
 #	Configuration diagnostics idea taken from XML::Simple
 #
 
-#	$Id: config.t,v 1.2 2005/01/07 21:59:27 adam Exp $
+#	$Id: config.t,v 1.3 2006-01-15 15:25:03 adam Exp $
 
 use strict;
 use Test::More tests => 1;
@@ -17,6 +17,8 @@ my @module_list = qw(
 	HTTP::Lite
 	Test::Pod
 	URI
+	Test::Pod::Coverage
+	Pod::Coverage
 	Test::More);
 
 my (%version);

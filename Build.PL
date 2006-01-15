@@ -1,23 +1,21 @@
-#	$Id: Makefile.PL,v 1.7 2006-01-15 15:24:40 adam Exp $
+#	$Id: Build.PL,v 1.2 2006-01-15 15:24:40 adam Exp $
 
-use ExtUtils::MakeMaker;
-use strict;
-use 5.006;
-use Sys::Hostname;
+use Module::Build;
 
-my @tests;
-my $test_list  = 't/config.t t/use.t t/basic-tests.t t/standard-tests.t t/version-tests.t t/filehandle-tests.t t/error-tests.t';
+my @tests  = qw(t/config.t t/use.t t/basic-tests.t t/standard-tests.t t/version-tests.t t/filehandle-tests.t t/error-tests.t);
 my $ghttp;
 my $lite;
 
+print "Checking which extra POD testing modules you have installed...\n";
+
 eval { require Test::Pod; };
-$test_list .= ' t/pod-test.t' unless ($@);
+push @tests, 't/pod-test.t' unless ($@);
 
 eval { require Pod::Coverage; };
-$test_list .= ' t/pod-cover-1.t' unless ($@);
+push @tests, 't/pod-cover-1.t' unless ($@);
 
 eval { require Test::Pod::Coverage; };
-$test_list .= ' t/pod-cover-2.t' unless ($@);
+push @tests, 't/pod-cover-2.t' unless ($@);
 
 print "Checking which HTTP clients you have installed...\n";
 
@@ -58,9 +56,9 @@ if ($@) {
 } else {
 	if ($XML::LibXML::VERSION < 1.53) {
 		print "Your version of LibXML is too old to support XML Catalog.\n";
-		$test_list .= " t/no-catalog.t";
+		push @tests, "t/no-catalog.t";
 	} else {
-		$test_list .= " t/catalog-tests.t";
+		push @tests, "t/catalog-tests.t";
 	}
 }
 
@@ -77,35 +75,27 @@ my $s = IO::Socket::INET->new(
 if ($s) {
 	close($s);
 	print "Good, you are connected to the Internet!\nWill test HTTP clients for you...\n";
-	$test_list .= " t/http-tests.t";
+	push @tests, "t/http-tests.t";
 } elsif ($s = IO::Socket::INET->new(PeerAddr => "$hostname:80", Timeout  => 10)) {
 		print "Good, $hostname is running a HTTP server.\nWill test HTTP clients for you...\n";
-		$test_list .= " t/http-tests.t";
+		push @tests, "t/http-tests.t";
 		close($s);
 } else {
 	print "Can't reach the Internet or find a HTTP server on $hostname\nAborting HTTP client tests.\n";
 }
 
-push @tests, test => { TESTS => $test_list};
-WriteMakefile(
-    'NAME'		=> 'XML::RSS::Tools',
-    'VERSION_FROM'	   => 'lib/XML/RSS/Tools.pm', 
-    'PREREQ_PM'		   => {
-    	'URI'          => 1.31,
-    	'XML::LibXSLT' => 1.5,
-    	'XML::LibXML'  => 1.5,
-    	'XML::RSS'     => 1.0,
-    	'LWP'          => 5.7,
-		'Test::More'   => 0.1,
-    	},
-	'PL_FILES'      => {},
-	@tests,
-    dist             => {
-       COMPRESS      => 'gzip -9f',
-       SUFFIX        => 'gz'
-       }, 
-    ($] >= 5.005 ?    
-      (ABSTRACT_FROM => 'lib/XML/RSS/Tools.pm', 
-       AUTHOR        => 'Dr A. J. Trickett <atrickett@cpan.org>') : ()),
+my $build = Module::Build->new(
+	module_name => 'XML::RSS::Tools',
+	license     => 'gpl',
+	test_files  => \@tests,
+	requires    => {
+		'perl'  => '5.6.1',
+		'URI'	=> '1.31',
+        'LWP'   => '5.7',
+        'XML::LibXSLT' => '1.5',
+        'XML::LibXML'  => '1.5',
+        'XML::RSS'     => '1.0',
+	},
 );
 
+$build->create_build_script;
