@@ -1,9 +1,14 @@
-#	$Id: Makefile.PL,v 1.7 2006-01-15 15:24:40 adam Exp $
+#	$Id: Makefile.PL,v 1.8 2007-01-26 22:24:06 adam Exp $
 
 use ExtUtils::MakeMaker;
 use strict;
 use 5.006;
 use Sys::Hostname;
+
+eval { require Module::Build };
+if ($@) {
+    print "\n\nThis Makefile.PL is deprecated please use the Build.PL file if possible.\n\n";
+}
 
 my @tests;
 my $test_list  = 't/config.t t/use.t t/basic-tests.t t/standard-tests.t t/version-tests.t t/filehandle-tests.t t/error-tests.t';
@@ -18,6 +23,9 @@ $test_list .= ' t/pod-cover-1.t' unless ($@);
 
 eval { require Test::Pod::Coverage; };
 $test_list .= ' t/pod-cover-2.t' unless ($@);
+
+eval { require IO::Capture; };
+$test_list .= ' t/debug-tests.t t/no-debug-tests.t' unless ($@);
 
 print "Checking which HTTP clients you have installed...\n";
 

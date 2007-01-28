@@ -1,9 +1,9 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.16
-# $Id: Tools.pm,v 1.9 2006-01-15 15:24:49 adam Exp $
-# 
+# Version 0.20
+# $Id: Tools.pm,v 1.14 2007-01-28 14:59:54 adam Exp $
+#
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
 #
@@ -11,417 +11,421 @@
 #
 # --------------------------------------------------
 
-# --------------------------------------------------
-# Module starts here...
-# --------------------------------------------------
-
 package XML::RSS::Tools;
 
-use 5.006;						# Not been tested on anything earlier
-use strict;						# Naturally
-use warnings;					# Naturally
-use warnings::register;			# So users can "use warnings 'XML::RSS::Tools'"
-use Carp;						# We're a nice module
-use XML::RSS;					# Handle the RSS/RDF files
-use XML::LibXML;				# Hand the XML file for XSLT
-use XML::LibXSLT;				# Hand the XSL file and do the XSLT
-use URI;						# Deal with URIs nicely
-use FileHandle;					# Allow the use of File Handle Objects
+use 5.006;                 # Not been tested on anything earlier
+use strict;                # Naturally
+use warnings;              # Naturally
+use warnings::register;    # So users can "use warnings 'XML::RSS::Tools'"
+use Carp;                  # We're a nice module
+use XML::RSS;              # Handle the RSS/RDF files
+use XML::LibXML;           # Hand the XML file for XSLT
+use XML::LibXSLT;          # Hand the XSL file and do the XSLT
+use URI;                   # Deal with URIs nicely
+use FileHandle;            # Allow the use of File Handle Objects
 
-our $VERSION = '0.16';
+our $VERSION = '0.20';
 
 #
 #	Tools Constructor
 #
 
 sub new {
-	my $class = shift;
-	my %args = @_;
+    my $class = shift;
+    my %args  = @_;
 
-	my $object = bless {
-		_rss_version	=>	0.91,								# We convert all feeds to this version
-		_debug			=>  $args{debug} || 0,					# Debug flag
-		_xml_string	 	=>  "",									# Where we hold the input RSS/RDF
-		_xsl_string     =>  "",									# Where we hold the XSL Template
-		_output_string  =>  "",									# Where the output string goes
-		_transformed    =>  0,									# Flag for transformation
-		_auto_wash      =>  $args{auto_wash} || 1,				# Flag for auto_washing input RSS/RDF
-		_error_message  =>  "",									# Error message
-		_uri_url        =>  "",									# URI URL
-		_uri_file       =>  "",									# URI File
-		_uri_scheme     =>  "",									# URI Scheme
-		_xml_catalog	=>	"",									# XML Catalog file
-		_http_client	=>	"auto",								# Which HTTP Client to use
-		_proxy_server   =>  "",									# A Proxy Server
-		_proxy_user     =>  "",									# Username on the proxy server
-		_proxy_password =>  ""									# Password for user on the proxy server
-	}, ref($class) || $class;
+    my $object = bless {
+        _rss_version    => 0.91,            # We convert all feeds to this version
+        _xml_string     => q{},             # Where we hold the input RSS/RDF
+        _xsl_string     => q{},             # Where we hold the XSL Template
+        _output_string  => q{},             # Where the output string goes
+        _transformed    => 0,               # Flag for transformation
+        _error_message  => q{},             # Error message
+        _uri_url        => q{},             # URI URL
+        _uri_file       => q{},             # URI File
+        _uri_scheme     => q{},             # URI Scheme
+        _xml_catalog    => q{},             # XML Catalog file
+        _http_client    => 'auto',          # Which HTTP Client to use
+        _proxy_server   => q{},             # A Proxy Server
+        _proxy_user     => q{},             # Username on the proxy server
+        _proxy_password => q{},             # Password for user on the proxy server
+        _debug          => $args{debug} || 0,       # Debug flag
+        _auto_wash      => $args{auto_wash} || 1,   # Flag for auto_washing input RSS/RDF
+    },
+    ref $class || $class;
 
-	if ($args{version}) {
-		croak "No such version of RSS $args{version}" unless set_version($object, $args{version});
-	}
+    if ( $args{version} ) {
+        croak "No such version of RSS $args{version}"
+            unless set_version( $object, $args{version} );
+    }
 
-	if ($args{http_client}) {
-		croak "Not configured for HTTP Client $args{http_client}" unless set_http_client($object, $args{http_client});
-	}
+    if ( $args{http_client} ) {
+        croak "Not configured for HTTP Client $args{http_client}"
+            unless set_http_client( $object, $args{http_client} );
+    }
 
-	if ($args{xml_catalog}) {
-		croak "XML Catalog Support not enabled in your version of XML::LibXML" unless $XML::LibXML::VERSION > 1.52;
-		croak "Unable to read XML catalog $args{xml_catalog}" unless set_xml_catalog($object, $args{xml_catalog});
-	}
+    if ( $args{xml_catalog} ) {
+        croak 'XML Catalog Support not enabled in your version of XML::LibXML'
+            unless $XML::LibXML::VERSION > 1.52;
+        croak "Unable to read XML catalog $args{xml_catalog}"
+            unless set_xml_catalog( $object, $args{xml_catalog} );
+    }
 
-	return $object;
+    return $object;
 }
-
 
 #
 #	Output what we have as a string
 #
 sub as_string {
-	my $self = shift;
-	my $mode = shift || '';
+    my $self = shift;
+    my $mode = shift || q{};
 
-	if ($mode) {
-		if ($mode =~ /rss/i) {
-			warn "No RSS File to output" if ! $self->{_rss_string} && $self->{_debug};
-			return $self->{_rss_string};
-		} elsif ($mode =~ /xsl/i) {
-			warn "No XSL Template to output" if ! $self->{_xsl_string} && $self->{_debug};
-			return $self->{_xsl_string};
-		} elsif ($mode =~ /error/i) {
-			if ($self->{_error_message}) {
-				my $message = $self->{_error_message};
-				$self->{_error_message} = "";
-				return $message;
-			}
-		} else {
-			croak "Unknown mode: $mode";
-		}
-	} else {
-		warn "Nothing To Output Yet" if ! $self->{_transformed} && $self->{_debug};
-		return $self->{_output_string};
-	}
+    if ($mode) {
+        if ( $mode =~ /rss/mxi ) {
+            carp 'No RSS File to output'
+                if !$self->{_rss_string} && $self->{_debug};
+            return $self->{_rss_string};
+        }
+        elsif ( $mode =~ /xsl/mxi ) {
+            carp 'No XSL Template to output'
+                if !$self->{_xsl_string} && $self->{_debug};
+            return $self->{_xsl_string};
+        }
+        elsif ( $mode =~ /error/mxi ) {
+            if ( $self->{_error_message} ) {
+                my $message = $self->{_error_message};
+                $self->{_error_message} = q{};
+                return $message;
+            }
+        }
+        else {
+            croak "Unknown mode: $mode";
+        }
+    }
+    else {
+        carp 'Nothing To Output Yet'
+            if !$self->{_transformed} && $self->{_debug};
+        return $self->{_output_string};
+    }
+    return;
 }
-
 
 #
 #	Set/Read the debug level
 #
 sub debug {
-	my $self  = shift;
-	my $debug = shift;
-	$self->{_debug} = $debug if defined $debug;
-	return $self->{_debug};
+    my $self  = shift;
+    my $debug = shift;
+    $self->{_debug} = $debug if defined $debug;
+    return $self->{_debug};
 }
-
 
 #
 #	Read the auto_wash level
 #
 sub get_auto_wash {
-	my $self = shift;
-	return $self->{_auto_wash};
+    my $self = shift;
+    return $self->{_auto_wash};
 }
-
 
 #
 #	Set the auto_wash level
 #
 sub set_auto_wash {
-	my $self = shift;
-	my $wash = shift;
-	$self->{_auto_wash} = $wash if defined $wash;
-	return $self->{_auto_wash};
+    my $self = shift;
+    my $wash = shift;
+    $self->{_auto_wash} = $wash if defined $wash;
+    return $self->{_auto_wash};
 }
-
 
 #
 #	Read the HTTP client mode
 #
 sub get_http_client {
-	my $self = shift;
-	return $self->{_http_client};
+    my $self = shift;
+    return $self->{_http_client};
 }
-
 
 #
 #	Set which HTTP client to use
 #
 sub set_http_client {
-	my $self = shift;
-	my $client = shift;
-	
-	return $self->_raise_error("No HTTP Client requested")
-		unless defined $client;
-	return $self->_raise_error("Not configured for HTTP Client $client")
-		unless (grep {/$client/} qw(auto ghttp lwp lite));
-		
-	$self->{_http_client} = lc($client);
-	return $self->{_http_client};
-}
+    my $self   = shift;
+    my $client = shift;
 
+    return $self->_raise_error('No HTTP Client requested')
+        unless defined $client;
+    return $self->_raise_error("Not configured for HTTP Client $client")
+        unless ( grep {/$client/mx} qw(auto ghttp lwp lite) );
+
+    $self->{_http_client} = lc $client;
+    return $self->{_http_client};
+}
 
 #
 #	Get the HTTP proxy
 #
 sub get_http_proxy {
-	my $self = shift;
-	my $proxy;
+    my $self = shift;
+    my $proxy;
 
-	if ($self->{_proxy_server}) {
-		$proxy = $self->{_proxy_user} . ":" . $self->{_proxy_password} . '@' if ($self->{_proxy_user} && $self->{_proxy_password});
-		$proxy .= $self->{_proxy_server};
-		return $proxy;
-	}
+    if ( $self->{_proxy_server} ) {
+        $proxy = $self->{_proxy_user} . q{:} . $self->{_proxy_password} . q{@}
+            if ( $self->{_proxy_user} && $self->{_proxy_password} );
+        $proxy .= $self->{_proxy_server};
+        return $proxy;
+    }
 }
-
 
 #
 #	Set the HTTP proxy
 #
 sub set_http_proxy {
-	my $self = shift;
-	my %args = @_;
+    my $self = shift;
+    my %args = @_;
 
-	$self->{_proxy_server}   = $args{proxy_server};
-	$self->{_proxy_user}     = $args{proxy_user};
-	$self->{_proxy_password} = $args{proxy_pass};
+    $self->{_proxy_server}   = $args{proxy_server};
+    $self->{_proxy_user}     = $args{proxy_user};
+    $self->{_proxy_password} = $args{proxy_pass};
 
-	return $self;
+    return $self;
 }
-
 
 #
 #	Get the RSS Version
 #
 sub get_version {
-	my $self = shift;
-	return $self->{_rss_version};
+    my $self = shift;
+    return $self->{_rss_version};
 }
-
 
 #
 #	Set the RSS Version
 #
 sub set_version {
-	my $self    = shift;
-	my $version = shift;
+    my $self    = shift;
+    my $version = shift;
 
-	return $self->_raise_error("No RSS version supplied")
-		unless defined $version;
-	return $self->_raise_error("No such version of RSS $version")
-		unless (grep {/$version/} qw(0 0.9 0.91 0.92 0.93 0.94 1.0 2.0));
-	
-	$self->{_rss_version} = $version;
-	if ($version) {
-		return $self->{_rss_version};
-	} else {
-		return "0.0";
-	}
+    return $self->_raise_error('No RSS version supplied')
+        unless defined $version;
+    return $self->_raise_error("No such version of RSS $version")
+        unless ( grep {/$version/mx} qw(0 0.9 0.91 0.92 0.93 0.94 1.0 2.0) );
+
+    $self->{_rss_version} = $version;
+    if ($version) {
+        return $self->{_rss_version};
+    }
+    else {
+        return '0.0';
+    }
 }
-
 
 #
 #	Get XML Catalog File
 #
 sub get_xml_catalog {
-	my $self = shift;
-	return $self->{_xml_catalog};
+    my $self = shift;
+    return $self->{_xml_catalog};
 }
-
 
 #
 #	Set XML catalog file
 #
 sub set_xml_catalog {
-	my $self = shift;
-	my $catalog_file = shift;
+    my $self         = shift;
+    my $catalog_file = shift;
 
-	croak "XML Catalog Support not enabled in your version of XML::LibXML" unless $XML::LibXML::VERSION > 1.52;	
+    croak 'XML Catalog Support not enabled in your version of XML::LibXML'
+        unless $XML::LibXML::VERSION > 1.52;
 
-	if ($self->_check_file($catalog_file)) {
-		$self->{_xml_catalog} = $catalog_file;
-		return $self;
-	} else {
-		return undef;
-	}
+    if ( $self->_check_file($catalog_file) ) {
+        $self->{_xml_catalog} = $catalog_file;
+        return $self;
+    }
+    else {
+        return;
+    }
 }
-
 
 #
 #	Load an RSS file, and call RSS conversion to standard RSS format
 #
 sub rss_file {
-	my $self = shift;
-	my $file_name = shift;
+    my $self      = shift;
+    my $file_name = shift;
 
-	if ($self->_check_file($file_name)) {
-		my $fh = FileHandle->new($file_name, "r") or croak "Unable to open $file_name for reading";
-		$self->{_rss_string} = $self->_load_filehandle($fh);
-		undef $fh;
-		_parse_rss_string($self);
-		$self->{_transformed} = 0;
-		return $self;
-	} else {
-		return undef;
-	}
+    if ( $self->_check_file($file_name) ) {
+        my $fh = FileHandle->new( $file_name, 'r' )
+            or croak "Unable to open $file_name for reading";
+        $self->{_rss_string} = $self->_load_filehandle($fh);
+        undef $fh;
+        $self->_parse_rss_string;
+        $self->{_transformed} = 0;
+        return $self;
+    }
+    else {
+        return;
+    }
 }
-
 
 #
 #	Load an XSL file
 #
 sub xsl_file {
-	my $self = shift;
-	my $file_name = shift;
+    my $self      = shift;
+    my $file_name = shift;
 
-	if ($self->_check_file($file_name)) {
-		my $fh = FileHandle->new($file_name, "r") or croak "Unable to open $file_name for reading";
-		$self->{_xsl_string} = $self->_load_filehandle($fh);
-		undef $fh;
-		$self->{_transformed} = 0;
-		return $self
-	} else {
-		return undef
-	}
+    if ( $self->_check_file($file_name) ) {
+        my $fh = FileHandle->new( $file_name, 'r' )
+            or croak "Unable to open $file_name for reading";
+        $self->{_xsl_string} = $self->_load_filehandle($fh);
+        undef $fh;
+        $self->{_transformed} = 0;
+        return $self;
+    }
+    else {
+        return;
+    }
 }
-
 
 #
 #	Load an RSS file from a FH, and call RSS conversion to standard RSS format
 #
 sub rss_fh {
-	my $self = shift;
-	my $file_name = shift;
+    my $self      = shift;
+    my $file_name = shift;
 
-	if (ref($file_name) eq "FileHandle") {
-		$self->{_rss_string} = $self->_load_filehandle($file_name);
-		_parse_rss_string($self);
-		$self->{_transformed} = 0;
-		return $self;
-	} else {
-		return $self->_raise_error("FileHandle error: No FileHandle Object Passed");
-	}
+    if ( ref $file_name  eq 'FileHandle' ) {
+        $self->{_rss_string} = $self->_load_filehandle($file_name);
+        _parse_rss_string($self);
+        $self->{_transformed} = 0;
+        return $self;
+    }
+    else {
+        return $self->_raise_error(
+            'FileHandle error: No FileHandle Object Passed');
+    }
 }
-
 
 #
 #	Load an XSL file from a FH
 #
 sub xsl_fh {
-	my $self = shift;
-	my $file_name = shift;
+    my $self      = shift;
+    my $file_name = shift;
 
-	if (ref($file_name) eq "FileHandle") {
-		$self->{_xsl_string} = $self->_load_filehandle($file_name);
-		$self->{_transformed} = 0;
-		return $self
-	} else {
-		return $self->_raise_error("FileHandle error: No FileHandle Object Passed");
-	}
+    if ( ref $file_name eq 'FileHandle' ) {
+        $self->{_xsl_string}  = $self->_load_filehandle($file_name);
+        $self->{_transformed} = 0;
+        return $self;
+    }
+    else {
+        return $self->_raise_error(
+            'FileHandle error: No FileHandle Object Passed');
+    }
 }
-
 
 #
 #	Load an RSS file via HTTP and call RSS conversion to standard RSS format
 #
 sub rss_uri {
-	my $self = shift;
-	my $uri  = shift;
+    my $self = shift;
+    my $uri  = shift;
 
-	$uri = $self->_process_uri($uri);
-	return unless $uri;
+    $uri = $self->_process_uri($uri);
+    return unless $uri;
 
-	return $self->rss_file($self->{_uri_file}) if ($self->{_uri_scheme} eq "file");
-		
-	my $xml = $self->_http_get($uri);
-	return unless $xml;
-	$self->{_rss_string} = $xml;	
-	_parse_rss_string($self);
-	$self->{_transformed} = 0;
-	return $self;
+    return $self->rss_file( $self->{_uri_file} )
+        if ( $self->{_uri_scheme} eq 'file' );
+
+    my $xml = $self->_http_get($uri);
+    return unless $xml;
+    $self->{_rss_string} = $xml;
+    _parse_rss_string($self);
+    $self->{_transformed} = 0;
+    return $self;
 }
-
 
 #
 #	Load an XSL file via HTTP
 #
 sub xsl_uri {
-	my $self = shift;
-	my $uri  = shift;
+    my $self = shift;
+    my $uri  = shift;
 
-	$uri = $self->_process_uri($uri);
-	return unless $uri;
+    $uri = $self->_process_uri($uri);
+    return unless $uri;
 
-	return $self->xsl_file($self->{_uri_file}) if ($self->{_uri_scheme} eq "file");
+    return $self->xsl_file( $self->{_uri_file} )
+        if ( $self->{_uri_scheme} eq 'file' );
 
-	my $xml = $self->_http_get($uri);
-	return unless $xml;
-	$self->{_xsl_string} = $xml;
-	$self->{_transformed} = 0;
-	return $self;
+    my $xml = $self->_http_get($uri);
+    return unless $xml;
+    $self->{_xsl_string}  = $xml;
+    $self->{_transformed} = 0;
+    return $self;
 }
-
 
 #
 #	Parse a string and convert to standard RSS
 #
 sub rss_string {
-	my $self = shift;
-	my $xml  = shift;
+    my $self = shift;
+    my $xml  = shift;
 
-	return unless $xml;
-	$self->{_rss_string} = $xml;
-	_parse_rss_string($self);
-	$self->{_transformed} = 0;
-	return $self;
+    return unless $xml;
+    $self->{_rss_string} = $xml;
+    _parse_rss_string($self);
+    $self->{_transformed} = 0;
+    return $self;
 }
-
 
 #
 #	Import an XSL from string
 #
 sub xsl_string {
-	my $self = shift;
-	my $xml  = shift;
+    my $self = shift;
+    my $xml  = shift;
 
-	return unless $xml;
-	$self->{_xsl_string} = $xml;
-	$self->{_transformed} = 0;
-	return $self;
+    return unless $xml;
+    $self->{_xsl_string}  = $xml;
+    $self->{_transformed} = 0;
+    return $self;
 }
-
 
 #
 #	Do the transformation
 #
 sub transform {
-	my $self = shift;
+    my $self = shift;
 
-	croak "No XSLT loaded" unless $self->{_xsl_string};
-	croak "No RSS loaded" unless $self->{_rss_string};
-	croak "Can't transform twice without a change" if $self->{_transformed};
-	
-	my $xslt       = XML::LibXSLT->new;
-	my $xml_parser = XML::LibXML->new;
-	if ($self->{_xml_catalog}) {
-		$xml_parser->load_catalog($self->{_xml_catalog});				# Load the catalogue
-	} else {
-		$xml_parser->expand_entities(0);								# Otherwise don't touch entities
-	}
-	$xml_parser->keep_blanks(0);
-	$xml_parser->validation(0);
-	$xml_parser->complete_attributes(0);
-	
-	my $source_xml = $xml_parser->parse_string($self->{_rss_string});	# Parse the source XML
-	my $style_xsl  = $xml_parser->parse_string($self->{_xsl_string});	# and Template XSL files
-	my $stylesheet = $xslt->parse_stylesheet($style_xsl);				# Load the parsed XSL into XSLT
-	my $result_xml = $stylesheet->transform($source_xml);				# Transform the source XML
-	$self->{_output_string} = $stylesheet->output_string($result_xml);	# Store the result
-	$self->{_transformed} = 1;
-	return $self;
+    croak 'No XSLT loaded' unless $self->{_xsl_string};
+    croak 'No RSS loaded'  unless $self->{_rss_string};
+    croak q{Can't transform twice without a change} if $self->{_transformed};
+
+    my $xslt       = XML::LibXSLT->new;
+    my $xml_parser = XML::LibXML->new;
+    if ( $self->{_xml_catalog} ) {
+        $xml_parser->load_catalog( $self->{_xml_catalog} )
+            ;    # Load the catalogue
+    }
+    else {
+        $xml_parser->expand_entities(0);                                    # Otherwise don't touch entities
+    }
+    $xml_parser->keep_blanks(0);
+    $xml_parser->validation(0);
+    $xml_parser->complete_attributes(0);
+
+    my $source_xml = $xml_parser->parse_string( $self->{_rss_string} );     # Parse the source XML
+    my $style_xsl  = $xml_parser->parse_string( $self->{_xsl_string} );     # and Template XSL files
+    my $stylesheet = $xslt->parse_stylesheet($style_xsl);                   # Load the parsed XSL into XSLT
+    my $result_xml = $stylesheet->transform($source_xml);                   # Transform the source XML
+    $self->{_output_string}
+        = $stylesheet->output_string($result_xml);                          # Store the result
+    $self->{_transformed} = 1;
+    return $self;
 }
-
 
 #	---------------
 #	Private Methods
@@ -431,151 +435,171 @@ sub transform {
 #	Parse the RSS string
 #
 sub _parse_rss_string {
-	my $self = shift;
-	my $xml  = $self->{_rss_string};
+    my $self = shift;
+    my $xml  = $self->{_rss_string};
 
-	$xml = _wash_xml($xml) if $self->{_auto_wash};
+    $xml = _wash_xml($xml) if $self->{_auto_wash};
 
-	if ($self->{_rss_version}) {							# Only normalise if version is true
-		my $rss  = XML::RSS->new;
-		$rss->parse($xml);
-		if ($rss->{version} != $self->{_rss_version}) {
-			$rss->{output} = $self->{_rss_version};
-			$xml = $rss->as_string;
-			$xml = _wash_xml($xml) if $self->{_auto_wash};
-		}
-	}
-	$self->{_rss_string} = $xml;
-	return $self;
+    if ( $self->{_rss_version} ) {    # Only normalise if version is true
+        my $rss = XML::RSS->new;
+        $rss->parse($xml);
+        if ( $rss->{version} != $self->{_rss_version} ) {
+            $rss->{output} = $self->{_rss_version};
+            $xml = $rss->as_string;
+            $xml = _wash_xml($xml) if $self->{_auto_wash};
+        }
+    }
+    $self->{_rss_string} = $xml;
+    return $self;
 }
-
 
 #
 #	Load file from File Handle
 #
-sub	_load_filehandle {
-	my $self   = shift;
-	my $handle = shift;
-	my $content;
+sub _load_filehandle {
+    my $self   = shift;
+    my $handle = shift;
+    my $content;
 
-	while (my $line = $handle->getline) {
-		$content .= $line;
-	}
-	return $content;
+    while ( my $line = $handle->getline ) {
+        $content .= $line;
+    }
+    return $content;
 }
-
 
 #
 #	Wash the XML File of known nasties
 #
 sub _wash_xml {
-	my $xml = shift;
+    my $xml = shift;
 
-	$xml = _clean_entities($xml);
-	$xml =~ s/\s+/ /gs;
-	$xml =~ s/> />/g;
-	$xml =~ s/^.*(<\?xml)/$1/gs;		# Remove bogus content before <?xml start
-	return $xml
+    $xml = _clean_entities($xml);
+    $xml =~ s/\s+/ /gsmx;
+    $xml =~ s/> />/gmx;
+    $xml =~ s/^.*(<\?xml)/$1/gsmx;    # Remove bogus content before <?xml start
+    return $xml;
 }
-
 
 #
 #	Check that the requested file is there and readable
 #
 sub _check_file {
-	my $self      = shift;
-	my $file_name = shift;
+    my $self      = shift;
+    my $file_name = shift;
 
-	return $self->_raise_error("File error: No file name supplied") unless $file_name;
-	return $self->_raise_error("File error: Cannot find $file_name") unless -e $file_name;
-	return $self->_raise_error("File error: $file_name isn't a real file") unless -f _;
-	return $self->_raise_error("File error: Cannot read file $file_name") unless -r _;
-	return $self->_raise_error("File error: $file_name is zero bytes long") if -z _;
-	return $self;
+    return $self->_raise_error('File error: No file name supplied')
+        unless $file_name;
+    return $self->_raise_error("File error: Cannot find $file_name")
+        unless -e $file_name;
+    return $self->_raise_error("File error: $file_name isn't a real file")
+        unless -f _;
+    return $self->_raise_error("File error: Cannot read file $file_name")
+        unless -r _;
+    return $self->_raise_error("File error: $file_name is zero bytes long")
+        if -z _;
+    return $self;
 }
-
 
 #
 #	Process a URI ready for HTTP getting
 #
 sub _process_uri {
-	my $self= shift;
-	my $uri = shift;
+    my $self = shift;
+    my $uri  = shift;
 
-	return $self->_raise_error("No URI provided.") unless $uri;
-	my $uri_object = URI->new($uri)->canonical;
-	return $self->_raise_error("URI provided ($uri) is not valid.") unless $uri_object;
+    return $self->_raise_error('No URI provided.') unless $uri;
+    my $uri_object = URI->new($uri)->canonical;
+    return $self->_raise_error("URI provided ($uri) is not valid.")
+        unless $uri_object;
 
-	$self->{_uri_scheme} = $uri_object->scheme;
-	return $self->_raise_error("No URI Scheme in " . $uri_object->as_string . ".") unless $self->{_uri_scheme};
-	return $self->_raise_error("Unsupported URI Scheme (" . $self->{_uri_scheme} . ").") unless $self->{_uri_scheme} =~ /http|file/;
+    $self->{_uri_scheme} = $uri_object->scheme;
+    return $self->_raise_error(
+        'No URI Scheme in ' . $uri_object->as_string . q{.} )
+        unless $self->{_uri_scheme};
+    return $self->_raise_error(
+        'Unsupported URI Scheme (' . $self->{_uri_scheme} . q{).} )
+        unless $self->{_uri_scheme} =~ /http|file/mx;
 
-	$self->{_uri_file} = $uri_object->file if $self->{_uri_scheme} eq "file";
-	
-	return $uri_object->as_string;
+    $self->{_uri_file} = $uri_object->file if $self->{_uri_scheme} eq 'file';
+
+    return $uri_object->as_string;
 }
-
 
 #
 #	Grab something via HTTP
 #
 sub _http_get {
-	my $self= shift;
-	my $uri = shift;
+    my $self = shift;
+    my $uri  = shift;
 
-	if ($self->{_http_client} eq "auto"){
-		my @modules = qw "HTTP::GHTTP HTTP::Lite LWP";
-		foreach my $module (@modules) {
-			eval "require $module";
-			if (! $@) {
-				$self->{_http_client} = lc($module);
-				$self->{_http_client} =~ s/.*:://;
-				last;
-			}
-		}
-		return $self->_raise_error("HTTP error: No HTTP client library installed") if $self->{_http_client} eq "auto";
-	}
+    if ( $self->{_http_client} eq 'auto' ) {
+        my @modules = qw "HTTP::GHTTP HTTP::Lite LWP";
+        foreach my $module (@modules) {
+            eval { require $module; };
+            if ( ! $@ ) {
+                $self->{_http_client} = lc $module ;
+                $self->{_http_client} =~ s/.*:://mx;
+                last;
+            }
+        }
+        return $self->_raise_error(
+            'HTTP error: No HTTP client library installed')
+            if $self->{_http_client} eq 'auto';
+    }
 
-	if ($self->{_http_client} eq "lite") {
-		require HTTP::Lite;
-		my $ua = HTTP::Lite->new;
-		$ua->add_req_header("User-Agent", "XML::RSS::Tools/$VERSION HTTP::Lite/$HTTP::Lite::VERSION ($^O)");
-		$ua->proxy($self->{_proxy_server}) if $self->{_proxy_server};
-		my $r = $ua->request($uri) or return $self->_raise_error("Unable to get document: $!");
-		return $self->_raise_error("HTTP error: $r, " . $ua->status_message) unless $r == 200;
-		return $ua->body;
-	}
-	
-	if ($self->{_http_client} eq "lwp" || $self->{_http_client} eq "useragent") {
-		require LWP::UserAgent;
-		my $ua = LWP::UserAgent->new;
-		$ua->agent("XML::RSS::Tools/$VERSION " . $ua->agent . " ($^O)");
-		$ua->proxy(['http', 'ftp'], $self->{_proxy_server}) if $self->{_proxy_server};
-		my $response = $ua->request(HTTP::Request->new('GET', $uri));
-		return $self->_raise_error("HTTP error: " . $response->status_line) if $response->is_error;
-		return $response->content();
-	}
+    if ( $self->{_http_client} eq 'lite' ) {
+        require HTTP::Lite;
+        my $ua = HTTP::Lite->new;
+        $ua->add_req_header( 'User-Agent',
+            "XML::RSS::Tools/$VERSION HTTP::Lite/$HTTP::Lite::VERSION ($^O)"
+        );
+        $ua->proxy( $self->{_proxy_server} ) if $self->{_proxy_server};
+        my $r = $ua->request($uri)
+            or return $self->_raise_error("Unable to get document: $!");
+        return $self->_raise_error( "HTTP error: $r, " . $ua->status_message )
+            unless $r == 200;
+        return $ua->body;
+    }
 
-	if ($self->{_http_client} eq "ghttp") {
-		require HTTP::GHTTP;
-		my $ua = HTTP::GHTTP->new($uri);
-		$ua->set_header("User-Agent", "XML::RSS::Tools/$VERSION libghttp/1.x ($^O)");
-		if ($self->{_proxy_server}) {
-			$ua->set_proxy($self->{_proxy_server});
-			$ua->set_proxy_authinfo($self->{_proxy_user}, $self->{_proxy_password}) if ($self->{_proxy_user} && $self->{_proxy_password});
-		}
-		$ua->process_request;
-		my $xml = $ua->get_body;
-		if ($xml) {
-			my ($status, $message) = $ua->get_status;
-			return $self->_raise_error("HTTP error: $status, $message") unless $status == 200;
-			return $xml;
-		} else {
-			return $self->_raise_error("HTTP error: Unable to connect to server: $uri");
-		}
-	}
+    if (   $self->{_http_client} eq 'lwp'
+        || $self->{_http_client} eq 'useragent' )
+    {
+        require LWP::UserAgent;
+        my $ua = LWP::UserAgent->new;
+        $ua->agent( "XML::RSS::Tools/$VERSION " . $ua->agent . " ($^O)" );
+        $ua->proxy( [ 'http', 'ftp' ], $self->{_proxy_server} )
+            if $self->{_proxy_server};
+        my $response = $ua->request( HTTP::Request->new( 'GET', $uri ) );
+        return $self->_raise_error( 'HTTP error: ' . $response->status_line )
+            if $response->is_error;
+        return $response->content();
+    }
+
+    if ( $self->{_http_client} eq 'ghttp' ) {
+        require HTTP::GHTTP;
+        my $ua = HTTP::GHTTP->new($uri);
+        $ua->set_header( 'User-Agent',
+            "XML::RSS::Tools/$VERSION libghttp/1.x ($^O)" );
+        if ( $self->{_proxy_server} ) {
+            $ua->set_proxy( $self->{_proxy_server} );
+            $ua->set_proxy_authinfo( $self->{_proxy_user},
+                $self->{_proxy_password} )
+                if ( $self->{_proxy_user} && $self->{_proxy_password} );
+        }
+        $ua->process_request;
+        my $xml = $ua->get_body;
+        if ($xml) {
+            my ( $status, $message ) = $ua->get_status;
+            return $self->_raise_error("HTTP error: $status, $message")
+                unless $status == 200;
+            return $xml;
+        }
+        else {
+            return $self->_raise_error(
+                "HTTP error: Unable to connect to server: $uri");
+        }
+    }
 }
-
 
 #
 #	Fix Entities
@@ -583,127 +607,127 @@ sub _http_get {
 #	And chunks of the HTML::Entites module if you have Perl 5.8.x you
 #	don't need this code.
 #
-sub	_clean_entities {
-	my $xml  = shift;
-	
-	my %entity = (
-		trade	=> "&#8482;",
-		euro	=> "&#8364;",
-		quot	=> '"',
- 		apos	=> "'",
-		AElig	=> 'Æ',
-		Aacute	=> 'Á',
-		Acirc	=> 'Â',
-		Agrave	=> 'À',
-		Aring	=> 'Å',
-		Atilde	=> 'Ã',
-		Auml	=> 'Ä',
-		Ccedil	=> 'Ç',
-		ETH		=> 'Ð',
-		Eacute	=> 'É',
-		Ecirc	=> 'Ê',
-		Egrave	=> 'È',
-		Euml	=> 'Ë',
-		Iacute	=> 'Í',
-		Icirc	=> 'Î',
-		Igrave	=> 'Ì',
-		Iuml	=> 'Ï',
-		Ntilde	=> 'Ñ',
-		Oacute	=> 'Ó',
-		Ocirc	=> 'Ô',
-		Ograve	=> 'Ò',
-		Oslash	=> 'Ø',
-		Otilde	=> 'Õ',
-		Ouml	=> 'Ö',
-		THORN	=> 'Þ',
-		Uacute	=> 'Ú',
-		Ucirc	=> 'Û',
-		Ugrave	=> 'Ù',
-		Uuml	=> 'Ü',
-		Yacute	=> 'Ý',
-		aacute	=> 'á',
-		acirc	=> 'â',
-		aelig	=> 'æ',
-		agrave	=> 'à',
-		aring	=> 'å',
-		atilde	=> 'ã',
-		auml	=> 'ä',
-		ccedil	=> 'ç',
-		eacute	=> 'é',
-		ecirc	=> 'ê',
-		egrave	=> 'è',
-		eth		=> 'ð',
-		euml	=> 'ë',
-		iacute	=> 'í',
-		icirc	=> 'î',
-		igrave	=> 'ì',
-		iuml	=> 'ï',
-		ntilde	=> 'ñ',
-		oacute	=> 'ó',
-		ocirc	=> 'ô',
-		ograve	=> 'ò',
-		oslash	=> 'ø',
-		otilde	=> 'õ',
-		ouml	=> 'ö',
-		szlig	=> 'ß',
-		thorn	=> 'þ',
-		uacute	=> 'ú',
-		ucirc	=> 'û',
-		ugrave	=> 'ù',
-		uuml	=> 'ü',
-		yacute	=> 'ý',
-		yuml	=> 'ÿ',
-		copy	=> '©',
-		reg		=> '®',
-		nbsp	=> "\240",
-		iexcl	=> '¡',
-		cent	=> '¢',
-		pound	=> '£',
-		curren	=> '¤',
-		yen		=> '¥',
-		brvbar	=> '¦',
-		sect	=> '§',
-		uml		=> '¨',
-		ordf	=> 'ª',
-		laquo	=> '«',
-		'not'	=> '¬',
-		shy		=> '­',
-		macr	=> '¯',
-		deg		=> '°',
-		plusmn	=> '±',
-		sup1	=> '¹',
-		sup2	=> '²',
-		sup3	=> '³',
-		acute	=> '´',
-		micro	=> 'µ',
-		para	=> '¶',
-		middot	=> '·',
-		cedil	=> '¸',
-		ordm	=> 'º',
-		raquo	=> '»',
-		frac14	=> '¼',
-		frac12	=> '½',
-		frac34	=> '¾',
-		iquest	=> '¿',
-		'times'	=> '×',
-		divide	=> '÷',
-	);
-	my $entities = join('|', keys %entity);
-	$xml =~ s/&(?!(#[0-9]+|#x[0-9a-fA-F]+|\w+);)/&amp;/g;			# Matt's ampersand entity fixer
-	$xml =~ s/&($entities);/$entity{$1}/gi;							# Deal with odd entities
-	return $xml;
+sub _clean_entities {
+    my $xml = shift;
+
+    my %entity = (
+        trade   => '&#8482;',
+        euro    => '&#8364;',
+        quot    => q{"},
+        apos    => q{'},
+        AElig   => q{Æ},
+        Aacute  => q{Á},
+        Acirc   => q{Â},
+        Agrave  => q{À},
+        Aring   => q{Å},
+        Atilde  => q{Ã},
+        Auml    => q{Ä},
+        Ccedil  => q{Ç},
+        ETH     => q{Ð},
+        Eacute  => q{É},
+        Ecirc   => q{Ê},
+        Egrave  => q{È},
+        Euml    => q{Ë},
+        Iacute  => q{Í},
+        Icirc   => q{Î},
+        Igrave  => q{Ì},
+        Iuml    => q{Ï},
+        Ntilde  => q{Ñ},
+        Oacute  => q{Ó},
+        Ocirc   => q{Ô},
+        Ograve  => q{Ò},
+        Oslash  => q{Ø},
+        Otilde  => q{Õ},
+        Ouml    => q{Ö},
+        THORN   => q{Þ},
+        Uacute  => q{Ú},
+        Ucirc   => q{Û},
+        Ugrave  => q{Ù},
+        Uuml    => q{Ü},
+        Yacute  => q{Ý},
+        aacute  => q{á},
+        acirc   => q{â},
+        aelig   => q{æ},
+        agrave  => q{à},
+        aring   => q{å},
+        atilde  => q{ã},
+        auml    => q{ä},
+        ccedil  => q{ç},
+        eacute  => q{é},
+        ecirc   => q{ê},
+        egrave  => q{è},
+        eth     => q{ð},
+        euml    => q{ë},
+        iacute  => q{í},
+        icirc   => q{î},
+        igrave  => q{ì},
+        iuml    => q{ï},
+        ntilde  => q{ñ},
+        oacute  => q{ó},
+        ocirc   => q{ô},
+        ograve  => q{ò},
+        oslash  => q{ø},
+        otilde  => q{õ},
+        ouml    => q{ö},
+        szlig   => q{ß},
+        thorn   => q{þ},
+        uacute  => q{ú},
+        ucirc   => q{û},
+        ugrave  => q{ù},
+        uuml    => q{ü},
+        yacute  => q{ý},
+        yuml    => q{ÿ},
+        copy    => q{©},
+        reg     => q{®},
+        nbsp    => q{\240},
+        iexcl   => q{¡},
+        cent    => q{¢},
+        pound   => q{£},
+        curren  => q{¤},
+        yen     => q{¥},
+        brvbar  => q{¦},
+        sect    => q{§},
+        uml     => q{¨},
+        ordf    => q{ª},
+        laquo   => q{«},
+        'not'   => q{¬},
+        shy     => q{­},
+        macr    => q{¯},
+        deg     => q{°},
+        plusmn  => q{±},
+        sup1    => q{¹},
+        sup2    => q{²},
+        sup3    => q{³},
+        acute   => q{´},
+        micro   => q{µ},
+        para    => q{¶},
+        middot  => q{·},
+        cedil   => q{¸},
+        ordm    => q{º},
+        raquo   => q{»},
+        frac14  => q{¼},
+        frac12  => q{½},
+        frac34  => q{¾},
+        iquest  => q{¿},
+        'times' => q{×},
+        divide  => q{÷},
+    );
+    my $entities = join q{|}, keys %entity;
+    $xml =~ s/&(?!(#[0-9]+|#x[0-9a-fA-F]+|\w+);)/&amp;/gm;       # Matt's ampersand entity fixer
+    $xml =~ s/&($entities);/$entity{$1}/gimx;                     # Deal with odd entities
+    return $xml;
 }
 
 #
 #	Raise error condition
 #
 sub _raise_error {
-	my $self    = shift;
-	my $message = shift;
+    my $self    = shift;
+    my $message = shift;
 
-	$self->{_error_message} = $message;
-	warn $message if $self->{_debug};
-	return undef;
+    $self->{_error_message} = $message;
+    carp $message if $self->{_debug};
+    return;
 }
 
 1;
@@ -714,6 +738,10 @@ __END__
 
 XML::RSS::Tools - A tool-kit providing a wrapper around a HTTP client, a RSS parser, and a
 XSLT engine.
+
+=head1 VERSION
+
+This documantation refers to XML::RSS::Tools version 0.20
 
 =head1 SYNOPSIS
 
@@ -768,7 +796,7 @@ Or with optional parameters.
 
 The module will die if it's created with invalid parameters.
 
-=head1 METHODS
+=head1 SUBROUTINES/METHODS
 
 =head2 Source RSS feed
 
@@ -788,7 +816,7 @@ slightly, this may result in erroneous file location. The variable
 $URI::file::DEFAULT_AUTHORITY should be set to undef in versions later
 than 1.32 to revert their behaviour to that of the older version, see
 the URI changes file for more details.
- 
+
 
 =head2 Source XSL Template
 
@@ -827,8 +855,9 @@ If there is nothing to stringify you will get nothing.
 
   $rss_object->debug(1);
 
-A simple switch that control the debug status of the module. By default debug is off. Returns the
-current status.
+A simple switch that control the debug status of the module. By default debug
+is off. Returns the current status. With debug on you will get more warnings
+sent to stderr.
 
 =head3 set_auto_wash and get_auto_wash
 
@@ -840,14 +869,14 @@ known entities by their numeric value, and fix known invalid XML constructs. By 
 auto_wash is set to true.
 
 =head3 set_version
-  
-  $rss_object->set_version(0.92);  
+
+  $rss_object->set_version(0.92);
 
 All incoming RSS feeds are automatically converted to one default RSS version. If RSS version
 is set to 0 then normalisation is not performed. The default RSS version is 0.91.
 
 =head3 get_version
-  
+
   $rss_object->get_version;
 
 Return the default RSS version.
@@ -861,26 +890,26 @@ These methods set the HTTP client to use, and get back the one selected. Accepta
 
 =over
 
-=item	*
+=item *
 
 auto
 
 Will use attempt to use the HTTP client modules in order of performance.
 
-=item	*
+=item *
 
 ghttp
 
 Matt Sergeant's libghttp based C<HTTP::GHTTP>.
 
-=item	*
+=item *
 
 lite
 
 Roy Hooper's pure Perl C<HTTP::Lite> client. Slower than ghttp, but still
 faster than lwp.
 
-=item	*
+=item *
 
 lwp
 
@@ -914,8 +943,8 @@ If you need to recover the proxy settings there is also the get_http_proxy
 command which returns the proxy and BASIC authentication details as a
 single URI.
 
-	print $rss_object->get_http_proxy;
-	# username:password@http://proxy.server.com:3128/
+    print $rss_object->get_http_proxy;
+    # username:password@http://proxy.server.com:3128/
 
 =head3 set_xml_catalog
 
@@ -938,13 +967,13 @@ about 60 seconds per XML file. If a catalogue is created then the process will
 be much quicker as the libxml2 parser will use the local information stored
 in the catalogue.
 
-	$rss_object->set_xml_catalog( $xml_catalog_file);
+    $rss_object->set_xml_catalog( $xml_catalog_file);
 
 This will pass the specified file to the XML parsers to use as a local XML Catalog.
 If your version of XML::LibXML does not support XML Catalogs it will die if you
 attempt to use this method (see below).
 
-	$rss_object->get_xml_catalog;
+    $rss_object->get_xml_catalog;
 
 This will return the file name of the XML Catalog in use.
 
@@ -984,17 +1013,17 @@ None.
 
 =head1 HISTORY
 
-0.16 Bug in xsl_string read fixed.
+0.20 Module reformatted to PBP Guidelines.
 
-0.15 Doc and build/test changes, module untouched.
+0.16 Bug in xsl_string read fixed.
 
 ...
 
 0.01 Initial Build. Shown to the public on PerlMonks May 2002, for feedback.
 
-See CHANGES file for more detail
+See CHANGES file.
 
-=head2 Defects and Limitations
+=head1 BUGS AND LIMITATIONS
 
 =over
 
@@ -1028,18 +1057,11 @@ Mark Pilgrim estimates that about 10% of RSS feeds have defective XML.
 
 XML::RSS Limitations
 
-XML::RSS up-to and including version 0.96 has a number of defects. In October
-2002 brian d foy took over the module and it was again actively developed.
-At the moment the module is languishing. See http://perl-rss.sourceforge.net/
+XML::RSS up-to and including version 0.96 has a number of defects. The
+module is currently being maintained by Ask Bjørn Hansen. See
+http://perl-rss.sourceforge.net/ and http://svn.perl.org/modules/XML-RSS/
 
-Since version 1.xx most problems have been fixed please upgrade if you can.
-
-=item *
-
-Perl and Unicode
-
-Perl pre 5.7.x is not able to handle Unicode properly. Things are better 
-since the release of 5.8.x.
+Since version 1.xx most problems have been fixed, please upgrade if you can.
 
 =item *
 
@@ -1058,10 +1080,6 @@ false negatives. Feedback welcomed.
 
 =item *
 
-Debug mode doesn't actually do much yet.
-
-=item *
-
 Support Piers Harding's C<HTTP::MHTTP> module, it seems to be even faster
 than GHTTP.
 
@@ -1071,7 +1089,7 @@ Support libcurl, it's very fast, and GHTTP is deprecated.
 
 =item *
 
-Investigate supporting Atom feeds.
+Support Atom feeds.
 
 =item *
 
@@ -1089,12 +1107,12 @@ and more...
 
 =head1 SEE ALSO
 
-L<perl>, L<XML::RSS>, L<XML::LibXSLT>, L<XML::LibXML>, L<URI>, L<LWP>,
-L<HTTP::Lite>, L<HTTP::GHTTP>.
+L<perl>, L<XML::RSS>, L<XML::LibXSLT>, L<XML::LibXML>, L<XML::RSS::LibXML>,
+L<URI>, L<LWP>, L<HTTP::Lite>, L<HTTP::GHTTP>.
 
-=head1 COPYRIGHT
+=head1 LICENSE AND COPYRIGHT
 
-XML::RSS::Tools, Copyright iredale Consulting 2002-2006
+XML::RSS::Tools, Copyright iredale Consulting 2002-2007
 
 OSI Certified Open Source Software
 
@@ -1104,7 +1122,7 @@ Foundation; either version 2 of the License, or (at your option) any later versi
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY
 WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE. See the GNU General Public License for more details. 
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with
 this program; if not, write to the Free Software Foundation, Inc.,

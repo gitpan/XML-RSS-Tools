@@ -1,5 +1,5 @@
 #!/usr/bin/env perl -w
-#   $Id: http-tests.t,v 1.2 2004/02/14 16:34:23 adam Exp $
+#   $Id: http-tests.t,v 1.5 2007-01-28 15:00:01 adam Exp $
 
 use Test;
 use strict;
@@ -7,7 +7,7 @@ use warnings;
 use IO::Socket;
 use Sys::Hostname;
 
-BEGIN { plan tests => 7 }
+BEGIN { plan tests => 18 }
 
 use XML::RSS::Tools;
 
@@ -17,6 +17,10 @@ my $socket   = IO::Socket::INET->new(
 	PeerAddr => "$r_host:80",
 	Timeout  => 10
 );
+
+#   1
+my $rss = XML::RSS::Tools->new;
+ok($rss);
 
 my $uri;
 if ($socket) {
@@ -28,9 +32,6 @@ if ($socket) {
 }  
 
 if ($uri) {
-	my $rss = XML::RSS::Tools->new;
-	ok($rss);
-#	$rss->set_http_proxy(proxy_server => "http://marmot:3128/");		# HTTP PROXY TEST
 	
 	eval { require HTTP::GHTTP };
 	if ($@) {
@@ -56,14 +57,31 @@ if ($uri) {
 		skip("LWP isn't installed", 1);
 	} else {
 		ok($rss->set_http_client('lwp'));
+        ok($rss->get_http_client, 'lwp');
 		ok($rss->xsl_uri($uri));
+		ok($rss->{_http_client} = 'useragent');
+		ok($rss->xsl_uri($uri));
+        ok ($rss = XML::RSS::Tools->new(http_client => 'lwp'));
 	}
 
 } else {
-	for (1..7) {
+	for (2..11) {
 		skip("Unable to locate a HTTP Server to test HTTP clients.", 1);
 	};
 }
 
-exit;
+#   12-18
+ok (! $rss->get_http_proxy);
+ok ($rss->set_http_proxy(proxy_server => 'foo:3128'));
+ok ($rss->get_http_proxy, 'foo:3128');
+ok ($rss->set_http_proxy(
+    'proxy_server' => 'bar:3128',
+    'proxy_user'   => 'me'));
+ok ($rss->get_http_proxy, 'bar:3128');
+ok ($rss->set_http_proxy(
+    'proxy_server' => 'bar:3128',
+    'proxy_user'   => 'me',
+    'proxy_pass'   => 'secret'));
+ok ($rss->get_http_proxy, 'me:secret@bar:3128');
 
+exit;

@@ -1,4 +1,4 @@
-#	$Id: Build.PL,v 1.2 2006-01-15 15:24:40 adam Exp $
+#	$Id: Build.PL,v 1.3 2007-01-26 22:24:06 adam Exp $
 
 use Module::Build;
 
@@ -16,6 +16,12 @@ push @tests, 't/pod-cover-1.t' unless ($@);
 
 eval { require Test::Pod::Coverage; };
 push @tests, 't/pod-cover-2.t' unless ($@);
+
+eval { require IO::Capture; };
+if (! $@) {
+    push @tests, 't/debug-tests.t';
+    push @tests, 't/no-debug-tests.t';
+};
 
 print "Checking which HTTP clients you have installed...\n";
 
@@ -64,7 +70,7 @@ if ($@) {
 
 # Check if we have internet connection
 # (I lifted this code from Net::DNS which lifted it from LWP...)
-print "Probing for a HTTP Server, this may take a few seconds...\n";
+print "\n\nProbing for a HTTP Server, this may take a few seconds...\n\n";
 require IO::Socket;
 my $hostname = hostname;
 my $s = IO::Socket::INET->new(

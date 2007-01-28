@@ -11,8 +11,12 @@ docs/example-2.pod
 docs/example-3.pod
 docs/example-4.pod
 docs/example-5.pod
-docs/rss_with_xslt.pod
-docs/rss.xml
+examples/example-1.pl
+examples/example-2.pl
+examples/example-3.pl
+examples/example-4.pl
+examples/example-4.xsl
+examples/example-5.pl
 t/config.t
 t/use.t
 t/basic-tests.t
@@ -20,6 +24,8 @@ t/standard-tests.t
 t/version-tests.t
 t/filehandle-tests.t
 t/error-tests.t
+t/debug-tests.t
+t/no-debug-tests.t
 t/catalog-tests.t
 t/no-catalog.t
 t/http-tests.t
