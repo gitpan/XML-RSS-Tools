@@ -1,6 +1,6 @@
-#   $Id: README,v 1.9 2007-01-26 22:24:06 adam Exp $
+#   $Id: README 67 2008-06-29 14:17:37Z adam $
 
-XML/RSS/Tools version 0.20
+XML/RSS/Tools version 0.30
 ==========================
 
 RSS/RDF feeds are commonly available ways of distributing the latest news
@@ -8,26 +8,17 @@ about a given web site for news syndication. This module provides a VERY
 high level way of manipulating them. You can easily use LWP, the XML::RSS
 and XML::LibXSLT do to this yourself.
 
-STATUS
-
-This module is BETA code, it may have undocumented features "bugs", and
-the API may change. It is currently under development and so now is the
-time to add features to the code base before the API becomes fixed.
-
 INSTALLATION
 
 To install this module type the following:
 
-   perl Makefile.PL
-   make
-   make test
-   make install
+   perl Build.PL
+   ./Build
+   ./Build test
+   ./Build install
 
-It will install okay on Windows with ActiveState Perl without a compiler
-just use the free Microsoft nmake tool instead of make.
-
-During the install it will try to connect to the Internet to test the HTTP
-toolchain.
+WARNING: During the install it will try to connect to the Internet to
+test the HTTP toolchain.
 
 DEPENDENCIES
 
@@ -36,16 +27,16 @@ This module requires these other non-core modules for full functionality:
   XML::LibXSLT XML::LibXML
   XML::RSS
   URI
-  LWP or HTTP::GHTTP or HTTP::Lite
+  LWP or HTTP::GHTTP or HTTP::Lite or WWW::Curl::Easy
 
-XML::RSS older versions than version 0.98 have a number of defects and
+XML::RSS older versions than version 1.0 have a number of defects and
 limitations, please upgrade if possible.
 
-XML::LibXML and XML::LibXSLT rely on the GNOME libxml2 and libxslt libraries
-which need to be installed before attempting to install the Perl modules.
-XML Catalog support in certain versions of XML::LibXML appears to be broken
-if you are unable to use Catalogs please let me know so that I can better
-document the module.
+XML::LibXML and XML::LibXSLT rely on the GNOME libxml2 and libxslt
+libraries which need to be installed before attempting to install the
+Perl modules. XML Catalog support in certain versions of XML::LibXML
+may be broken if you are unable to use Catalogs please let me know so
+that I can better document the module.
 
 Please be aware that the API to the URI module changed, at version 1.32,
 and hence how you use the file scheme changed, see the URI changelog for
@@ -53,13 +44,12 @@ more details.
 
 OLDER VERSIONS
 
-To keep CPAN trim, older versions of this module will be continually culled as
-newer versions are loaded. Older versions are archive on backPAN here:
-http://history.perl.org/backpan/authors/id/A/AT/ATRICKETT/  and I keep copies
-myself which are also available upon request.
+To keep CPAN trim, older versions of this module will be continually
+culled as newer versions are loaded. Older versions are available
+upon request.
 
 COPYRIGHT AND LICENCE
 
-XML::RSS::Tools, Copyright (C) iredale Consulting 2002-2007
+XML::RSS::Tools, Copyright (C) iredale Consulting 2002-2008
 
 See POD for full details.

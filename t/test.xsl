@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<!-- $Id: test.xsl,v 1.2 2004/02/14 16:34:23 adam Exp $ -->
+<!-- $Id: test.xsl 56 2008-06-23 16:54:31Z adam $ -->
 <xsl:stylesheet version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	exclude-result-prefixes="xsl"

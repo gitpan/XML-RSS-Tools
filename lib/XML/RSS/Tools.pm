@@ -1,8 +1,8 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.20
-# $Id: Tools.pm,v 1.14 2007-01-28 14:59:54 adam Exp $
+# Version 0.30
+# $Id: Tools.pm 67 2008-06-29 14:17:37Z adam $
 #
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
@@ -13,7 +13,7 @@
 
 package XML::RSS::Tools;
 
-use 5.006;                 # Not been tested on anything earlier
+use 5.006001;              # Not been tested on anything earlier
 use strict;                # Naturally
 use warnings;              # Naturally
 use warnings::register;    # So users can "use warnings 'XML::RSS::Tools'"
@@ -24,15 +24,15 @@ use XML::LibXSLT;          # Hand the XSL file and do the XSLT
 use URI;                   # Deal with URIs nicely
 use FileHandle;            # Allow the use of File Handle Objects
 
-our $VERSION = '0.20';
+our $VERSION = '0.30';
 
 #
-#	Tools Constructor
+#   Tools Constructor
 #
 
 sub new {
     my $class = shift;
-    my %args  = @_;
+    my %args   = @_;
 
     my $object = bless {
         _rss_version    => 0.91,            # We convert all feeds to this version
@@ -66,7 +66,7 @@ sub new {
 
     if ( $args{xml_catalog} ) {
         croak 'XML Catalog Support not enabled in your version of XML::LibXML'
-            unless $XML::LibXML::VERSION > 1.52;
+            if $XML::LibXML::VERSION < 1.53;
         croak "Unable to read XML catalog $args{xml_catalog}"
             unless set_xml_catalog( $object, $args{xml_catalog} );
     }
@@ -75,7 +75,7 @@ sub new {
 }
 
 #
-#	Output what we have as a string
+#   Output what we have as a string
 #
 sub as_string {
     my $self = shift;
@@ -112,7 +112,7 @@ sub as_string {
 }
 
 #
-#	Set/Read the debug level
+#   Set/Read the debug level
 #
 sub debug {
     my $self  = shift;
@@ -122,7 +122,7 @@ sub debug {
 }
 
 #
-#	Read the auto_wash level
+#   Read the auto_wash level
 #
 sub get_auto_wash {
     my $self = shift;
@@ -130,7 +130,7 @@ sub get_auto_wash {
 }
 
 #
-#	Set the auto_wash level
+#   Set the auto_wash level
 #
 sub set_auto_wash {
     my $self = shift;
@@ -140,7 +140,7 @@ sub set_auto_wash {
 }
 
 #
-#	Read the HTTP client mode
+#   Read the HTTP client mode
 #
 sub get_http_client {
     my $self = shift;
@@ -148,7 +148,7 @@ sub get_http_client {
 }
 
 #
-#	Set which HTTP client to use
+#   Set which HTTP client to use
 #
 sub set_http_client {
     my $self   = shift;
@@ -157,14 +157,14 @@ sub set_http_client {
     return $self->_raise_error('No HTTP Client requested')
         unless defined $client;
     return $self->_raise_error("Not configured for HTTP Client $client")
-        unless ( grep {/$client/mx} qw(auto ghttp lwp lite) );
+        unless ( grep {/$client/mx} qw(auto ghttp lwp lite curl) );
 
     $self->{_http_client} = lc $client;
     return $self->{_http_client};
 }
 
 #
-#	Get the HTTP proxy
+#   Get the HTTP proxy
 #
 sub get_http_proxy {
     my $self = shift;
@@ -179,7 +179,7 @@ sub get_http_proxy {
 }
 
 #
-#	Set the HTTP proxy
+#   Set the HTTP proxy
 #
 sub set_http_proxy {
     my $self = shift;
@@ -193,7 +193,7 @@ sub set_http_proxy {
 }
 
 #
-#	Get the RSS Version
+#   Get the RSS Version
 #
 sub get_version {
     my $self = shift;
@@ -201,7 +201,7 @@ sub get_version {
 }
 
 #
-#	Set the RSS Version
+#   Set the RSS Version
 #
 sub set_version {
     my $self    = shift;
@@ -222,7 +222,7 @@ sub set_version {
 }
 
 #
-#	Get XML Catalog File
+#   Get XML Catalog File
 #
 sub get_xml_catalog {
     my $self = shift;
@@ -230,14 +230,14 @@ sub get_xml_catalog {
 }
 
 #
-#	Set XML catalog file
+#   Set XML catalog file
 #
 sub set_xml_catalog {
     my $self         = shift;
     my $catalog_file = shift;
 
     croak 'XML Catalog Support not enabled in your version of XML::LibXML'
-        unless $XML::LibXML::VERSION > 1.52;
+        if $XML::LibXML::VERSION < 1.53;
 
     if ( $self->_check_file($catalog_file) ) {
         $self->{_xml_catalog} = $catalog_file;
@@ -249,7 +249,7 @@ sub set_xml_catalog {
 }
 
 #
-#	Load an RSS file, and call RSS conversion to standard RSS format
+#   Load an RSS file, and call RSS conversion to standard RSS format
 #
 sub rss_file {
     my $self      = shift;
@@ -270,7 +270,7 @@ sub rss_file {
 }
 
 #
-#	Load an XSL file
+#   Load an XSL file
 #
 sub xsl_file {
     my $self      = shift;
@@ -290,7 +290,7 @@ sub xsl_file {
 }
 
 #
-#	Load an RSS file from a FH, and call RSS conversion to standard RSS format
+#   Load an RSS file from a FH, and call RSS conversion to standard RSS format
 #
 sub rss_fh {
     my $self      = shift;
@@ -309,7 +309,7 @@ sub rss_fh {
 }
 
 #
-#	Load an XSL file from a FH
+#   Load an XSL file from a FH
 #
 sub xsl_fh {
     my $self      = shift;
@@ -327,7 +327,7 @@ sub xsl_fh {
 }
 
 #
-#	Load an RSS file via HTTP and call RSS conversion to standard RSS format
+#   Load an RSS file via HTTP and call RSS conversion to standard RSS format
 #
 sub rss_uri {
     my $self = shift;
@@ -348,7 +348,7 @@ sub rss_uri {
 }
 
 #
-#	Load an XSL file via HTTP
+#   Load an XSL file via HTTP
 #
 sub xsl_uri {
     my $self = shift;
@@ -368,7 +368,7 @@ sub xsl_uri {
 }
 
 #
-#	Parse a string and convert to standard RSS
+#   Parse a string and convert to standard RSS
 #
 sub rss_string {
     my $self = shift;
@@ -382,7 +382,7 @@ sub rss_string {
 }
 
 #
-#	Import an XSL from string
+#   Import an XSL from string
 #
 sub xsl_string {
     my $self = shift;
@@ -395,7 +395,7 @@ sub xsl_string {
 }
 
 #
-#	Do the transformation
+#   Do the transformation
 #
 sub transform {
     my $self = shift;
@@ -407,8 +407,7 @@ sub transform {
     my $xslt       = XML::LibXSLT->new;
     my $xml_parser = XML::LibXML->new;
     if ( $self->{_xml_catalog} ) {
-        $xml_parser->load_catalog( $self->{_xml_catalog} )
-            ;    # Load the catalogue
+        $xml_parser->load_catalog( $self->{_xml_catalog} );                 # Load the catalogue
     }
     else {
         $xml_parser->expand_entities(0);                                    # Otherwise don't touch entities
@@ -416,7 +415,6 @@ sub transform {
     $xml_parser->keep_blanks(0);
     $xml_parser->validation(0);
     $xml_parser->complete_attributes(0);
-
     my $source_xml = $xml_parser->parse_string( $self->{_rss_string} );     # Parse the source XML
     my $style_xsl  = $xml_parser->parse_string( $self->{_xsl_string} );     # and Template XSL files
     my $stylesheet = $xslt->parse_stylesheet($style_xsl);                   # Load the parsed XSL into XSLT
@@ -427,12 +425,12 @@ sub transform {
     return $self;
 }
 
-#	---------------
-#	Private Methods
-#	---------------
+#   ---------------
+#   Private Methods
+#   ---------------
 
 #
-#	Parse the RSS string
+#   Parse the RSS string
 #
 sub _parse_rss_string {
     my $self = shift;
@@ -454,7 +452,7 @@ sub _parse_rss_string {
 }
 
 #
-#	Load file from File Handle
+#   Load file from File Handle
 #
 sub _load_filehandle {
     my $self   = shift;
@@ -468,7 +466,7 @@ sub _load_filehandle {
 }
 
 #
-#	Wash the XML File of known nasties
+#   Wash the XML File of known nasties
 #
 sub _wash_xml {
     my $xml = shift;
@@ -481,7 +479,7 @@ sub _wash_xml {
 }
 
 #
-#	Check that the requested file is there and readable
+#   Check that the requested file is there and readable
 #
 sub _check_file {
     my $self      = shift;
@@ -501,7 +499,7 @@ sub _check_file {
 }
 
 #
-#	Process a URI ready for HTTP getting
+#   Process a URI ready for HTTP getting
 #
 sub _process_uri {
     my $self = shift;
@@ -526,14 +524,16 @@ sub _process_uri {
 }
 
 #
-#	Grab something via HTTP
+#   Grab something via HTTP
 #
 sub _http_get {
     my $self = shift;
     my $uri  = shift;
 
+    my $user_agent = "XML::RSS::Tools/$VERSION";
+
     if ( $self->{_http_client} eq 'auto' ) {
-        my @modules = qw "HTTP::GHTTP HTTP::Lite LWP";
+        my @modules = qw "WWW::Curl::Easy HTTP::GHTTP HTTP::Lite LWP";
         foreach my $module (@modules) {
             eval { require $module; };
             if ( ! $@ ) {
@@ -551,7 +551,7 @@ sub _http_get {
         require HTTP::Lite;
         my $ua = HTTP::Lite->new;
         $ua->add_req_header( 'User-Agent',
-            "XML::RSS::Tools/$VERSION HTTP::Lite/$HTTP::Lite::VERSION ($^O)"
+            "$user_agent HTTP::Lite/$HTTP::Lite::VERSION ($^O)"
         );
         $ua->proxy( $self->{_proxy_server} ) if $self->{_proxy_server};
         my $r = $ua->request($uri)
@@ -566,7 +566,7 @@ sub _http_get {
     {
         require LWP::UserAgent;
         my $ua = LWP::UserAgent->new;
-        $ua->agent( "XML::RSS::Tools/$VERSION " . $ua->agent . " ($^O)" );
+        $ua->agent( $user_agent . ' ' . $ua->agent . " ($^O)" );
         $ua->proxy( [ 'http', 'ftp' ], $self->{_proxy_server} )
             if $self->{_proxy_server};
         my $response = $ua->request( HTTP::Request->new( 'GET', $uri ) );
@@ -579,7 +579,7 @@ sub _http_get {
         require HTTP::GHTTP;
         my $ua = HTTP::GHTTP->new($uri);
         $ua->set_header( 'User-Agent',
-            "XML::RSS::Tools/$VERSION libghttp/1.x ($^O)" );
+            "$user_agent HTTP::GHTTP/$HTTP::GHTTP::VERSION ($^O)" );
         if ( $self->{_proxy_server} ) {
             $ua->set_proxy( $self->{_proxy_server} );
             $ua->set_proxy_authinfo( $self->{_proxy_user},
@@ -599,13 +599,50 @@ sub _http_get {
                 "HTTP error: Unable to connect to server: $uri");
         }
     }
+
+    if ($self->{_http_client} eq 'curl' ) {
+        require WWW::Curl::Easy;
+        my ($curl, $response_body, $file_b, $response_head,
+            $file_h, $response, $response_code);
+
+        $curl = WWW::Curl::Easy->new;
+
+        open $file_b, '>', \$response_body;
+        open $file_h, '>', \$response_head;
+
+        $curl->setopt( WWW::Curl::Easy->CURLOPT_USERAGENT,
+            "$user_agent WWW::Curl::Easy/$WWW::Curl::Easy::VERSION ($^O)" );
+        $curl->setopt( WWW::Curl::Easy->CURLOPT_HEADER, 0 );
+        $curl->setopt( WWW::Curl::Easy->CURLOPT_NOPROGRESS, 1 );
+        $curl->setopt( WWW::Curl::Easy->CURLOPT_URL, $uri );
+        $curl->setopt( WWW::Curl::Easy->CURLOPT_WRITEDATA, $file_b );
+        $curl->setopt( WWW::Curl::Easy->CURLOPT_WRITEHEADER, $file_h );
+
+        $response = $curl->perform;
+
+        close $file_b;
+        close $file_h;
+
+        if ($response == 0) {
+            $response_code = $curl->getinfo(
+                WWW::Curl::Easy->CURLINFO_HTTP_CODE );
+            return $self->_raise_error( "HTTP error: $response_code" )
+                unless $response_code == 200;
+            return $response_body
+        }
+        else {
+            return $self->_raise_error( "HTTP error : " .
+                $curl->strerror($response) . " ($response)" );
+        }
+
+    }
 }
 
 #
-#	Fix Entities
-#	This subroutine is a mix of Matt Sergent's rss-mirror script
-#	And chunks of the HTML::Entites module if you have Perl 5.8.x you
-#	don't need this code.
+#   Fix Entities
+#   This subroutine is a mix of Matt Sergent's rss-mirror script
+#   And chunks of the HTML::Entites module if you have Perl 5.8.x you
+#   don't need this code.
 #
 sub _clean_entities {
     my $xml = shift;
@@ -719,7 +756,7 @@ sub _clean_entities {
 }
 
 #
-#	Raise error condition
+#   Raise error condition
 #
 sub _raise_error {
     my $self    = shift;
@@ -736,12 +773,12 @@ __END__
 
 =head1 NAME
 
-XML::RSS::Tools - A tool-kit providing a wrapper around a HTTP client, a RSS parser, and a
-XSLT engine.
+XML::RSS::Tools - A tool-kit providing a wrapper around a HTTP client,
+a RSS parser, and a XSLT engine.
 
 =head1 VERSION
 
-This documantation refers to XML::RSS::Tools version 0.20
+This documentation refers to XML::RSS::Tools version 0.30
 
 =head1 SYNOPSIS
 
@@ -754,28 +791,28 @@ This documantation refers to XML::RSS::Tools version 0.20
 
 =head1 DESCRIPTION
 
-RSS/RDF feeds are commonly available ways of distributing or syndicating the latest
-news about a given web site. Weblog (blog) sites in particular are prolific
-generators of RSS feeds. This module provides a VERY high level way of
-manipulating them. You can easily use LWP, the XML::RSS and XML::LibXSLT do to this
-yourself, but this module is a wrapper around these modules, allowing for the simple
-creation of a RSS client.
+RSS/RDF feeds are commonly available ways of distributing or syndicating
+the latest news about a given web site. Weblog (blog) sites in particular
+are prolific generators of RSS feeds. This module provides a VERY high
+level way of manipulating them. You can easily use LWP, the XML::RSS and
+XML::LibXSLT do to this yourself, but this module is a wrapper around
+these modules, allowing for the simple creation of a RSS client.
 
-When working with XML if the file is invalid for some reason this module will croak
-bringing your application down. When calling methods that deal with XML manipulation
-you should enclose them in an eval statement should you wish your program to fail
-gracefully.
+When working with XML if the file is invalid for some reason this module
+will croak bringing your application down. When calling methods that
+deal with XML manipulation you should enclose them in an eval statement
+should you wish your program to fail gracefully.
 
-Otherwise method calls will return true on success, and false on failure. For example
-after loading a URI via HTTP, you may wish to check the error status before
-proceeding with your code:
+Otherwise method calls will return true on success and false on failure.
+For example after loading a URI via HTTP, you may wish to check the
+error status before proceeding with your code:
 
   unless ($rss_feed->rss_uri('http://this.goes.nowhere/')) {
-  	print "Unable to obtain file via HTTP", $rss_feed->as_string(error);
+    print "Unable to obtain file via HTTP", $rss_feed->as_string(error);
     # Do what else
-	# you have to.
+    # you have to.
   } else {
-  	# carry on...
+    # carry on...
   }
 
 Check the HTML documentation for extra examples, and background.
@@ -806,10 +843,10 @@ The module will die if it's created with invalid parameters.
   $rss_object->rss_string($xml_file);
   $rss_object->rss_fh($file_handle);
 
-All return true on success, false on failure. If an XML file was provided but
-was invalid XML the parser will fail fatally at this time. The input RSS feed
-will automatically be normalised to the preferred RSS version at this time.
-Chose your version before you load it!
+All return true on success, false on failure. If an XML file was
+provided but was invalid XML the parser will fail fatally at this time.
+The input RSS feed will automatically be normalised to the preferred RSS
+version at this time. Chose your version before you load it!
 
 As of version URI version 1.32 the way that URIs are mapped has changed
 slightly, this may result in erroneous file location. The variable
@@ -826,8 +863,8 @@ the URI changes file for more details.
   $rss_object->xsl_string($xml_file);
   $rss_object->xsl_fh($file_handle);
 
-All return true on success, false on failure. The XSLT file is NOT parsed or
-verified at this time.
+All return true on success, false on failure. The XSLT file is NOT
+parsed or verified at this time.
 
 =head2 Other Methods
 
@@ -835,15 +872,16 @@ verified at this time.
 
   $rss_object->transform();
 
-Performs the XSL transformation on the source RSS file with the loaded XSLT
-file.
+Performs the XSL transformation on the source RSS file with the loaded
+XSLT file.
 
 =head3 as_string
 
   $rss_object->as_string;
 
-Returns the RSS file after it's been though the XSLT process. Optionally you can pass this method
-one additional parameter to obtain the source RSS, XSL Template and any error message:
+Returns the RSS file after it's been though the XSLT process. Optionally
+you can pass this method one additional parameter to obtain the source
+RSS, XSL Template and any error message:
 
   $rss_object->as_string(xsl);
   $rss_object->as_string(rss);
@@ -855,25 +893,26 @@ If there is nothing to stringify you will get nothing.
 
   $rss_object->debug(1);
 
-A simple switch that control the debug status of the module. By default debug
-is off. Returns the current status. With debug on you will get more warnings
-sent to stderr.
+A simple switch that control the debug status of the module. By default
+debug is off. Returns the current status. With debug on you will get
+more warnings sent to stderr.
 
 =head3 set_auto_wash and get_auto_wash
 
   $rss_object->set_auto_wash(1);
   $rss_object->get_auto_wash;
 
-If auto_wash is true, then all RSS files are cleaned before RSS normalisation to replace
-known entities by their numeric value, and fix known invalid XML constructs. By default
-auto_wash is set to true.
+If auto_wash is true, then all RSS files are cleaned before RSS
+normalisation to replace known entities by their numeric value and fix
+known invalid XML constructs. By default auto_wash is set to true.
 
 =head3 set_version
 
   $rss_object->set_version(0.92);
 
-All incoming RSS feeds are automatically converted to one default RSS version. If RSS version
-is set to 0 then normalisation is not performed. The default RSS version is 0.91.
+All incoming RSS feeds are automatically converted to one default RSS
+version. If RSS version is set to 0 then normalisation is not performed.
+The default RSS version is 0.91.
 
 =head3 get_version
 
@@ -886,7 +925,8 @@ Return the default RSS version.
   $rss_object->set_http_client('lwp');
   $rss_object->get_http_client;
 
-These methods set the HTTP client to use, and get back the one selected. Acceptable values are:
+These methods set the HTTP client to use and get back the one selected.
+Acceptable values are:
 
 =over
 
@@ -895,6 +935,12 @@ These methods set the HTTP client to use, and get back the one selected. Accepta
 auto
 
 Will use attempt to use the HTTP client modules in order of performance.
+
+=item *
+
+curl
+
+Bálint Szilakszi's libcurl based C<WWW::Curl::Easy>.
 
 =item *
 
@@ -915,14 +961,14 @@ lwp
 
 LWP is the Rolls-Royce solution, it can do everything, but it's rather big,
 so it's slow to load, and it's not exactly fast. It is however far more
-common, and is the most complete.
+common and is by far the most complete.
 
 =back
 
-If set to auto the module will first try C<HTTP::GHTTP> then C<HTTP::Lite>
-then C<LWP>, to retrieve files on the Internet. Though C<GHTTP> is much
-faster than C<LWP> it is far less common and doesn't work reliably on
-Windows Apache 1.3.x/mod_Perl, so this method allows you to specify which
+If set to auto the module will first try C<WWW::Curl::Easy>,
+C<HTTP::GHTTP> then C<HTTP::Lite> then C<LWP>, to retrieve files on
+the Internet. Though C<LWP> is the slowest option but it is far more
+common than all the others, so this method allows you to specify which
 client to use if you wish to.
 
 =head3 set_http_proxy and get_http_proxy
@@ -1013,9 +1059,7 @@ None.
 
 =head1 HISTORY
 
-0.20 Module reformatted to PBP Guidelines.
-
-0.16 Bug in xsl_string read fixed.
+0.30 Support WWW::Curl::Easy. Swictehed to subversion from CVS. More Perltidy & test tweaks.
 
 ...
 
@@ -1031,34 +1075,36 @@ See CHANGES file.
 
 External Entities
 
-If an RSS or XSLT file is passed into LibXML and it contains references to
-external files, such as a DTD or external entities, LibXML will automatically
-attempt to obtain the files, before performing the transformation. If the files
-referred to are on the public INTERNET, and you do not have a connection when this
-happens you may find that the process waits around for several minutes until
-LibXML gives up. If you plan to use this module in an asynchronous manner, you
-should setup an XML Catalog for LibXML using the xmlcatalog command. See:
-http://www.xmlsoft.org/catalog.html for more details. You can pass your catalog
-into the module, and a local copy will then be used rather than the one on the
-Internet.
+If an RSS or XSLT file is passed into LibXML and it contains references
+to external files, such as a DTD or external entities, LibXML will
+automatically attempt to obtain the files, before performing the
+transformation. If the files referred to are on the public INTERNET
+and you do not have a connection when this happens you may find that
+the process waits around for several minutes until LibXML gives up. If
+you plan to use this module in an asynchronous manner, you should setup
+an XML Catalog for LibXML using the xmlcatalog command. See:
+http://www.xmlsoft.org/catalog.html for more details. You can pass your
+catalog into the module and a local copy will then be used rather than
+the one on the Internet.
 
 =item *
 
 Defective XML
 
-Many commercial RSS feeds are derived from the Content Management System in use
-at the site. Often the RSS feed is not well formed and is thus invalid. This will
-prevent the RSS parser and/or XSLT engine from functioning, and you will get
-no output. The auto_wash option attempts to fix these errors, but it's is neither
-perfect nor ideal. Some people report good success with complaining to the site.
-Mark Pilgrim estimates that about 10% of RSS feeds have defective XML.
+Many commercial RSS feeds are derived from the Content Management
+System in use at the site. Often the RSS feed is not well formed and is
+thus invalid. This will prevent the RSS parser and/or XSLT engine from
+functioning and you will get no output. The auto_wash option attempts
+to fix these errors, but it is is neither perfect nor ideal. Some
+people report good success with complaining to the site. Mark Pilgrim
+estimates that about 10% of RSS feeds have defective XML.
 
 =item *
 
 XML::RSS Limitations
 
 XML::RSS up-to and including version 0.96 has a number of defects. The
-module is currently being maintained by Ask Bjørn Hansen. See
+module is currently being maintained by Shlomi Fish. See
 http://perl-rss.sourceforge.net/ and http://svn.perl.org/modules/XML-RSS/
 
 Since version 1.xx most problems have been fixed, please upgrade if you can.
@@ -1080,15 +1126,6 @@ false negatives. Feedback welcomed.
 
 =item *
 
-Support Piers Harding's C<HTTP::MHTTP> module, it seems to be even faster
-than GHTTP.
-
-=item *
-
-Support libcurl, it's very fast, and GHTTP is deprecated.
-
-=item *
-
 Support Atom feeds.
 
 =item *
@@ -1101,32 +1138,37 @@ Import Proxy settings from environment.
 
 Adam Trickett, E<lt>atrickett@cpan.orgE<gt>
 
-This module contains the direct and indirect input of a number of friendly
-Perl Hackers on Perlmonks/use.perl: Ovid; Matts; Merlyn; hfb; link; Martin
-and more...
+This module contains the direct and indirect input of a number of
+friendly Perl Hackers on Perlmonks/use.perl: Ovid; Matts; Merlyn; hfb;
+link; Martin and more...
 
 =head1 SEE ALSO
 
 L<perl>, L<XML::RSS>, L<XML::LibXSLT>, L<XML::LibXML>, L<XML::RSS::LibXML>,
 L<URI>, L<LWP>, L<HTTP::Lite>, L<HTTP::GHTTP>.
 
+This module is not an aggregator tool for that I suggest you investigate
+Plagger
+
 =head1 LICENSE AND COPYRIGHT
 
-XML::RSS::Tools, Copyright iredale Consulting 2002-2007
+XML::RSS::Tools, Copyright iredale Consulting 2002-2008
 
-OSI Certified Open Source Software
+OSI Certified Open Source Software.
+Free Software Foundation Free Software.
 
-This program is free software; you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation; either version 2 of the License, or (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE. See the GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with
-this program; if not, write to the Free Software Foundation, Inc.,
-59 Temple Place - Suite 330, Boston, MA  02111, USA.
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 =head1 DEDICATION
 

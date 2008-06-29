@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-#   $Id: example-1.pl,v 1.1 2007-01-23 20:35:01 adam Exp $
+#   $Id: example-1.pl 56 2008-06-23 16:54:31Z adam $
 
 =head1 NAME
 

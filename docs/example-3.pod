@@ -1,4 +1,4 @@
-#   $Id: example-3.pod,v 1.2 2004/02/14 16:34:23 adam Exp $
+#   $Id: example-3.pod 56 2008-06-23 16:54:31Z adam $
 
 =head1 NAME
 

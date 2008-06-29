@@ -6,5 +6,5 @@
 	uri="http://my.netscape.com/publish/formats/rss-0.91.dtd"/>
 <rewriteSystem
 	systemIdStartString="http://my.netscape.com/publish/formats/rss-0.91.dtd"
-	rewritePrefix="file:rss-0.91.dtd"/>
+	rewritePrefix="rss-0.91.dtd"/>
 </catalog>
