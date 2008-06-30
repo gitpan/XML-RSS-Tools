@@ -1,7 +1,7 @@
-# $Id: META.yml 67 2008-06-29 14:17:37Z adam $
+# $Id: META.yml 74 2008-06-30 20:25:25Z adam $
 --- #YAML:1.0
 name: XML-RSS-Tools
-version: 0.30
+version: 0.31
 abstract: A tool-kit providing a wrapper around a HTTP client, a RSS parser, and a XSLT engine.
 author:
   - Adam Trickett <atrickett@cpan.org>
@@ -23,12 +23,12 @@ build_requires:
   URI::file: 4.19
   Test::Pod: 1.0
   Test::Warn: 0.09
-  Test::NoWarnings: 0.83
+  Test::NoWarnings: 0.08
   IO::Capture: 0.04
 provides:
   XML::RSS::Tools:
     file: lib/XML/RSS/Tools.pm
-    version: 0.30
+    version: 0.31
 resources:
   homepage: http://www.iredale.net/p/by-permalink/45203A44-EACB-11DC-9A07-61EB6225452B/
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=XML-RSS-Tools

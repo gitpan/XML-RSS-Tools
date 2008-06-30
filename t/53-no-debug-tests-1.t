@@ -1,6 +1,6 @@
-#   $Id: 53-no-debug-tests-1.t 67 2008-06-29 14:17:37Z adam $
+#   $Id: 53-no-debug-tests-1.t 74 2008-06-30 20:25:25Z adam $
 
-use Test;
+use Test::More;
 use strict;
 use warnings;
 
@@ -15,12 +15,13 @@ BEGIN {
                 'IO::Capture::Stderr does work reliably on your Perl version.'
         );
     }
-
-    plan tests => 44;
-    use URI::file;
-    if ( $URI::VERSION >= 1.32 ) {
-        no warnings;
-        $URI::file::DEFAULT_AUTHORITY = undef;
+    else {
+        plan tests => 44;
+        use URI::file;
+        if ( $URI::VERSION >= 1.32 ) {
+            no warnings;
+            $URI::file::DEFAULT_AUTHORITY = undef;
+        }
     }
 }
 

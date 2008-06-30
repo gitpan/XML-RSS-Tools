@@ -1,4 +1,4 @@
-#   $Id: 03-basic-tests.t 67 2008-06-29 14:17:37Z adam $
+#   $Id: 03-basic-tests.t 74 2008-06-30 20:25:25Z adam $
 
 use Test::More;
 use strict;
@@ -19,7 +19,7 @@ BEGIN {
     use_ok( 'XML::RSS::Tools' );
 }
 
-is( $XML::RSS::Tools::VERSION, '0.30',             'Version Check' );
+is( $XML::RSS::Tools::VERSION, '0.31',             'Version Check' );
 
 my $rss_object = XML::RSS::Tools->new;
 

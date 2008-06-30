@@ -1,9 +1,15 @@
-#   SVN: $Id: Changes 67 2008-06-29 14:17:37Z adam $
+#   SVN: $Id: Changes 74 2008-06-30 20:25:25Z adam $
 
 Revision history for Perl extension XML::RSS::Tools.
 
+0.31  Mon 30 June 2008
+    - Build/test fixes:
+        * Fix to 53-no-debug-tests-1.t, thanks to David Cantrell
+        * Minor tweak to Build.PL.META.yml files
+    - Module code unchanged
+
 0.30  Sun 29 June 2008
-    - Can now use WWW::Curl::Easy as HTTP layer
+    - Can now use WWW::Curl::Easy as HTTP layer (no proxy support yet)
     - Various build/text fixes and improvments:
         * Washed all tests through Perltidy
         * More tests - Thanks to Perl Testing: A Developer's Notebook
