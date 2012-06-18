@@ -1,10 +1,10 @@
-#   $Id: Makefile.PL 67 2008-06-29 14:17:37Z adam $
+#   $Id: Makefile.PL 93 2012-06-18 10:18:15Z adam $
 
-use ExtUtils::MakeMaker;
+use 5.008000; use 5.8.0;
 use strict;
-use 5.006001;
+use ExtUtils::MakeMaker;
 
-if ($] < 5.008) {
+if ($] < 5.0010) {
     print {*STDERR} "\n##########################################",
                     "\n# This module is not supported on Perls  #",
                     "\n# older than 5.8.x. Patches are welcome. #",
@@ -13,10 +13,11 @@ if ($] < 5.008) {
 
 eval { require Module::Build };
 if (! $@) {
-    print {*STDERR} "\n#############################################",
-                    "\n# This Makefile.PL is deprecated please use #",
-                    "\n# the Build.PL file if possible.            #",
-                    "\n#############################################\n\n";
+    print {*STDERR} "\n############################################",
+                     "\n# This Makefile.PL is deprecated and not  #",
+                     "\n# supported any more. Please use Build.PL #",
+                     "\n# file instead.                           #",
+                     "\n###########################################\n\n";
 }
 
 WriteMakefile(
@@ -38,4 +39,3 @@ WriteMakefile(
       (ABSTRACT_FROM => 'lib/XML/RSS/Tools.pm',
        AUTHOR        => 'Dr A. J. Trickett <atrickett@cpan.org>') : ()),
 );
-

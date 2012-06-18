@@ -4,7 +4,9 @@ Build.PL
 MANIFEST
 README
 META.yml
+META.json
 SIGNATURE
+LICENCE
 lib/XML/RSS/Tools.pm
 docs/rss-introduction.pod
 docs/example-1.pod

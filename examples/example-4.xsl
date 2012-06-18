@@ -8,7 +8,7 @@
   exclude-result-prefixes="xsl rdf dc rss rss09">
 	<xsl:output method="xml" omit-xml-declaration="yes" indent="yes"/>
 <!-- 
-    $Id: example-4.xsl,v 1.1 2007-01-23 20:35:02 adam Exp $
+    $Id: example-4.xsl 79 2008-07-01 19:45:17Z adam $
 
 The XSLT stylesheet listed below should be able to read any of the 7 versions of RSS feed currently
 available and convert them consistently to a XHTML fragment. Becasue of the differences in RSS, it is not

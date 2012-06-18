@@ -1,6 +1,16 @@
-#   SVN: $Id: Changes 74 2008-06-30 20:25:25Z adam $
+#   SVN: $Id: Changes 87 2012-06-18 09:50:44Z adam $
 
 Revision history for Perl extension XML::RSS::Tools.
+
+0.33  Mon 18 June 2012
+    - More modern Build system
+    - Tested on more modern perls, not tested on older ones
+    - Minor text changes
+
+0.32  Sun 06 July 2008
+    - Build/test fix for old (unsupported) XML::LibXML systems
+    - Added external licence file
+    - Module code unchanged
 
 0.31  Mon 30 June 2008
     - Build/test fixes:

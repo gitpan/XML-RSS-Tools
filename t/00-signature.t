@@ -1,6 +1,7 @@
-#   $Id: 00-signature.t 69 2008-06-29 15:00:08Z adam $
+#   $Id: 00-signature.t 83 2008-07-06 12:24:04Z adam $
 
 use Test::More;
+use strict;
 
 BEGIN {
 

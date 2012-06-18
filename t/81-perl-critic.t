@@ -1,4 +1,4 @@
-#   $Id: 80-kwalitee.t 60 2008-06-24 16:05:41Z adam $
+#   $Id: 81-perl-critic.t 79 2008-07-01 19:45:17Z adam $
 
 use strict;
 use warnings;

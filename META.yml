@@ -1,38 +1,35 @@
-# $Id: META.yml 74 2008-06-30 20:25:25Z adam $
---- #YAML:1.0
-name: XML-RSS-Tools
-version: 0.31
-abstract: A tool-kit providing a wrapper around a HTTP client, a RSS parser, and a XSLT engine.
+---
+abstract: 'A tool-kit providing a wrapper around a HTTP client,'
 author:
-  - Adam Trickett <atrickett@cpan.org>
-license: gpl
-distribution_type: module
-requires:
-  LWP: 5.8
-  URI: 1.35
-  XML::LibXML: 1.59
-  XML::LibXSLT: 1.59
-  XML::RSS: 1.22
-  perl: 5.6.1
-recommends:
-  HTTP::GHTTP: 1
-  HTTP::Lite: 2.1
-  WWW::Curl::Easy: 4
+  - 'Adam Trickett, E<lt>atrickett@cpan.orgE<gt>'
 build_requires:
-  Pod::Coverage: 0.18
-  URI::file: 4.19
+  IO::Capture: 0.04
+  Pod::Coverage: 0.21
+  Test::NoWarnings: 0.08
   Test::Pod: 1.0
   Test::Warn: 0.09
-  Test::NoWarnings: 0.08
-  IO::Capture: 0.04
+  URI::file: 4.19
+  YAML: 0.60
+configure_requires:
+  Module::Build: 0.4
+dynamic_config: 1
+generated_by: 'Module::Build version 0.4, CPAN::Meta::Converter version 2.120921'
+license: open_source
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: XML-RSS-Tools
 provides:
   XML::RSS::Tools:
     file: lib/XML/RSS/Tools.pm
-    version: 0.31
+    version: 0.33_1
+requires:
+  LWP: 6.0
+  URI: 1.58
+  XML::LibXML: 1.70
+  XML::LibXSLT: 1.70
+  XML::RSS: 1.46
+  perl: v5.8.0
 resources:
-  homepage: http://www.iredale.net/p/by-permalink/45203A44-EACB-11DC-9A07-61EB6225452B/
-  bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=XML-RSS-Tools
-meta-spec:
-   version: 1.3
-   url: http://module-build.sourceforge.net/META-spec-v1.3.html
-generated_by: Hand 1.0
+  license: http://www.gnu.org/licenses/gpl.txt
+version: 0.33_1

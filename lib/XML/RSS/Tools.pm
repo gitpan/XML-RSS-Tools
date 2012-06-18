@@ -1,8 +1,8 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.31
-# $Id: Tools.pm 74 2008-06-30 20:25:25Z adam $
+# Version 0.33_1
+# $Id: Tools.pm 90 2012-06-18 09:53:00Z adam $
 #
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
@@ -13,7 +13,7 @@
 
 package XML::RSS::Tools;
 
-use 5.006001;              # Not been tested on anything earlier
+use 5.008000;              # No longer been tested on anything earlier
 use strict;                # Naturally
 use warnings;              # Naturally
 use warnings::register;    # So users can "use warnings 'XML::RSS::Tools'"
@@ -24,7 +24,7 @@ use XML::LibXSLT;          # Hand the XSL file and do the XSLT
 use URI;                   # Deal with URIs nicely
 use FileHandle;            # Allow the use of File Handle Objects
 
-our $VERSION = '0.31';
+our $VERSION = '0.33_1';
 
 #
 #   Tools Constructor
@@ -154,9 +154,9 @@ sub set_http_client {
     my $self   = shift;
     my $client = shift;
 
-    return $self->_raise_error('No HTTP Client requested')
+    return $self->_raise_error( 'No HTTP Client requested' )
         unless defined $client;
-    return $self->_raise_error("Not configured for HTTP Client $client")
+    return $self->_raise_error( "Not configured for HTTP Client $client" )
         unless ( grep {/$client/mx} qw(auto ghttp lwp lite curl) );
 
     $self->{_http_client} = lc $client;
@@ -207,7 +207,7 @@ sub set_version {
     my $self    = shift;
     my $version = shift;
 
-    return $self->_raise_error('No RSS version supplied')
+    return $self->_raise_error( 'No RSS version supplied' )
         unless defined $version;
     return $self->_raise_error("No such version of RSS $version")
         unless ( grep {/$version/mx} qw(0 0.9 0.91 0.92 0.93 0.94 1.0 2.0) );
@@ -239,7 +239,7 @@ sub set_xml_catalog {
     croak 'XML Catalog Support not enabled in your version of XML::LibXML'
         if $XML::LibXML::VERSION < 1.53;
 
-    if ( $self->_check_file($catalog_file) ) {
+    if ( $self->_check_file( $catalog_file ) ) {
         $self->{_xml_catalog} = $catalog_file;
         return $self;
     }
@@ -255,10 +255,10 @@ sub rss_file {
     my $self      = shift;
     my $file_name = shift;
 
-    if ( $self->_check_file($file_name) ) {
+    if ( $self->_check_file( $file_name ) ) {
         my $fh = FileHandle->new( $file_name, 'r' )
             or croak "Unable to open $file_name for reading";
-        $self->{_rss_string} = $self->_load_filehandle($fh);
+        $self->{_rss_string} = $self->_load_filehandle( $fh );
         undef $fh;
         $self->_parse_rss_string;
         $self->{_transformed} = 0;
@@ -276,10 +276,10 @@ sub xsl_file {
     my $self      = shift;
     my $file_name = shift;
 
-    if ( $self->_check_file($file_name) ) {
+    if ( $self->_check_file( $file_name ) ) {
         my $fh = FileHandle->new( $file_name, 'r' )
             or croak "Unable to open $file_name for reading";
-        $self->{_xsl_string} = $self->_load_filehandle($fh);
+        $self->{_xsl_string} = $self->_load_filehandle( $fh );
         undef $fh;
         $self->{_transformed} = 0;
         return $self;
@@ -297,14 +297,14 @@ sub rss_fh {
     my $file_name = shift;
 
     if ( ref $file_name  eq 'FileHandle' ) {
-        $self->{_rss_string} = $self->_load_filehandle($file_name);
+        $self->{_rss_string} = $self->_load_filehandle( $file_name );
         _parse_rss_string($self);
         $self->{_transformed} = 0;
         return $self;
     }
     else {
         return $self->_raise_error(
-            'FileHandle error: No FileHandle Object Passed');
+            'FileHandle error: No FileHandle Object Passed' );
     }
 }
 
@@ -316,13 +316,13 @@ sub xsl_fh {
     my $file_name = shift;
 
     if ( ref $file_name eq 'FileHandle' ) {
-        $self->{_xsl_string}  = $self->_load_filehandle($file_name);
+        $self->{_xsl_string}  = $self->_load_filehandle( $file_name );
         $self->{_transformed} = 0;
         return $self;
     }
     else {
         return $self->_raise_error(
-            'FileHandle error: No FileHandle Object Passed');
+            'FileHandle error: No FileHandle Object Passed' );
     }
 }
 
@@ -333,16 +333,16 @@ sub rss_uri {
     my $self = shift;
     my $uri  = shift;
 
-    $uri = $self->_process_uri($uri);
+    $uri = $self->_process_uri( $uri );
     return unless $uri;
 
     return $self->rss_file( $self->{_uri_file} )
         if ( $self->{_uri_scheme} eq 'file' );
 
-    my $xml = $self->_http_get($uri);
+    my $xml = $self->_http_get( $uri );
     return unless $xml;
     $self->{_rss_string} = $xml;
-    _parse_rss_string($self);
+    _parse_rss_string( $self );
     $self->{_transformed} = 0;
     return $self;
 }
@@ -354,13 +354,13 @@ sub xsl_uri {
     my $self = shift;
     my $uri  = shift;
 
-    $uri = $self->_process_uri($uri);
+    $uri = $self->_process_uri( $uri );
     return unless $uri;
 
     return $self->xsl_file( $self->{_uri_file} )
         if ( $self->{_uri_scheme} eq 'file' );
 
-    my $xml = $self->_http_get($uri);
+    my $xml = $self->_http_get( $uri );
     return unless $xml;
     $self->{_xsl_string}  = $xml;
     $self->{_transformed} = 0;
@@ -410,17 +410,17 @@ sub transform {
         $xml_parser->load_catalog( $self->{_xml_catalog} );                 # Load the catalogue
     }
     else {
-        $xml_parser->expand_entities(0);                                    # Otherwise don't touch entities
+        $xml_parser->expand_entities( 0 );                                  # Otherwise don't touch entities
     }
-    $xml_parser->keep_blanks(0);
-    $xml_parser->validation(0);
-    $xml_parser->complete_attributes(0);
+    $xml_parser->keep_blanks( 0 );
+    $xml_parser->validation( 0 );
+    $xml_parser->complete_attributes( 0 );
     my $source_xml = $xml_parser->parse_string( $self->{_rss_string} );     # Parse the source XML
     my $style_xsl  = $xml_parser->parse_string( $self->{_xsl_string} );     # and Template XSL files
-    my $stylesheet = $xslt->parse_stylesheet($style_xsl);                   # Load the parsed XSL into XSLT
-    my $result_xml = $stylesheet->transform($source_xml);                   # Transform the source XML
+    my $stylesheet = $xslt->parse_stylesheet( $style_xsl );                 # Load the parsed XSL into XSLT
+    my $result_xml = $stylesheet->transform( $source_xml );                 # Transform the source XML
     $self->{_output_string}
-        = $stylesheet->output_string($result_xml);                          # Store the result
+        = $stylesheet->output_string( $result_xml );                          # Store the result
     $self->{_transformed} = 1;
     return $self;
 }
@@ -436,16 +436,17 @@ sub _parse_rss_string {
     my $self = shift;
     my $xml  = $self->{_rss_string};
 
-    $xml = _wash_xml($xml) if $self->{_auto_wash};
+    $xml = _wash_xml( $xml ) if $self->{_auto_wash};
 
     if ( $self->{_rss_version} ) {    # Only normalise if version is true
         my $rss = XML::RSS->new;
-        $rss->parse($xml);
+        $rss->parse( $xml );
         if ( $rss->{version} != $self->{_rss_version} ) {
             $rss->{output} = $self->{_rss_version};
             $xml = $rss->as_string;
-            $xml = _wash_xml($xml) if $self->{_auto_wash};
+            $xml = _wash_xml( $xml ) if $self->{_auto_wash};
         }
+        $self->{_xml_rss} = $rss;
     }
     $self->{_rss_string} = $xml;
     return $self;
@@ -471,7 +472,7 @@ sub _load_filehandle {
 sub _wash_xml {
     my $xml = shift;
 
-    $xml = _clean_entities($xml);
+    $xml = _clean_entities( $xml );
     $xml =~ s/\s+/ /gsmx;
     $xml =~ s/> />/gmx;
     $xml =~ s/^.*(<\?xml)/$1/gsmx;    # Remove bogus content before <?xml start
@@ -485,15 +486,15 @@ sub _check_file {
     my $self      = shift;
     my $file_name = shift;
 
-    return $self->_raise_error('File error: No file name supplied')
+    return $self->_raise_error( 'File error: No file name supplied' )
         unless $file_name;
-    return $self->_raise_error("File error: Cannot find $file_name")
+    return $self->_raise_error( "File error: Cannot find $file_name" )
         unless -e $file_name;
-    return $self->_raise_error("File error: $file_name isn't a real file")
+    return $self->_raise_error( "File error: $file_name isn't a real file" )
         unless -f _;
-    return $self->_raise_error("File error: Cannot read file $file_name")
+    return $self->_raise_error( "File error: Cannot read file $file_name" )
         unless -r _;
-    return $self->_raise_error("File error: $file_name is zero bytes long")
+    return $self->_raise_error( "File error: $file_name is zero bytes long" )
         if -z _;
     return $self;
 }
@@ -505,9 +506,9 @@ sub _process_uri {
     my $self = shift;
     my $uri  = shift;
 
-    return $self->_raise_error('No URI provided.') unless $uri;
-    my $uri_object = URI->new($uri)->canonical;
-    return $self->_raise_error("URI provided ($uri) is not valid.")
+    return $self->_raise_error( 'No URI provided.' ) unless $uri;
+    my $uri_object = URI->new( $uri )->canonical;
+    return $self->_raise_error( "URI provided ($uri) is not valid." )
         unless $uri_object;
 
     $self->{_uri_scheme} = $uri_object->scheme;
@@ -555,7 +556,7 @@ sub _http_get {
         );
         $ua->proxy( $self->{_proxy_server} ) if $self->{_proxy_server};
         my $r = $ua->request($uri)
-            or return $self->_raise_error("Unable to get document: $!");
+            or return $self->_raise_error( "Unable to get document: $!" );
         return $self->_raise_error( "HTTP error: $r, " . $ua->status_message )
             unless $r == 200;
         return $ua->body;
@@ -572,7 +573,7 @@ sub _http_get {
         my $response = $ua->request( HTTP::Request->new( 'GET', $uri ) );
         return $self->_raise_error( 'HTTP error: ' . $response->status_line )
             if $response->is_error;
-        return $response->content();
+        return $response->content( );
     }
 
     if ( $self->{_http_client} eq 'ghttp' ) {
@@ -588,7 +589,7 @@ sub _http_get {
         }
         $ua->process_request;
         my $xml = $ua->get_body;
-        if ($xml) {
+        if ( $xml ) {
             my ( $status, $message ) = $ua->get_status;
             return $self->_raise_error("HTTP error: $status, $message")
                 unless $status == 200;
@@ -632,7 +633,7 @@ sub _http_get {
         }
         else {
             return $self->_raise_error( "HTTP error : " .
-                $curl->strerror($response) . " ($response)" );
+                $curl->strerror( $response ) . " ($response)" );
         }
 
     }
@@ -751,7 +752,7 @@ sub _clean_entities {
     );
     my $entities = join q{|}, keys %entity;
     $xml =~ s/&(?!(#[0-9]+|#x[0-9a-fA-F]+|\w+);)/&amp;/gm;       # Matt's ampersand entity fixer
-    $xml =~ s/&($entities);/$entity{$1}/gimx;                     # Deal with odd entities
+    $xml =~ s/&($entities);/$entity{$1}/gimx;                    # Deal with odd entities
     return $xml;
 }
 
@@ -778,14 +779,14 @@ a RSS parser, and a XSLT engine.
 
 =head1 VERSION
 
-This documentation refers to XML::RSS::Tools version 0.30
+This documentation refers to XML::RSS::Tools version 0.33
 
 =head1 SYNOPSIS
 
   use XML::RSS::Tools;
   my $rss_feed = XML::RSS::Tools->new;
-  $rss_feed->rss_uri('http:://foo/bar.rdf');
-  $rss_feed->xsl_file('/my/rss_transformation.xsl');
+  $rss_feed->rss_uri( 'http:://foo/bar.rdf' );
+  $rss_feed->xsl_file( '/my/rss_transformation.xsl' );
   $rss_feed->transform;
   print $rss_feed->as_string;
 
@@ -807,8 +808,8 @@ Otherwise method calls will return true on success and false on failure.
 For example after loading a URI via HTTP, you may wish to check the
 error status before proceeding with your code:
 
-  unless ($rss_feed->rss_uri('http://this.goes.nowhere/')) {
-    print "Unable to obtain file via HTTP", $rss_feed->as_string(error);
+  unless ( $rss_feed->rss_uri( 'http://this.goes.nowhere/' ) ) {
+    print "Unable to obtain file via HTTP", $rss_feed->as_string( 'error' );
     # Do what else
     # you have to.
   } else {
@@ -837,11 +838,11 @@ The module will die if it's created with invalid parameters.
 
 =head2 Source RSS feed
 
-  $rss_object->rss_file('/my/file.rss');
-  $rss_object->rss_uri('http://my.server.com/index.rss');
-  $rss_object->rss_uri('file:/my/file.rss');
-  $rss_object->rss_string($xml_file);
-  $rss_object->rss_fh($file_handle);
+  $rss_object->rss_file( '/my/file.rss' );
+  $rss_object->rss_uri( 'http://my.server.com/index.rss' );
+  $rss_object->rss_uri( 'file:/my/file.rss' );
+  $rss_object->rss_string( $xml_file );
+  $rss_object->rss_fh( $file_handle );
 
 All return true on success, false on failure. If an XML file was
 provided but was invalid XML the parser will fail fatally at this time.
@@ -857,11 +858,11 @@ the URI changes file for more details.
 
 =head2 Source XSL Template
 
-  $rss_object->xsl_file('/my/file.xsl');
-  $rss_object->xsl_uri('http://my.server.com/index.xsl');
-  $rss_object->xsl_uri('file:/my/file.xsl');
-  $rss_object->xsl_string($xml_file);
-  $rss_object->xsl_fh($file_handle);
+  $rss_object->xsl_file( '/my/file.xsl' );
+  $rss_object->xsl_uri( 'http://my.server.com/index.xsl' );
+  $rss_object->xsl_uri( 'file:/my/file.xsl' );
+  $rss_object->xsl_string( $xml_file );
+  $rss_object->xsl_fh( $file_handle );
 
 All return true on success, false on failure. The XSLT file is NOT
 parsed or verified at this time.
@@ -870,7 +871,7 @@ parsed or verified at this time.
 
 =head3 transform
 
-  $rss_object->transform();
+  $rss_object->transform( );
 
 Performs the XSL transformation on the source RSS file with the loaded
 XSLT file.
@@ -883,15 +884,15 @@ Returns the RSS file after it's been though the XSLT process. Optionally
 you can pass this method one additional parameter to obtain the source
 RSS, XSL Template and any error message:
 
-  $rss_object->as_string(xsl);
-  $rss_object->as_string(rss);
-  $rss_object->as_string(error);
+  $rss_object->as_string( 'xsl' );
+  $rss_object->as_string( 'rss' );
+  $rss_object->as_string( 'error' );
 
 If there is nothing to stringify you will get nothing.
 
 =head3 debug
 
-  $rss_object->debug(1);
+  $rss_object->debug( 1 );
 
 A simple switch that control the debug status of the module. By default
 debug is off. Returns the current status. With debug on you will get
@@ -899,7 +900,7 @@ more warnings sent to stderr.
 
 =head3 set_auto_wash and get_auto_wash
 
-  $rss_object->set_auto_wash(1);
+  $rss_object->set_auto_wash( 1 );
   $rss_object->get_auto_wash;
 
 If auto_wash is true, then all RSS files are cleaned before RSS
@@ -940,7 +941,7 @@ Will use attempt to use the HTTP client modules in order of performance.
 
 curl
 
-Bálint Szilakszi's libcurl based C<WWW::Curl::Easy>.
+Balint Szilakszi's libcurl based C<WWW::Curl::Easy>.
 
 =item *
 
@@ -1015,16 +1016,17 @@ in the catalogue.
 
     $rss_object->set_xml_catalog( $xml_catalog_file);
 
-This will pass the specified file to the XML parsers to use as a local XML Catalog.
-If your version of XML::LibXML does not support XML Catalogs it will die if you
-attempt to use this method (see below).
+This will pass the specified file to the XML parsers to use as a local
+XML Catalog. If your version of XML::LibXML does not support XML
+Catalogs it will die if you attempt to use this method (see below).
 
     $rss_object->get_xml_catalog;
 
 This will return the file name of the XML Catalog in use.
 
-Depending upon how your core libxml2 library is compiled, you should also be
-able to use pre-configured XML Catalog files stored in your C</etc/xml/catalog>.
+Depending upon how your core libxml2 library is compiled, you should
+also be able to use pre-configured XML Catalog files stored in your
+C</etc/xml/catalog>.
 
 XML Catalog support was introduced in version 2.4.3 of libxml2, and
 significantly revised in version 2.4.7. Support for XML Catalog was
@@ -1059,7 +1061,10 @@ None.
 
 =head1 HISTORY
 
-0.30 Support WWW::Curl::Easy. Swictehed to subversion from CVS. More Perltidy & test tweaks.
+0.33 More minor changes, tested on more modern perls. More modern build.
+
+0.32 Minor build and kwalitee tweaks. Mo actual module code changes
+     since version 0.30
 
 ...
 
@@ -1132,6 +1137,10 @@ Support Atom feeds.
 
 Import Proxy settings from environment.
 
+=item *
+
+Turn on proxy support for WWW::Curl
+
 =back
 
 =head1 AUTHOR
@@ -1145,14 +1154,14 @@ link; Martin and more...
 =head1 SEE ALSO
 
 L<perl>, L<XML::RSS>, L<XML::LibXSLT>, L<XML::LibXML>, L<XML::RSS::LibXML>,
-L<URI>, L<LWP>, L<HTTP::Lite>, L<HTTP::GHTTP>.
+L<URI>, L<LWP>, L<XML::Feed>.
 
 This module is not an aggregator tool for that I suggest you investigate
 Plagger
 
-=head1 LICENSE AND COPYRIGHT
+=head1 LICENCE AND COPYRIGHT
 
-XML::RSS::Tools, Copyright iredale Consulting 2002-2008
+XML::RSS::Tools, Copyright iredale Consulting 2002-2012
 
 OSI Certified Open Source Software.
 Free Software Foundation Free Software.

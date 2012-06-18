@@ -1,4 +1,4 @@
-#   $Id: 08-no-catalog.t 67 2008-06-29 14:17:37Z adam $
+#   $Id: 08-no-catalog.t 80 2008-07-06 11:43:16Z adam $
 
 use strict;
 use Test::More;
@@ -31,8 +31,8 @@ BEGIN {
 
 my $rss_object = XML::RSS::Tools->new;
 eval { $rss_object->set_xml_catalog( './t/catalog.xml' ); };
-is( $@,
-    'XML Catalog Support not enabled in your version of XML::LibXML',
+like( $@,
+    qr/XML Catalog Support not enabled in your version of XML::LibXML/,
                                        'Correct Catalog error message' );
 
 if ( $test_warn ) {
