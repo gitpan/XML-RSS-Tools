@@ -2,7 +2,7 @@
 #
 # XML::RSS::Tools
 # Version 0.33_1
-# $Id: Tools.pm 90 2012-06-18 09:53:00Z adam $
+# $Id: Tools.pm 95 2014-05-23 11:55:03Z adam $
 #
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
@@ -13,7 +13,8 @@
 
 package XML::RSS::Tools;
 
-use 5.008000;              # No longer been tested on anything earlier
+use 5.010;                 # No longer been tested on anything earlier
+use utf8;
 use strict;                # Naturally
 use warnings;              # Naturally
 use warnings::register;    # So users can "use warnings 'XML::RSS::Tools'"
@@ -24,7 +25,7 @@ use XML::LibXSLT;          # Hand the XSL file and do the XSLT
 use URI;                   # Deal with URIs nicely
 use FileHandle;            # Allow the use of File Handle Objects
 
-our $VERSION = '0.33_1';
+our $VERSION = '0.33';
 
 #
 #   Tools Constructor
@@ -642,8 +643,8 @@ sub _http_get {
 #
 #   Fix Entities
 #   This subroutine is a mix of Matt Sergent's rss-mirror script
-#   And chunks of the HTML::Entites module if you have Perl 5.8.x you
-#   don't need this code.
+#   And chunks of the HTML::Entites module if you have Perl 5.8 or
+#   later you don't need this code.
 #
 sub _clean_entities {
     my $xml = shift;
@@ -788,7 +789,7 @@ This documentation refers to XML::RSS::Tools version 0.33
   $rss_feed->rss_uri( 'http:://foo/bar.rdf' );
   $rss_feed->xsl_file( '/my/rss_transformation.xsl' );
   $rss_feed->transform;
-  print $rss_feed->as_string;
+  say $rss_feed->as_string;
 
 =head1 DESCRIPTION
 
@@ -809,7 +810,7 @@ For example after loading a URI via HTTP, you may wish to check the
 error status before proceeding with your code:
 
   unless ( $rss_feed->rss_uri( 'http://this.goes.nowhere/' ) ) {
-    print "Unable to obtain file via HTTP", $rss_feed->as_string( 'error' );
+    say "Unable to obtain file via HTTP", $rss_feed->as_string( 'error' );
     # Do what else
     # you have to.
   } else {
@@ -990,7 +991,7 @@ If you need to recover the proxy settings there is also the get_http_proxy
 command which returns the proxy and BASIC authentication details as a
 single URI.
 
-    print $rss_object->get_http_proxy;
+    say $rss_object->get_http_proxy;
     # username:password@http://proxy.server.com:3128/
 
 =head3 set_xml_catalog
@@ -1159,16 +1160,16 @@ L<URI>, L<LWP>, L<XML::Feed>.
 This module is not an aggregator tool for that I suggest you investigate
 Plagger
 
-=head1 LICENCE AND COPYRIGHT
+=head1 LICENSE AND COPYRIGHT
 
-XML::RSS::Tools, Copyright iredale Consulting 2002-2012
+This version as C<XML::RSS::Tools>, Copyright Adam John Trickett 2002-2014
 
 OSI Certified Open Source Software.
 Free Software Foundation Free Software.
 
 This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
+it under the terms of the GNU Lesser General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -1176,7 +1177,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 =head1 DEDICATION

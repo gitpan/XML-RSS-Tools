@@ -1,4 +1,4 @@
-#   $Id: README 87 2012-06-18 09:50:44Z adam $
+#   $Id: README 95 2014-05-23 11:55:03Z adam $
 
 XML/RSS/Tools version 0.33
 ==========================
@@ -50,6 +50,6 @@ upon request.
 
 COPYRIGHT AND LICENCE
 
-XML::RSS::Tools, Copyright (C) iredale Consulting 2002-2012
+XML::RSS::Tools, Copyright (C) Adam John Trickett 2002-2014
 
 See POD for full details.
