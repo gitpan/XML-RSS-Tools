@@ -1,4 +1,4 @@
-#   $Id: 51-debug-tests-1.t 95 2014-05-23 11:55:03Z adam $
+#   $Id: 51-debug-tests-1.t 101 2014-05-27 14:25:39Z adam $
 
 use Test::More;
 use strict;
@@ -211,6 +211,7 @@ ok( !( $rss_object->rss_uri( 'file:./t/empty-file' ) ),
                             '50:  Check for an empty RSS File by URI' );
 $capture->stop();
 $line = $capture->read;
+$line =~ s#\\#/#g;
 like( $line, qr/File error: \..t.empty-file is zero bytes long/,
                                               '51:  Empty file error' );
 
@@ -223,7 +224,8 @@ ok( !( $rss_object->xsl_uri( 'file:./t/empty-file' ) ),
                             '53:  Check for an empty XSL File by URI' );
 $capture->stop();
 $line = $capture->read;
-like( $line, qr/File error: \.\/t\/empty-file is zero bytes long/,
+$line =~ s#\\#/#g;
+like( $line, qr/File error: \..t.empty-file is zero bytes long/,
                                               '54:  Empty File error' );
 
 $error = $rss_object->as_string( 'error' );

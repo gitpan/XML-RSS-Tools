@@ -15,13 +15,13 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA256
 
 SHA1 d792c904f1ba43bda68e76c44cbecd9a1a43fcf6 Build.PL
-SHA1 61e9a2f1c6ed2f2103cf3a849be7e7ba890f6302 Changes
+SHA1 541ea87c66ab8e17effcfa1b7b0ab0db321fb48d Changes
 SHA1 f45ee1c765646813b442ca58de72e20a64a7ddba LICENCE
 SHA1 b45b7b965ffe62d55d8fa66f5d5d35407b34adfa MANIFEST
-SHA1 16e1c25b277c1084c9e24d436ed2e5546944eab8 META.json
-SHA1 f7ebec363a7957f0c2c808279024eff607d857a3 META.yml
+SHA1 9093453b9acbc7411a1736d4b739124c3fd3b39a META.json
+SHA1 f2089155734bd8959f95d007fc29ba3ece534460 META.yml
 SHA1 e9b86f2d2a342c714cc0c12c29bfa9cd58fd19c7 Makefile.PL
-SHA1 d21969596ae454beb421bab61ddecc8c87f8488f README
+SHA1 4a0cebee5be0c1d22ae1992d784ab5b0b292b7a4 README
 SHA1 db261871d29eef754cc6272ced707011b1e009cd docs/example-1.pod
 SHA1 9d0e099bf9769485d339b74900da1d98dfdc159b docs/example-2.pod
 SHA1 c51f6398a666bc9e7dbeaeaba4cea4baf9c35a09 docs/example-3.pod
@@ -34,19 +34,19 @@ SHA1 182ff910039731a49dbce0715f23581fec01a1d7 examples/example-3.pl
 SHA1 7190f948ae64868457b3a0695ddf8aea54ffd342 examples/example-4.pl
 SHA1 24332d083fbf116fd64bee7102bbaef26e50e62e examples/example-4.xsl
 SHA1 c12f01186db1a09921c2c27b54710989dbf619d7 examples/example-5.pl
-SHA1 fe825a0e6c9875a414dfe35e2c46c8c49067cdd8 lib/XML/RSS/Tools.pm
+SHA1 8a2cd2d0756a7aab98e44f9ae5c575037434f6b5 lib/XML/RSS/Tools.pm
 SHA1 b5d5704d90593ea4130cd73df25d245524f589eb t/00-signature.t
 SHA1 263f0582e311954dbd6ffbb4cd11dabf0e7ea73d t/01-config.t
 SHA1 793bbfbd4d548aaf40d9e17f632af5d6cf2cc417 t/02-use.t
-SHA1 a1857db6fce9ae6efafea830ad5d9385c7e54275 t/03-basic-tests.t
+SHA1 b62b9858a927ea801b3111d7bc60e8ec580c1dc9 t/03-basic-tests.t
 SHA1 63f360e76d76690b01bf282adafe321f17c17af7 t/04-standard-tests.t
 SHA1 10a365b931ac76030e29065a10c182c850cc0587 t/05-version-tests.t
 SHA1 56cd268ca4c3e14d606f1059849a411f74ce0a4e t/06-filehandle-tests.t
 SHA1 649901ffc56dfa9360b527cba4162fa934e78459 t/07-catalog-tests.t
 SHA1 581b6e51a2a88c13d6d7438fd24ad0a1323f20ad t/08-no-catalog.t
 SHA1 9c9497c73f4716d108b16d29671bffa7d249e582 t/50-error-tests.t
-SHA1 37857f211d8cfcb8f1afb3850d7c17161bbd5c23 t/51-debug-tests-1.t
-SHA1 0f2247db8b195e8a3b7c4b133deb397089dd4919 t/52-debug-tests-2.t
+SHA1 bffd9b9dfe206a61fb29f57599ca739fc62432d6 t/51-debug-tests-1.t
+SHA1 081fdb48d0bc4adb86604c6093f5bb85c1cfb5bd t/52-debug-tests-2.t
 SHA1 4ca82b6374b578d3de9333a25248b1e56dd9c1aa t/53-no-debug-tests-1.t
 SHA1 65585411f3252e66f6d3400bfadd5f9a6beeca95 t/54-no-debug-tests-2.t
 SHA1 ade6fbe20ef06f2d5d293918bebff4b7706745df t/60-http-tests.t
@@ -67,11 +67,11 @@ SHA1 62d6945edf901138a3be9be607d05063098f7384 t/test.xsl
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQEcBAEBCAAGBQJTf0CeAAoJEJzaiRGvDbjITgcH/0J950lDmHZzHgyfhrAP0x/S
-MkdsLIiqAMIY8KpH2n4ugrffKRHNd2F3uOf2me3rB+SPeemhmUEfmasTipEyFAbb
-g2QYXezSovM0Dcx6IJL3cDaNwEHEhZuVYlzAOuMVXakUIWEAl3qWA7E+p92ZgB31
-3zsFldnXwwKiMMY1fS7XMNbZLITnD/Yj8az2TPXFyBUgWwNK0PEmfZv7UV+mO7m2
-b+67FycMoUROnT9pyRqUfYDaQHIIO2kNgKkOF4xpUyKosW2ONI9/iS0cDinJkWra
-9ybTihgQr+haXlJCLE2Jg5JVffHqudtEjPJY63+N8bvbHLyAza82QBOzykUZTag=
-=fs6+
+iQEcBAEBCAAGBQJThKLQAAoJEJzaiRGvDbjIJd4H/0xxp0W1ZDPX3i6PlSDuVDCz
+8DGTbCBbkE7sFfBJKNPIznNMp/ykJZiLx+6rNTv0xApEUuZmBjiK0nPAy+haHPrH
+RohBmfDmJcYr2f+CLh2KcoSeV/fG33ZQ6JJTLiEgLZ0U+Vawvdjwgy9IanowNVZr
+wVfLupu/LWhx7c5AUW5jDobUF1lfmuRVkpvlVQgYSwDlc95PS2JMIwXX0L/uclnV
+BkzjJH7hZeGhKS/wjq4jIK/lPeIFX0UTkHxhFf/6Ea1x6Y8i7qyaEXEp4S+v02a3
+JKh8h0GIXkllKu/vdjZ+HXcHrqKDes/nSQfTGcB0iQWcYdnFp0OTRX64n1W+3HA=
+=INF5
 -----END PGP SIGNATURE-----

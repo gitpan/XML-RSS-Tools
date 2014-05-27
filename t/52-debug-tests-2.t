@@ -1,4 +1,4 @@
-#   $Id: 52-debug-tests-2.t 67 2008-06-29 14:17:37Z adam $
+#   $Id: 52-debug-tests-2.t 101 2014-05-27 14:25:39Z adam $
 
 use Test::More;
 use strict;
@@ -198,14 +198,14 @@ warning_like {
     ok( !( $rss_object->rss_uri( 'file:./t/empty-file' ) ),
                             '51:  Check for an empty RSS File by URI' );
 }
-qr/File error: \.\/t\/empty-file is zero bytes long/,
+qr/File error: \..t.empty-file is zero bytes long/,
                                    '52:  Empty RSS File via URI error?';
 
 warning_like {
     ok( !( $rss_object->xsl_uri( 'file:./t/empty-file' ) ),
                             '53:  Check for an empty XSL File by URI' );
 }
-qr/File error: \.\/t\/empty-file is zero bytes long/,
+qr/File error: \..t.empty-file is zero bytes long/,
                                    '54:  Empty XSL File via URI error?';
 
 warning_like {

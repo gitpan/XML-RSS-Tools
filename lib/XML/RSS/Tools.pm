@@ -1,8 +1,8 @@
 # --------------------------------------------------
 #
 # XML::RSS::Tools
-# Version 0.33_1
-# $Id: Tools.pm 95 2014-05-23 11:55:03Z adam $
+# Version 0.34
+# $Id: Tools.pm 101 2014-05-27 14:25:39Z adam $
 #
 # Copyright iredale Consulting, all rights reserved
 # http://www.iredale.net/
@@ -25,7 +25,7 @@ use XML::LibXSLT;          # Hand the XSL file and do the XSLT
 use URI;                   # Deal with URIs nicely
 use FileHandle;            # Allow the use of File Handle Objects
 
-our $VERSION = '0.33';
+our $VERSION = '0.34';
 
 #
 #   Tools Constructor

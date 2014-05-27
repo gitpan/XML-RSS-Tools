@@ -44,7 +44,7 @@
    "provides" : {
       "XML::RSS::Tools" : {
          "file" : "lib/XML/RSS/Tools.pm",
-         "version" : "0.33"
+         "version" : "0.34"
       }
    },
    "release_status" : "stable",
@@ -53,5 +53,5 @@
          "http://www.gnu.org/licenses/lgpl-3.0.txt"
       ]
    },
-   "version" : "0.33"
+   "version" : "0.34"
 }

@@ -1,6 +1,11 @@
-#   SVN: $Id: Changes 95 2014-05-23 11:55:03Z adam $
+#   SVN: $Id: Changes 101 2014-05-27 14:25:39Z adam $
 
 Revision history for Perl extension XML::RSS::Tools.
+
+0.34  Tue 27 May 2014
+    - Fix for Windows false positive test failures, only tested against
+      Strawberry Perl (RT #96001)
+    - Module code unchanged
 
 0.33  Fri 23 May 2014
     - More modern Build system
